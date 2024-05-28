@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
+import apiClient from '../services/apiClient'; // Import the apiClient
 import NFTCard from './NFTCard';
 import { AuthContext } from '../context/AuthContext';
 
@@ -15,7 +15,7 @@ const Dashboard = () => {
             'x-auth-token': auth.token,
           },
         };
-        const result = await axios.get('http://localhost:5000/api/nftdrops', config);
+        const result = await apiClient.get('/nftdrops', config); // Use apiClient instead of axios
         console.log('Fetched NFT drops:', result.data);
         setNftDrops(result.data);
       } catch (error) {
@@ -33,7 +33,7 @@ const Dashboard = () => {
         },
       };
       console.log('Sending like request for NFT Drop ID:', id);
-      const response = await axios.post(`http://localhost:5000/api/nftdrops/${id}/like`, {}, config);
+      const response = await apiClient.post(`/nftdrops/${id}/like`, {}, config); // Use apiClient instead of axios
       console.log('Like response:', response.data);
       setNftDrops(nftDrops.map(drop => drop._id === id ? response.data : drop));
     } catch (error) {
@@ -52,7 +52,7 @@ const Dashboard = () => {
           'x-auth-token': auth.token,
         },
       };
-      await axios.put(`http://localhost:5000/api/nftdrops/approve/${id}`, {}, config);
+      await apiClient.put(`/nftdrops/approve/${id}`, {}, config); // Use apiClient instead of axios
       setNftDrops(nftDrops.map(drop => drop._id === id ? { ...drop, approved: true } : drop));
     } catch (error) {
       console.error('Error approving drop:', error);

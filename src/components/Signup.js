@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import apiClient from '../services/apiClient'; // Import the apiClient
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -16,7 +16,7 @@ const Signup = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/users', formData);
+      await apiClient.post('/users', formData); // Use apiClient
       navigate('/login');
     } catch (err) {
       console.error(err.response.data);

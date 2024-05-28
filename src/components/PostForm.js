@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import apiClient from '../services/apiClient'; // Import the apiClient
 
 const PostForm = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +28,7 @@ const PostForm = () => {
           'x-auth-token': token,
         },
       };
-      const response = await axios.post('http://localhost:5000/api/nftdrops', formData, config);
+      const response = await apiClient.post('/nftdrops', formData, config); // Use apiClient
       console.log('Submitted post response:', response.data);
       alert('Submission successful! Await approval.');
       navigate('/dashboard');

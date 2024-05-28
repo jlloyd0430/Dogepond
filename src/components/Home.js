@@ -1,9 +1,7 @@
-// src/components/Home.js
-
 import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import NFTCard from './NFTCard';
+import apiClient from '../services/apiClient'; // Import the configured axios instance
 
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
@@ -17,7 +15,7 @@ const Home = () => {
             'x-auth-token': auth.token,
           },
         };
-        const result = await axios.get('http://localhost:5000/api/nftdrops/approved', config);
+        const result = await apiClient.get('/nftdrops/approved', config);
         console.log('Fetched approved NFT drops:', result.data);
         setApprovedDrops(result.data);
       } catch (error) {
