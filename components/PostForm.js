@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import apiClient from '../services/apiClient'; // Import the apiClient
 
 const PostForm = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ const PostForm = () => {
     date: '',
     time: '',
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -20,16 +22,16 @@ const PostForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token'); // Retrieve the token from local storage
+      const token = localStorage.getItem('token');
       const config = {
         headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token, // Include the token in the request headers
+          'x-auth-token': token,
         },
       };
-      const response = await axios.post('http://localhost:5000/api/nftdrops', formData, config); // Make sure the URL is correct
-      console.log('Submitted post response:', response.data); // Log response
+      const response = await apiClient.post('/nftdrops', formData, config); // Use apiClient
+      console.log('Submitted post response:', response.data);
       alert('Submission successful! Await approval.');
+      navigate('/dashboard');
     } catch (error) {
       console.error('Error submitting form:', error);
     }
