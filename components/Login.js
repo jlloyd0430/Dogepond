@@ -1,29 +1,45 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+// src/components/Login.js
+
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password }, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      localStorage.setItem('token', response.data.token);
-      // Redirect to dashboard or wherever
-    } catch (error) {
-      console.error('Login error:', error.response ? error.response.data : error.message);
+      await login(email, password);
+      navigate('/dashboard');
+    } catch (err) {
+      console.error(err.message);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+    <form onSubmit={onSubmit}>
+      <div>
+        <label>Email</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label>Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
       <button type="submit">Login</button>
     </form>
   );
