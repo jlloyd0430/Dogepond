@@ -1,30 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// src/components/Home.js
+
+import React, { useEffect, useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import NFTCard from './NFTCard';
+import apiClient from '../services/apiClient';
 
 const Home = () => {
-  const [nftDrops, setNftDrops] = useState([]);
+  const [approvedDrops, setApprovedDrops] = useState([]);
+  const { auth } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get('http://localhost:5000/api/nftdrops/approved');
+        const config = {
+          headers: {
+            'x-auth-token': auth.token,
+          },
+        };
+        const result = await apiClient.get('/nftdrops/approved', config);
         console.log('Fetched approved NFT drops:', result.data);
-        setNftDrops(result.data);
+        setApprovedDrops(result.data);
       } catch (error) {
         console.error('Error fetching approved NFT drops:', error);
       }
     };
     fetchData();
-  }, []);
+  }, [auth.token]);
 
   return (
     <div>
-      <h1>Home Page</h1>
+      <h1>Approved NFT Drops</h1>
       <div>
-        {nftDrops.length > 0 ? (
-          nftDrops.map((drop) => (
-            <NFTCard key={drop._id} drop={drop} />
+        {approvedDrops.length > 0 ? (
+          approvedDrops.map((drop) => (
+            <NFTCard
+              key={drop._id}
+              drop={drop}
+              onLike={null}
+              onApprove={null}
+            />
           ))
         ) : (
           <p>No approved NFT drops found.</p>
