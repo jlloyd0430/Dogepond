@@ -1,30 +1,46 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import apiClient from '../services/apiClient'; // Import the apiClient
 
 const Signup = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const { email, password } = formData;
+
+  const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/signup', { email, password }, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log('Signup response:', response.data); // Log response data
-      localStorage.setItem('token', response.data.token);
-      // Redirect to login or wherever
-    } catch (error) {
-      console.error('Signup error:', error.response ? error.response.data : error.message);
+      await apiClient.post('/users', formData); // Use apiClient
+      navigate('/login');
+    } catch (err) {
+      console.error(err.response.data);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+    <form onSubmit={onSubmit}>
+      <input
+        type="email"
+        placeholder="Email Address"
+        name="email"
+        value={email}
+        onChange={onChange}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        name="password"
+        value={password}
+        onChange={onChange}
+        required
+      />
       <button type="submit">Sign Up</button>
     </form>
   );
