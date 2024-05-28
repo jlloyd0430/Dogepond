@@ -1,0 +1,81 @@
+/* src/App.css */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+}
+
+div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  /* padding: 20px; */
+}
+
+div > div {
+  width: 100%;
+  max-width: 500px;
+}
+
+.header {
+  /* background-color: #333; */
+  color: black;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.5em;
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link, .nav-button {
+  /* color: white; */
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-link:hover, .nav-button:hover {
+  text-decoration: underline;
+}
+
+.nav-button {
+  background-color: #555;
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
+.nav-button:hover {
+  background-color: #777;
+}
+
+/* src/components/NFTCard.css */
+
+.nft-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px;
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.nft-card h2 {
+  margin-top: 0;
+}
+
+.nft-card button {
+  margin-top: 8px;
+}

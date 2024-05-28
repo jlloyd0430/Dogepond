@@ -1,0 +1,47 @@
+/* Header.css */
+.header {
+    width: 100%;
+    /* background-color: #333; */
+    /* color: white; */
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  }
+  
+  .title {
+    margin: 0;
+    font-size: 1.5em;
+  }
+  
+  .nav {
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav-link {
+    /* color: white; */
+    text-decoration: none;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-link:hover {
+    color: #0f0e0e;
+  }
+  
+  .nav-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    margin: 0 10px;
+    font-size: 1em;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-button:hover {
+    color: #ddd;
+  }
+  
