@@ -14,7 +14,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (auth.token) {
       axios
-        .get('http://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth', {
+        .get('https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth', {
           headers: { 'x-auth-token': auth.token }
         })
         .then((response) => {
@@ -41,7 +41,7 @@ const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth/login', {
+      const response = await axios.post('https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth/login', {
         email,
         password
       });
