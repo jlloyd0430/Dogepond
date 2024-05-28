@@ -10,11 +10,13 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const config = {
-          headers: {
-            'x-auth-token': auth.token,
-          },
-        };
+        const config = auth.token
+          ? {
+              headers: {
+                'x-auth-token': auth.token,
+              },
+            }
+          : {};
         const result = await apiClient.get('/nftdrops/approved', config);
         console.log('Fetched approved NFT drops:', result.data);
         setApprovedDrops(result.data);
