@@ -1,16 +1,34 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+// src/components/Header.js
 
-const Header = () => (
-  <nav>
-    <ul>
-      <li><Link to="/">Home</Link></li>
-      <li><Link to="/login">Login</Link></li>
-      <li><Link to="/signup">Sign Up</Link></li>
-      <li><Link to="/dashboard">Dashboard</Link></li>
-      <li><Link to="/post">Post NFT Drop</Link></li>
-    </ul>
-  </nav>
-);
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import './Header.css';
+
+const Header = () => {
+  const { auth, logout } = useContext(AuthContext);
+
+  return (
+    <header className="header">
+      <h1 className="title"> DRC Calendar</h1>
+      <nav className="nav">
+        <Link className="nav-link" to="/">Home</Link>
+        {auth.isAuthenticated ? (
+          <>
+            {auth.user && auth.user.role === 'admin' && (
+              <Link className="nav-link" to="/dashboard">Dashboard</Link>
+            )}
+            <button className="nav-button" onClick={logout}>Logout</button>
+          </>
+        ) : (
+          <>
+            <Link className="nav-link" to="/login">Login</Link>
+            <Link className="nav-link" to="/signup">Signup</Link>
+          </>
+        )}
+      </nav>
+    </header>
+  );
+};
 
 export default Header;
