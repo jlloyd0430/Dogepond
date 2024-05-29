@@ -27,8 +27,8 @@ const Dashboard = () => {
           'x-auth-token': token,
         },
       };
-      await axios.post(`http://localhost:5000/api/nftdrops/${id}/like`, {}, config);
-      setNftDrops(nftDrops.map(drop => drop._id === id ? { ...drop, likes: drop.likes + 1 } : drop));
+      const response = await axios.post(`http://localhost:5000/api/nftdrops/${id}/like`, {}, config);
+      setNftDrops(nftDrops.map(drop => drop._id === id ? response.data : drop));
     } catch (error) {
       console.error('Error liking drop:', error);
     }
@@ -42,15 +42,15 @@ const Dashboard = () => {
           'x-auth-token': token,
         },
       };
-      await axios.put(`http://localhost:5000/api/nftdrops/approve/${id}`, {}, config);
-      setNftDrops(nftDrops.map(drop => drop._id === id ? { ...drop, approved: true } : drop));
+      const response = await axios.put(`http://localhost:5000/api/nftdrops/approve/${id}`, {}, config);
+      setNftDrops(nftDrops.map(drop => drop._id === id ? response.data : drop));
     } catch (error) {
       console.error('Error approving drop:', error);
     }
   };
 
   const sortedDrops = nftDrops.sort((a, b) => {
-    if (filter === 'mostLiked') return b.likes - a.likes;
+    if (filter === 'mostLiked') return b.likes.length - a.likes.length;
     if (filter === 'mostRecent') return new Date(b.date) - new Date(a.date);
     return 0;
   });
