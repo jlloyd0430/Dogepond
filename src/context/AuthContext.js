@@ -6,37 +6,39 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
     token: localStorage.getItem('token'),
-    isAuthenticated: null,
+    isAuthenticated: !!localStorage.getItem('token'),
     loading: true,
     user: null
   });
 
   useEffect(() => {
-    if (auth.token) {
-      axios
-        .get('https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth', {
-          headers: { 'x-auth-token': auth.token }
-        })
-        .then((response) => {
-          setAuth({
-            ...auth,
+    const fetchUser = async () => {
+      if (auth.token) {
+        try {
+          const response = await axios.get('https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth', {
+            headers: { 'x-auth-token': auth.token }
+          });
+          setAuth((prevAuth) => ({
+            ...prevAuth,
             isAuthenticated: true,
             loading: false,
             user: response.data
-          });
-        })
-        .catch((error) => {
-          setAuth({
-            ...auth,
+          }));
+        } catch (error) {
+          setAuth((prevAuth) => ({
+            ...prevAuth,
             isAuthenticated: false,
             loading: false,
             user: null
-          });
+          }));
           console.error('Error fetching user:', error);
-        });
-    } else {
-      setAuth({ ...auth, loading: false });
-    }
+        }
+      } else {
+        setAuth((prevAuth) => ({ ...prevAuth, loading: false }));
+      }
+    };
+
+    fetchUser();
   }, [auth.token]);
 
   const login = async (email, password) => {
