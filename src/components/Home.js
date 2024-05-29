@@ -5,6 +5,7 @@ import apiClient from '../services/apiClient'; // Import the configured axios in
 
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
+  const [error, setError] = useState(""); // State to store any errors
   const { auth } = useContext(AuthContext);
 
   useEffect(() => {
@@ -20,8 +21,10 @@ const Home = () => {
         const result = await apiClient.get('/nftdrops/approved', config);
         console.log('Fetched approved NFT drops:', result.data);
         setApprovedDrops(result.data);
+        setError(""); // Clear any previous errors
       } catch (error) {
         console.error('Error fetching approved NFT drops:', error);
+        setError("Failed to fetch approved NFT drops. Please try again later.");
       }
     };
     fetchData();
@@ -31,13 +34,14 @@ const Home = () => {
     <div>
       <h1>Approved NFT Drops</h1>
       <div>
+        {error && <p>{error}</p>}
         {approvedDrops.length > 0 ? (
           approvedDrops.map((drop) => (
             <NFTCard
               key={drop._id}
               drop={drop}
-              onLike={null} // No like functionality on home
-              onApprove={null} // No approve functionality on home
+              onLike={null} // Assuming no like functionality on home
+              onApprove={null} // Assuming no approve functionality on home
             />
           ))
         ) : (

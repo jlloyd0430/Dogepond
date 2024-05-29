@@ -9,8 +9,9 @@ const PostForm = () => {
     wlPrice: '',
     date: '',
     time: '',
+    supply: '', // Add supply to the initial form data state
   });
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Correct function from 'react-router-dom'
 
   const handleChange = (e) => {
     setFormData({
@@ -28,12 +29,13 @@ const PostForm = () => {
           'x-auth-token': token,
         },
       };
-      const response = await apiClient.post('/nftdrops', formData, config); // Use apiClient
+      const response = await apiClient.post('/nftdrops', formData, config);
       console.log('Submitted post response:', response.data);
       alert('Submission successful! Await approval.');
       navigate('/dashboard');
     } catch (error) {
       console.error('Error submitting form:', error);
+      alert('Error submitting the form, check console for more details.');
     }
   };
 
@@ -44,6 +46,7 @@ const PostForm = () => {
       <input type="number" name="wlPrice" placeholder="Whitelist Price" onChange={handleChange} required />
       <input type="date" name="date" onChange={handleChange} required />
       <input type="time" name="time" onChange={handleChange} required />
+      <input type="number" name="supply" placeholder="Supply" onChange={handleChange} required /> {/* Add input for supply */}
       <button type="submit">Submit</button>
     </form>
   );

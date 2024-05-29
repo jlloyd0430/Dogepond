@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import apiClient from '../services/apiClient'; // Import the apiClient
+import apiClient from '../services/apiClient';
 import NFTCard from './NFTCard';
 import { AuthContext } from '../context/AuthContext';
 
@@ -15,7 +15,7 @@ const Dashboard = () => {
             'x-auth-token': auth.token,
           },
         };
-        const result = await apiClient.get('/nftdrops', config); // Use apiClient instead of axios
+        const result = await apiClient.get('/nftdrops', config);
         console.log('Fetched NFT drops:', result.data);
         setNftDrops(result.data);
       } catch (error) {
@@ -33,7 +33,7 @@ const Dashboard = () => {
         },
       };
       console.log('Sending like request for NFT Drop ID:', id);
-      const response = await apiClient.post(`/nftdrops/${id}/like`, {}, config); // Use apiClient instead of axios
+      const response = await apiClient.post(`/nftdrops/${id}/like`, {}, config);
       console.log('Like response:', response.data);
       setNftDrops(nftDrops.map(drop => drop._id === id ? response.data : drop));
     } catch (error) {
@@ -52,7 +52,7 @@ const Dashboard = () => {
           'x-auth-token': auth.token,
         },
       };
-      await apiClient.put(`/nftdrops/approve/${id}`, {}, config); // Use apiClient instead of axios
+      await apiClient.put(`/nftdrops/approve/${id}`, {}, config);
       setNftDrops(nftDrops.map(drop => drop._id === id ? { ...drop, approved: true } : drop));
     } catch (error) {
       console.error('Error approving drop:', error);
@@ -63,13 +63,13 @@ const Dashboard = () => {
     <div>
       <h1>Dashboard</h1>
       <div>
-        {nftDrops && nftDrops.length > 0 ? (
+        {nftDrops.length > 0 ? (
           nftDrops.map((drop) => (
             <NFTCard
               key={drop._id}
               drop={drop}
-              onLike={handleLike}
-              onApprove={handleApprove}
+              onLike={() => handleLike(drop._id)}
+              onApprove={() => handleApprove(drop._id)}
             />
           ))
         ) : (
