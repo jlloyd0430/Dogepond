@@ -1,5 +1,3 @@
-// src/components/NFTCard.js
-
 import React from 'react';
 
 const NFTCard = ({ drop, onLike, onApprove }) => {
@@ -12,7 +10,7 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
       <p>Whitelist Price: {drop.wlPrice}</p>
       <p>Date: {new Date(drop.date).toLocaleDateString()}</p>
       <p>Time: {drop.time}</p>
-      <p>Likes: {drop.likes}</p>
+      <p>Likes: {drop.likes.length}</p> {/* Show number of likes */}
       <button onClick={() => {
         console.log('Like button clicked for drop ID:', drop._id);
         if (typeof onLike === 'function') {
