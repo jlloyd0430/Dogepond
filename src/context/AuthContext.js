@@ -18,7 +18,6 @@ const AuthProvider = ({ children }) => {
           const response = await axios.get('https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth', {
             headers: { 'x-auth-token': auth.token }
           });
-<<<<<<< HEAD
           setAuth((prevAuth) => ({
             ...prevAuth,
             isAuthenticated: true,
@@ -28,17 +27,6 @@ const AuthProvider = ({ children }) => {
         } catch (error) {
           setAuth((prevAuth) => ({
             ...prevAuth,
-=======
-          setAuth({
-            ...auth,
-            isAuthenticated: true,
-            loading: false,
-            user: response.data
-          });
-        } catch (error) {
-          setAuth({
-            ...auth,
->>>>>>> 8b9af11 (refactor)
             isAuthenticated: false,
             loading: false,
             user: null
@@ -46,11 +34,7 @@ const AuthProvider = ({ children }) => {
           console.error('Error fetching user:', error);
         }
       } else {
-<<<<<<< HEAD
         setAuth((prevAuth) => ({ ...prevAuth, loading: false }));
-=======
-        setAuth({ ...auth, loading: false });
->>>>>>> 8b9af11 (refactor)
       }
     };
 
