@@ -8,10 +8,11 @@
     text-align: center;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
   }
   
   .nft-card img {
-    max-width: 100%;
+    max-width: 80%;
     height: auto;
     border-radius: 8px;
     margin-bottom: 16px;
@@ -25,3 +26,22 @@
     margin-top: 8px;
   }
   
+  @media (max-width: 600px) {
+    .nft-card {
+      padding: 20px;
+      margin: 10px;
+    }
+  
+    .nft-card h2 {
+      font-size: 1em;
+    }
+  
+    .nft-card p {
+      font-size: 0.9em;
+    }
+  
+    .nft-card button {
+      font-size: 14px;
+      padding: 8px 16px;
+    }
+  }

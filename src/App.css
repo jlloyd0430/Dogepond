@@ -77,6 +77,7 @@ div > div {
 
 .title {
   font-size: 1.5em;
+  padding: 5px;
 }
 
 .nav {
@@ -110,22 +111,4 @@ body.dark-mode .nav-link, .nav-button {
   background-color: #272424;
 }
 
-/* src/components/NFTCard.css */
 
-.nft-card {
-  /* border: 1px solid #ccc; */
-  /* border-radius: 8px; */
-  padding: 16px;
-  margin: 16px;
-  text-align: center;
-  background-color: #fff;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.nft-card h2 {
-  margin-top: 0;
-}
-
-.nft-card button {
-  margin-top: 8px;
-}
