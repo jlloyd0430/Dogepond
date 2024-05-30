@@ -25,6 +25,7 @@ const ProfileDropdown = () => {
       {isOpen && (
         <div className="dropdown-menu">
           <a href="/profile" className="dropdown-item">Profile</a>
+          <a href='/packages' className="dropdown-item">Packages</a>
           <a href="/settings" className="dropdown-item">Settings</a>
           <button className="dropdown-item" onClick={handleLogout}>Logout</button>
         </div>

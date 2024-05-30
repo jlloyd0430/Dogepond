@@ -10,6 +10,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Logout from './components/Logout';
 import Profile from './components/Profile';
 import Settings from './components/Settings';
+import Packages from './components/Packages'; 
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
 import './App.css';
@@ -54,6 +55,7 @@ const AppContent = () => {
             <Route path="/post" element={<PostForm />} />
           </Route>
           <Route path="/settings" element={<Settings />} /> {/* Add the settings route */}
+          <Route path="/packages" element={<Packages />} />
         </Routes>
       </div>
     </Router>
