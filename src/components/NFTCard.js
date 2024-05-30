@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import './NFTCard.css'; // 
 
 const NFTCard = ({ drop, onLike, onApprove }) => {
   console.log('Rendering NFTCard with props:', { drop, onLike, onApprove });
@@ -7,7 +8,7 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
   const likesCount = Array.isArray(drop.likes) ? drop.likes.length : 0;
 
   return (
-    <div>
+    <div className="nft-card">
       <h2>{drop.projectName}</h2>
       <p>Price: {drop.price}</p>
       <p>Whitelist Price: {drop.wlPrice}</p>

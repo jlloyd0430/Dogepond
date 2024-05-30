@@ -1,0 +1,15 @@
+.nft-card {
+    border: 2px solid gold;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .nft-card h2 {
+    margin-top: 0;
+  }
+  
+  .nft-card p {
+    margin: 5px 0;
+  }
