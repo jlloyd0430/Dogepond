@@ -33,10 +33,6 @@ body.dark-mode .nft-card {
 }
 
 
-/* Dark Mode for profile icon */
-body.dark-mode .profile-icon {
-  color: goldenrod;
-}
 
 /* Dark Mode for dropdown menu */
 body.dark-mode .dropdown-menu {

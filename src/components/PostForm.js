@@ -11,26 +11,47 @@ const PostForm = () => {
     date: '',
     time: '',
     supply: '', // Add supply field
+    image: null, // Add image field
   });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value, files } = e.target;
+    if (name === 'image') {
+      setFormData({
+        ...formData,
+        image: files[0],
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+
+    // Debugging: Check the form data before sending
+    for (let pair of formDataToSend.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
     try {
       const token = localStorage.getItem('token');
       const config = {
         headers: {
           'x-auth-token': token,
+          'Content-Type': 'multipart/form-data',
         },
       };
-      const response = await apiClient.post('/nftdrops', formData, config); // Use apiClient
+
+      const response = await apiClient.post('/nftdrops', formDataToSend, config); // Use apiClient
       console.log('Submitted post response:', response.data);
       alert('Submission successful! Await approval.');
       navigate('/dashboard');
@@ -81,6 +102,12 @@ const PostForm = () => {
           placeholder="Supply" 
           onChange={handleChange} 
           required 
+        />
+        <input 
+          type="file" 
+          name="image" 
+          accept="image/*"
+          onChange={handleChange}
         />
         <button type="submit">Submit</button>
       </form>
