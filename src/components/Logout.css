@@ -12,6 +12,6 @@
   
   .logout-button:hover {
     background-color: darkgoldenrod;
-    color: white;
+    /* color: white; */
   }
   

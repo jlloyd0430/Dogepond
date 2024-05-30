@@ -3,8 +3,58 @@
 body {
   font-family: Arial, sans-serif;
   background-color: #f0f0f0;
+  color: black;
   margin: 0;
   padding: 0;
+}
+
+.settings-page {
+  padding: 20px;
+}
+
+.dark-mode-toggle {
+  margin-top: 20px;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background-color: black;
+  color: white;
+}
+
+body.dark-mode h1 {
+  color: white;
+}
+
+/* Ensure h2 inside .nft-card is also white in dark mode */
+body.dark-mode .nft-card {
+  background-color: #333;
+  color: white;
+}
+
+
+/* Dark Mode for profile icon */
+body.dark-mode .profile-icon {
+  color: white;
+}
+
+/* Dark Mode for dropdown menu */
+body.dark-mode .dropdown-menu {
+  /* background-color: #444; */
+  border-color: #555;
+}
+
+/* Dark Mode for dropdown items */
+body.dark-mode .dropdown-item {
+  color: white;
+}
+
+body.dark-mode .dropdown-item:hover {
+  background-color: #555;
+}
+
+h1 {
+  color: black;
 }
 
 div {
@@ -39,11 +89,15 @@ div > div {
 }
 
 .nav-link, .nav-button {
-  /* color: white; */
+  color: black;
   /* text-decoration: black; */
   background: none;
   border: none;
   cursor: pointer;
+}
+
+body.dark-mode .nav-link, .nav-button {
+  color: white;
 }
 
 .nav-link:hover, .nav-button:hover {
