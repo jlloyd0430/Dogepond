@@ -1,35 +1,73 @@
-/* src/components/NFTCard.css */
+/* NFTCard.css */
 
 .nft-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     border: 2px solid gold;
     border-radius: 8px;
     padding: 16px;
     margin: 16px;
-    text-align: center;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    max-width: 100%;
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
   }
   
   .nft-card img {
-    max-width: 80%;
+    max-width: 60%;
     height: auto;
-    border-radius: 8px;
-    margin-bottom: 16px;
+    border-radius: 5px;
+    margin-right: 16px; /* Space between image and content */
+  }
+  
+  .nft-card-content {
+    flex: 1; /* Take up the remaining space */
+    display: flex;
+    flex-direction: column;
+    /* align-items: flex-start; */
   }
   
   .nft-card h2 {
     margin-top: 0;
+    font-size: 1.2em;
+  }
+  
+  .nft-card p {
+    margin: 8px 0;
   }
   
   .nft-card button {
     margin-top: 8px;
+    padding: 10px 20px;
+    background-color: goldenrod;
+    border: 2px solid gold;
+    border-radius: 5px;
+    color: black;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .nft-card button:hover {
+    background-color: #ffd700;
   }
   
   @media (max-width: 600px) {
     .nft-card {
-      padding: 20px;
-      margin: 10px;
+      flex-direction: column; /* Stack image and content vertically on smaller screens */
+      align-items: center;
+    }
+  
+    .nft-card img {
+      max-width: 100%;
+      margin-right: 0;
+      margin-bottom: 16px;
+    }
+  
+    .nft-card-content {
+      align-items: center;
     }
   
     .nft-card h2 {
@@ -45,3 +83,4 @@
       padding: 8px 16px;
     }
   }
+  
