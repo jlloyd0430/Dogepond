@@ -40,7 +40,7 @@ div > div {
 
 .nav-link, .nav-button {
   /* color: white; */
-  text-decoration: none;
+  /* text-decoration: black; */
   background: none;
   border: none;
   cursor: pointer;
@@ -51,20 +51,20 @@ div > div {
 }
 
 .nav-button {
-  background-color: #555;
+  background-color: goldenrod;
   padding: 5px 10px;
   border-radius: 3px;
 }
 
 .nav-button:hover {
-  background-color: #777;
+  background-color: #272424;
 }
 
 /* src/components/NFTCard.css */
 
 .nft-card {
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  /* border: 1px solid #ccc; */
+  /* border-radius: 8px; */
   padding: 16px;
   margin: 16px;
   text-align: center;
