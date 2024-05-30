@@ -1,4 +1,4 @@
-# Doginal/Drc20 Drop Calendar
+# Doginal/Drc20 Drop Calendar Doge pond 
 The first mint calendar website for doge projects,
 
 create an account
