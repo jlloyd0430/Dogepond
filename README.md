@@ -1,9 +1,19 @@
 # Doginal/Drc20 Drop Calendar
 The first mint calendar website for doge projects,
 
+create an account
+
+Login
+
 submit your upcoming project drop for the public to see
 
 admin approves the drop
+
+view your drops on your profile
+
+settings page
+
+darkmode
 
 # To do List
 
