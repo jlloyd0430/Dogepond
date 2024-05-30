@@ -54,7 +54,7 @@ const Home = () => {
 
   return (
     <div>
-      <h1>Approved NFT Drops</h1>
+      <h1>Doginal/Drc20 Drops</h1>
       <div>
         {error && <p>{error}</p>}
         {approvedDrops.length > 0 ? (

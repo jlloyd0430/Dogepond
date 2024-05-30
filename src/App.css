@@ -18,7 +18,7 @@ body {
 
 /* Dark Mode Styles */
 body.dark-mode {
-  background-color: black;
+  background-color: #131111;
   color: white;
 }
 
@@ -35,7 +35,7 @@ body.dark-mode .nft-card {
 
 /* Dark Mode for profile icon */
 body.dark-mode .profile-icon {
-  color: white;
+  color: goldenrod;
 }
 
 /* Dark Mode for dropdown menu */

@@ -11,7 +11,7 @@ const Header = () => {
 
   return (
     <header className="header">
-      <h1 className="title">DRC Calendar</h1>
+      <h1 className="title">Mint Calendar</h1>
       <nav className="nav">
         <Link className="nav-link" to="/">Home</Link>
         {auth.isAuthenticated ? (
