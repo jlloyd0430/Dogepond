@@ -2,10 +2,12 @@ import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import NFTCard from './NFTCard';
 import apiClient from '../services/apiClient';
+// import './Home.css';
 
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
   const [error, setError] = useState(""); // State to store any errors
+  const [sortOption, setSortOption] = useState("mostRecent"); // Default sort option
   const { auth } = useContext(AuthContext);
 
   useEffect(() => {
@@ -18,7 +20,7 @@ const Home = () => {
               },
             }
           : {};
-        const result = await apiClient.get('/nftdrops/approved', config);
+        const result = await apiClient.get(`/nftdrops/approved?sort=${sortOption}`, config);
         console.log('Fetched approved NFT drops:', result.data);
         setApprovedDrops(result.data);
         setError(""); // Clear any previous errors
@@ -28,42 +30,31 @@ const Home = () => {
       }
     };
     fetchData();
-  }, [auth.token]);
+  }, [auth.token, sortOption]);
 
-  const handleLike = async (id) => {
-    try {
-      const config = {
-        headers: {
-          'x-auth-token': auth.token,
-        },
-      };
-      console.log('Sending like request for NFT Drop ID:', id);
-      const response = await apiClient.post(`/nftdrops/${id}/like`, {}, config);
-      console.log('Like response:', response.data);
-      setApprovedDrops((prevDrops) =>
-        prevDrops.map((drop) => (drop._id === id ? response.data : drop))
-      );
-    } catch (error) {
-      if (error.response && error.response.data.msg) {
-        alert(error.response.data.msg);
-      } else {
-        console.error('Error liking drop:', error);
-      }
-    }
+  const handleSortChange = (e) => {
+    setSortOption(e.target.value);
   };
 
   return (
     <div>
-      <h1>Upcoming Drops</h1>
-      <div className='card'>
+      <h1>Approved NFT Drops</h1>
+      <div className="sort-filter">
+        <label htmlFor="sort">Sort by: </label>
+        <select id="sort" value={sortOption} onChange={handleSortChange}>
+          <option value="mostRecent">Most Recent</option>
+          <option value="mostLiked">Most Liked</option>
+        </select>
+      </div>
+      <div>
         {error && <p>{error}</p>}
         {approvedDrops.length > 0 ? (
           approvedDrops.map((drop) => (
             <NFTCard
               key={drop._id}
               drop={drop}
-              onLike={() => handleLike(drop._id)}
-              onApprove={null} // No approve functionality on home
+              onLike={null} // Assuming no like functionality on home
+              onApprove={null} // Assuming no approve functionality on home
             />
           ))
         ) : (
