@@ -15,8 +15,8 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
           alt={drop.projectName}
           className="nft-card-image"
         />
-      )} 
-     <div className="nft-card-content">
+      )}
+      <div className="nft-card-content">
         <h2>{drop.projectName}</h2>
         <p>Price: {drop.price}</p>
         <p>Whitelist Price: {drop.wlPrice}</p>

@@ -1,48 +1,66 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../services/apiClient'; // Import the apiClient
+import './Signup.css'; // Import the CSS file
 
 const Signup = () => {
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: '',
   });
   const navigate = useNavigate();
 
-  const { email, password } = formData;
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-  const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await apiClient.post('/users', formData); // Use apiClient
+      const response = await apiClient.post('/auth/signup', formData);
+      console.log('Signup response:', response.data);
+      alert('Signup successful! Please login.');
       navigate('/login');
-    } catch (err) {
-      console.error(err.response.data);
+    } catch (error) {
+      console.error('Error signing up:', error);
     }
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        type="email"
-        placeholder="Email Address"
-        name="email"
-        value={email}
-        onChange={onChange}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        name="password"
-        value={password}
-        onChange={onChange}
-        required
-      />
-      <button type="submit">Sign Up</button>
-    </form>
+    <div className="signup-container">
+      <form className="signup-form" onSubmit={handleSubmit}>
+        <h2>Signup</h2>
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+        <button type="submit">Signup</button>
+      </form>
+    </div>
   );
 };
 
