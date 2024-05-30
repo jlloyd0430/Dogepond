@@ -61,7 +61,7 @@
     }
   
     .nft-card img {
-      max-width: 100%;
+      max-width: 80%;
       margin-right: 0;
       margin-bottom: 16px;
     }
@@ -69,6 +69,8 @@
     .nft-card-content {
       align-items: center;
     }
+
+    
   
     .nft-card h2 {
       font-size: 1em;

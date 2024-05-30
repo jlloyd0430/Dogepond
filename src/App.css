@@ -111,4 +111,11 @@ body.dark-mode .nav-link, .nav-button {
   background-color: #272424;
 }
 
+@media (max-width: 600px) {
+.card {
+  width: 100%;
+  max-width: 280px;
+}
+
+}
 

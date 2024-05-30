@@ -55,7 +55,7 @@ const Home = () => {
   return (
     <div>
       <h1>Upcoming Drops</h1>
-      <div>
+      <div className='card'>
         {error && <p>{error}</p>}
         {approvedDrops.length > 0 ? (
           approvedDrops.map((drop) => (
