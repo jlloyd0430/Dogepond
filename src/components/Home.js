@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import NFTCard from './NFTCard';
-import apiClient from '../services/apiClient'; // Import the configured axios instance
+import apiClient from '../services/apiClient';
 
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
@@ -30,6 +30,28 @@ const Home = () => {
     fetchData();
   }, [auth.token]);
 
+  const handleLike = async (id) => {
+    try {
+      const config = {
+        headers: {
+          'x-auth-token': auth.token,
+        },
+      };
+      console.log('Sending like request for NFT Drop ID:', id);
+      const response = await apiClient.post(`/nftdrops/${id}/like`, {}, config);
+      console.log('Like response:', response.data);
+      setApprovedDrops((prevDrops) =>
+        prevDrops.map((drop) => (drop._id === id ? response.data : drop))
+      );
+    } catch (error) {
+      if (error.response && error.response.data.msg) {
+        alert(error.response.data.msg);
+      } else {
+        console.error('Error liking drop:', error);
+      }
+    }
+  };
+
   return (
     <div>
       <h1>Approved NFT Drops</h1>
@@ -40,8 +62,8 @@ const Home = () => {
             <NFTCard
               key={drop._id}
               drop={drop}
-              onLike={null} // Assuming no like functionality on home
-              onApprove={null} // Assuming no approve functionality on home
+              onLike={() => handleLike(drop._id)}
+              onApprove={null} // No approve functionality on home
             />
           ))
         ) : (

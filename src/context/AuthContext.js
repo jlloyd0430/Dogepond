@@ -39,7 +39,7 @@ const AuthProvider = ({ children }) => {
     };
 
     fetchUser();
-  }, [auth.token]);
+  }, [auth.token]); // Added auth.token as a dependency
 
   const login = async (email, password) => {
     try {
@@ -48,31 +48,34 @@ const AuthProvider = ({ children }) => {
         password
       });
       localStorage.setItem('token', response.data.token);
-      setAuth({
+      setAuth((prevAuth) => ({
+        ...prevAuth,
         token: response.data.token,
         isAuthenticated: true,
         loading: false,
         user: response.data.user
-      });
+      }));
     } catch (error) {
       console.error('Login error:', error.response ? error.response.data : error.message);
-      setAuth({
+      setAuth((prevAuth) => ({
+        ...prevAuth,
         token: null,
         isAuthenticated: false,
         loading: false,
         user: null
-      });
+      }));
     }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    setAuth({
+    setAuth((prevAuth) => ({
+      ...prevAuth,
       token: null,
       isAuthenticated: false,
       loading: false,
       user: null
-    });
+    }));
   };
 
   return (
