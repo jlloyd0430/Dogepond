@@ -35,6 +35,9 @@ body.dark-mode {
 
 h1 {
   color: var(--text-color-light);
+  font-size: 1.5em;
+  padding: 5px;
+  text-decoration: underline solid goldenrod;
 }
 
 body.dark-mode h1 {

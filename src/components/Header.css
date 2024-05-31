@@ -1,49 +1,68 @@
-/* Header.css */
 .header {
-    width: 100%;
-    /* background-color: #333; */
-    /* color: white; */
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+.title {
+  margin: 0;
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.5em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  font-family: "Orbitron", sans-serif;
+}
+
+.nav-link {
+  text-decoration: none;
+  margin: 0 10px;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #0f0e0e;
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin: 0 10px;
+  font-size: 1em;
+  transition: color 0.3s ease;
+}
+
+.nav-button:hover {
+  color: #ddd;
+}
+
+/* Responsive Design for Smaller Screens */
+@media (max-width: 600px) {
+  .header {
+    padding: 10px;
+    flex-direction: row;
+    /* align-items: flex-end; */
   }
-  
+
   .title {
-    margin: 0;
-    font-family: "Orbitron", sans-serif;
-    font-size: 1.5em;
+    font-size: 1.2em;
+    margin-bottom: 10px;
   }
-  
+
   .nav {
-    display: flex;
-    align-items: center;
-    font-family: "Orbitron", sans-serif;
+    flex-direction: row;
+    /* align-items: flex-start; */
+    width: 100%;
   }
-  
-  .nav-link {
-    /* color: white; */
-    text-decoration: none;
-    margin: 0 10px;
-    transition: color 0.3s ease;
+
+  .nav-link, .nav-button {
+    margin: 5px 0;
   }
-  
-  .nav-link:hover {
-    color: #0f0e0e;
-  }
-  
-  .nav-button {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    margin: 0 10px;
-    font-size: 1em;
-    transition: color 0.3s ease;
-  }
-  
-  .nav-button:hover {
-    color: #ddd;
-  }
-  
+}

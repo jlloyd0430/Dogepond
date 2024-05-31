@@ -11,9 +11,9 @@ const Header = () => {
 
   return (
     <header className="header">
-      <h1 className="title">DogePond</h1>
+     <Link className="title" to="/"> <h1>DogePond</h1></Link>
       <nav className="nav">
-        <Link className="nav-link" to="/">Home</Link>
+        {/* <Link className="nav-link" to="/">Home</Link> */}
         {auth.isAuthenticated ? (
           <>
             <Link className="nav-link" to="/post">Post</Link> {/* Add the Post link for authenticated users */}
