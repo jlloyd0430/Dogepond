@@ -9,6 +9,7 @@
     text-align: center;
     margin-bottom: 20px;
     position: relative;
+    font-family: "Orbitron", sans-serif;
   }
   
   .packages-title::after {
@@ -24,6 +25,7 @@
     text-align: center;
     margin-bottom: 30px;
     color: #e2dada;
+    font-family: "Orbitron", sans-serif;
   }
   
   .package {
@@ -35,6 +37,7 @@
   }
   
   .package-title {
+    font-family: "Orbitron", sans-serif;
     padding: 10px;
     display: inline-block;
     margin-bottom: 10px;
@@ -43,6 +46,7 @@
   }
   
   .package-description {
+    font-family: "Orbitron", sans-serif;
     margin-bottom: 15px;
     color: #e2dada;
   }

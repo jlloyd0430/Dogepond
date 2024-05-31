@@ -62,6 +62,7 @@ const PostForm = () => {
 
   return (
     <div className="post-form-container">
+      <h1>Post your Mint</h1>
       <form className="post-form" onSubmit={handleSubmit}>
         <input 
           type="text" 

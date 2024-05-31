@@ -1,7 +1,8 @@
 /* Signup.css */
 
 body {
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
+    font-family: "Orbitron", sans-serif;
     margin: 0;
     padding: 0;
   }
@@ -24,6 +25,7 @@ body {
   
   .signup-form h2 {
     margin-bottom: 20px;
+    font-family: "Orbitron", sans-serif;
   }
   
   .signup-form input {
