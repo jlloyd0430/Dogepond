@@ -6,6 +6,7 @@ import apiClient from '../services/apiClient';
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
   const [error, setError] = useState(""); // State to store any errors
+  const [filter, setFilter] = useState('mostRecent'); // State for filter
   const { auth } = useContext(AuthContext);
 
   useEffect(() => {
@@ -18,7 +19,7 @@ const Home = () => {
               },
             }
           : {};
-        const result = await apiClient.get('/nftdrops/approved', config);
+        const result = await apiClient.get(`/nftdrops/approved?sort=${filter}`, config);
         console.log('Fetched approved NFT drops:', result.data);
         setApprovedDrops(result.data);
         setError(""); // Clear any previous errors
@@ -28,7 +29,7 @@ const Home = () => {
       }
     };
     fetchData();
-  }, [auth.token]);
+  }, [auth.token, filter]); // Include filter in dependency array
 
   const handleLike = async (id) => {
     try {
@@ -52,10 +53,21 @@ const Home = () => {
     }
   };
 
+  const handleFilterChange = (e) => {
+    setFilter(e.target.value);
+  };
+
   return (
     <div>
       <h1>Upcoming Drops</h1>
-      <div className='card'>
+      <div className="filter">
+        <label htmlFor="filter">Sort By: </label>
+        <select id="filter" value={filter} onChange={handleFilterChange}>
+          <option value="mostRecent">Most Recent</option>
+          <option value="mostLiked">Most Liked</option>
+        </select>
+      </div>
+      <div className="card">
         {error && <p>{error}</p>}
         {approvedDrops.length > 0 ? (
           approvedDrops.map((drop) => (
@@ -73,4 +85,5 @@ const Home = () => {
     </div>
   );
 };
+
 export default Home;
