@@ -44,9 +44,8 @@
   font-size: 1.2em;
 }
 
-.darknft-card p {
+.nft-card p {
   margin: 8px 0;
-  color: white;
 }
 
 .nft-card button {
@@ -66,54 +65,82 @@
   background-color: #ffd700;
 }
 
+.nft-card-details {
+  width: 100%;
+  text-align: left;
+  margin-top: 16px;
+  display: none; /* Hide details by default */
+}
+
+.nft-card-details.expanded {
+  display: block; /* Show details when expanded */
+}
+
+.nft-card-details p {
+  margin: 4px 0;
+}
+
+.nft-card a {
+  color: blue;
+  text-decoration: none;
+}
+
+.nft-card a:hover {
+  text-decoration: underline;
+}
+
 @media (prefers-color-scheme: dark) {
   .nft-card {
-      border-color: var(--border-color-dark);
-      background-color: var(--background-color-dark);
+    border-color: var(--border-color-dark);
+    background-color: var(--background-color-dark);
   }
 
   .nft-card h2,
   .nft-card p {
-      color: var(--text-color-dark);
+    color: var(--text-color-dark);
   }
 
   .nft-card button {
-      background-color: var(--button-background-dark);
-      color: var(--button-text-color-dark);
-      border-color: var(--border-color-dark);
+    background-color: var(--button-background-dark);
+    color: var(--button-text-color-dark);
+    border-color: var(--border-color-dark);
   }
 
   .nft-card button:hover {
-      background-color: #e6c200;
+    background-color: #e6c200;
+  }
+
+  .nft-card-details {
+    color: var(--text-color-dark);
   }
 }
 
 @media (max-width: 600px) {
   .nft-card {
-      flex-direction: column;
-      align-items: center;
+    flex-direction: column;
+    align-items: center;
   }
 
   .nft-card img {
-      max-width: 80%;
-      margin-right: 0;
-      margin-bottom: 16px;
+    max-width: 80%;
+    margin-right: 0;
+    margin-bottom: 16px;
   }
 
   .nft-card-content {
-      align-items: center;
+    align-items: center;
   }
 
   .nft-card h2 {
-      font-size: 1em;
+    font-size: 1em;
   }
 
   .nft-card p {
-      font-size: 0.9em;
+    font-size: 0.9em;
   }
 
   .nft-card button {
-      font-size: 14px;
-      padding: 8px 16px;
+    font-size: 14px;
+    padding: 8px 16px;
   }
 }

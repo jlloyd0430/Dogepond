@@ -10,7 +10,12 @@ const PostForm = () => {
     wlPrice: '',
     date: '',
     time: '',
-    supply: '', // Add supply field
+    supply: '',
+    description: '', // Add description field
+    website: '', // Add website field
+    xCom: '', // Add X.com field
+    telegram: '', // Add Telegram field
+    discord: '', // Add Discord field
     image: null, // Add image field
   });
   const navigate = useNavigate();
@@ -103,6 +108,36 @@ const PostForm = () => {
           placeholder="Supply" 
           onChange={handleChange} 
           required 
+        />
+        <textarea
+          name="description"
+          placeholder="Description"
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="url"
+          name="website"
+          placeholder="Website URL"
+          onChange={handleChange}
+        />
+        <input
+          type="url"
+          name="xCom"
+          placeholder="X.com URL"
+          onChange={handleChange}
+        />
+        <input
+          type="url"
+          name="telegram"
+          placeholder="Telegram URL"
+          onChange={handleChange}
+        />
+        <input
+          type="url"
+          name="discord"
+          placeholder="Discord URL"
+          onChange={handleChange}
         />
         <input 
           type="file" 
