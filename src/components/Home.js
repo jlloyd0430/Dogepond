@@ -1,7 +1,9 @@
+// src/pages/Home.js
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import NFTCard from './NFTCard';
 import apiClient from '../services/apiClient';
+import AdBannerCarousel from '../components/AdBannerCarousel'; // Import the carousel component
 
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
@@ -59,6 +61,7 @@ const Home = () => {
 
   return (
     <div>
+      <AdBannerCarousel /> {/* Add the carousel component here */}
       <h1>Upcoming Drops</h1>
       <div className="filter">
         <label htmlFor="filter">Sort By: </label>
