@@ -2,9 +2,10 @@ import React from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 import './AdBannerCarousel.css';
-import catsbanner from "./uploads/catsbanner.jpg"
-import novalabs from "./uploads/novabanner.jpg"
-import wizards from "./uploads/wizardbanner.jpg"
+import catsbanner from "./uploads/catsbanner.jpg";
+import novalabs from "./uploads/novabanner.jpg";
+import wizards from "./uploads/wizardbanner.jpg";
+import rpc from "./uploads/rpc.webp";
 
 const AdBannerCarousel = () => {
   return (
@@ -19,6 +20,10 @@ const AdBannerCarousel = () => {
       </div>
       <div>
         <img src={wizards} alt="Ad Banner 3" />
+        {/* <p className="legend">Ad Banner 3</p> */}
+      </div>
+      <div>
+        <img src={rpc} alt="Ad Banner 3" />
         {/* <p className="legend">Ad Banner 3</p> */}
       </div>
     </Carousel>
