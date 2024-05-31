@@ -100,6 +100,7 @@ div > div {
 }
 
 .filter-container {
+  justify-content: space-between;
   display: flex;
   flex-direction: row;
   padding: 10px;
