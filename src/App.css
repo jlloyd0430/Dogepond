@@ -57,7 +57,10 @@ body.dark-mode .nft-card {
 
 /* Dark Mode for dropdown menu */
 .dropdown-menu {
-  border-color: var(--text-color-dark);
+  background-color: rgba(24, 23, 23, 0.445);
+  background-color: rgba(24, 23, 23, 0.671);
+  width: fit-content;
+  border-radius: 10px;
 }
 
 body.dark-mode .dropdown-menu {
@@ -70,11 +73,13 @@ body.dark-mode .dropdown-menu {
 }
 
 body.dark-mode .dropdown-item {
-  color: var(--text-color-dark);
+  color: var(--text-c);
+  
 }
 
 .dropdown-item:hover {
-  background-color: #555;
+  /* background-color: #555; */
+  color: #f0f0f0;
 }
 
 body.dark-mode .dropdown-item:hover {
