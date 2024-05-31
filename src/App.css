@@ -65,7 +65,7 @@ div {
 }
 
 div > div {
-  color: #131111;
+  /* color: #131111; */
   width: 100%;
   max-width: 500px;
 }
