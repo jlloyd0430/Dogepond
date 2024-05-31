@@ -11,15 +11,15 @@ const AdBannerCarousel = () => {
     <Carousel autoPlay interval={3000} infiniteLoop showThumbs={false}>
       <div>
         <img src={catsbanner} alt="Ad Banner 1" />
-        <p className="legend">Ad Banner 1</p>
+        {/* <p className="legend">Ad Banner 1</p> */}
       </div>
       <div>
         <img src={novalabs} alt="Ad Banner 2" />
-        <p className="legend">Ad Banner 2</p>
+        {/* <p className="legend">Ad Banner 2</p> */}
       </div>
       <div>
         <img src={wizards} alt="Ad Banner 3" />
-        <p className="legend">Ad Banner 3</p>
+        {/* <p className="legend">Ad Banner 3</p> */}
       </div>
     </Carousel>
   );
