@@ -53,6 +53,7 @@ body.dark-mode .dropdown-item:hover {
 
 h1 {
   color: black;
+  font-family: "Orbitron", sans-serif;
 }
 
 div {
@@ -64,6 +65,7 @@ div {
 }
 
 div > div {
+  color: #131111;
   width: 100%;
   max-width: 500px;
 }
