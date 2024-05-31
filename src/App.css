@@ -1,17 +1,26 @@
-/* src/App.css */
+:root {
+  --text-color-light: #000000;
+  --text-color-dark: #ffffff;
+  --background-color-light: #ffffff;
+  --background-color-dark: #131111;
+  --card-background-color-light: #f0f0f0;
+  --card-background-color-dark: #333333;
+  --nav-button-background-color-light: goldenrod;
+  --nav-button-background-color-dark: #272424;
+  --nav-link-color-light: black;
+  --nav-link-color-dark: white;
+}
 
 body {
-  /* font-family: Arial, sans-serif; */
   font-family: "Orbitron", sans-serif;
-  background-color: white;
-  color: black;
+  background-color: var(--background-color-light);
+  color: var(--text-color-light);
   margin: 0;
   padding: 0;
 }
 
 .settings-page {
   padding: 20px;
-  /* font-family: "Orbitron", sans-serif; */
 }
 
 .dark-mode-toggle {
@@ -20,40 +29,53 @@ body {
 
 /* Dark Mode Styles */
 body.dark-mode {
-  background-color: #131111;
-  color: white;
-}
-
-body.dark-mode h1 {
-  color: white;
-}
-
-/* Ensure h2 inside .nft-card is also white in dark mode */
-body.dark-mode .nft-card {
-  background-color: #333;
-  color: white;
-}
-
-
-
-/* Dark Mode for dropdown menu */
-body.dark-mode .dropdown-menu {
-  /* background-color: #444; */
-  border-color: #555;
-}
-
-/* Dark Mode for dropdown items */
-body.dark-mode .dropdown-item {
-  color: white;
-}
-
-body.dark-mode .dropdown-item:hover {
-  background-color: #555;
+  background-color: var(--background-color-dark);
+  color: var(--text-color-dark);
 }
 
 h1 {
-  color: black;
-  font-family: "Orbitron", sans-serif;
+  color: var(--text-color-light);
+}
+
+body.dark-mode h1 {
+  color: var(--text-color-dark);
+}
+
+/* Ensure h2 inside .nft-card is also white in dark mode */
+.nft-card {
+  background-color: var(--card-background-color-light);
+  color: var(--text-color-light);
+}
+
+body.dark-mode .nft-card {
+  background-color: var(--card-background-color-dark);
+  color: var(--text-color-dark);
+}
+
+/* Dark Mode for dropdown menu */
+.dropdown-menu {
+  border-color: var(--text-color-dark);
+}
+
+body.dark-mode .dropdown-menu {
+  border-color: var(--text-color-light);
+}
+
+/* Dark Mode for dropdown items */
+.dropdown-item {
+  color: var(--text-color-light);
+}
+
+body.dark-mode .dropdown-item {
+  color: var(--text-color-dark);
+}
+
+.dropdown-item:hover {
+  background-color: #555;
+}
+
+body.dark-mode .dropdown-item:hover {
+  background-color: #666;
 }
 
 div {
@@ -61,22 +83,23 @@ div {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  /* padding: 20px; */
 }
 
 div > div {
-  /* color: #131111; */
   width: 100%;
   max-width: 500px;
 }
 
 .header {
-  /* background-color: #333; */
-  color: black;
+  color: var(--text-color-light);
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+body.dark-mode .header {
+  color: var(--text-color-dark);
 }
 
 .title {
@@ -90,15 +113,14 @@ div > div {
 }
 
 .nav-link, .nav-button {
-  color: black;
-  /* text-decoration: black; */
+  color: var(--nav-link-color-light);
   background: none;
   border: none;
   cursor: pointer;
 }
 
 body.dark-mode .nav-link, .nav-button {
-  color: white;
+  color: var(--nav-link-color-dark);
 }
 
 .nav-link:hover, .nav-button:hover {
@@ -106,20 +128,22 @@ body.dark-mode .nav-link, .nav-button {
 }
 
 .nav-button {
-  background-color: goldenrod;
+  background-color: var(--nav-button-background-color-light);
   padding: 5px 10px;
   border-radius: 3px;
 }
 
+body.dark-mode .nav-button {
+  background-color: var(--nav-button-background-color-dark);
+}
+
 .nav-button:hover {
-  background-color: #272424;
+  background-color: var(--nav-button-background-color-dark);
 }
 
 @media (max-width: 600px) {
-.card {
-  width: 100%;
-  max-width: 280px;
+  .card {
+    width: 100%;
+    max-width: 280px;
+  }
 }
-
-}
-

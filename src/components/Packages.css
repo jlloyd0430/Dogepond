@@ -1,14 +1,9 @@
 /* Packages.css */
 
-body {
-  /* background-color: #121212; */
-  color: #e2dada;
-  font-family: Arial, sans-serif;
-}
 
 .packages-container {
   padding: 20px;
-  font-family: Arial, sans-serif;
+  font-family: "Orbitron", sans-serif;
 }
 
 .packages-title {
