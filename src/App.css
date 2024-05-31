@@ -99,6 +99,13 @@ div > div {
   max-width: 950px;
 }
 
+.filter-container {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+}
+
+
 .header {
   color: var(--text-color-light);
   padding: 10px 20px;

@@ -63,11 +63,11 @@ const Home = () => {
     <div>
       <AdBannerCarousel /> {/* Add the carousel component here */}
       <h1>Upcoming Drops</h1>
-      <div className="filter">
-        <label htmlFor="filter">Sort By: </label>
+      <div className="filter-container">
+        <label htmlFor="filter">Filter By:  </label>
         <select id="filter" value={filter} onChange={handleFilterChange}>
           <option value="mostRecent">Most Recent</option>
-          <option value="mostLiked">Most Liked</option>
+          <option value="mostLiked">Top Voted</option>
         </select>
       </div>
       <div className="card">
