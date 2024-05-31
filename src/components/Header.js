@@ -16,9 +16,6 @@ const Header = () => {
         <Link className="nav-link" to="/">Home</Link>
         {auth.isAuthenticated ? (
           <>
-            {auth.user && auth.user.role === 'admin' && (
-              <Link className="nav-link" to="/dashboard">Dashboard</Link>
-            )}
             <Link className="nav-link" to="/post">Post</Link> {/* Add the Post link for authenticated users */}
             {/* <button className="nav-button" onClick={logout}>Logout</button> */}
           </>

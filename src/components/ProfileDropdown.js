@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import './ProfileDropdown.css'; // Import the CSS file
 
 const ProfileDropdown = () => {
-  const { logout } = useContext(AuthContext);
+  const { auth, logout } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -24,9 +24,12 @@ const ProfileDropdown = () => {
       <FontAwesomeIcon icon={faUserCircle} className="profile-icon" onClick={toggleDropdown} />
       {isOpen && (
         <div className="dropdown-menu">
-          <a href="/profile" className="dropdown-item">Profile</a>
-          <a href='/packages' className="dropdown-item">Services</a>
-          <a href="/settings" className="dropdown-item">Settings</a>
+          <Link to="/profile" className="dropdown-item">Profile</Link>
+          <Link to="/packages" className="dropdown-item">Services</Link>
+          <Link to="/settings" className="dropdown-item">Settings</Link>
+          {auth.user && auth.user.role === 'admin' && (
+            <Link to="/dashboard" className="dropdown-item">Dashboard</Link>
+          )}
           <button className="dropdown-item" onClick={handleLogout}>Logout</button>
         </div>
       )}
