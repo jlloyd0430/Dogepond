@@ -1,0 +1,82 @@
+/* Packages.css */
+
+.packages-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .packages-title {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  
+  .packages-title::after {
+    content: '';
+    display: block;
+    width: 50%;
+    height: 3px;
+    background-color: goldenrod;
+    margin: 10px auto 0;
+  }
+  
+  .packages-description {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #e2dada;
+  }
+  
+  .package {
+    margin-bottom: 30px;
+    border: 2px solid goldenrod;
+    border-radius: 8px;
+    padding: 10px;
+
+  }
+  
+  .package-title {
+    padding: 10px;
+    display: inline-block;
+    margin-bottom: 10px;
+    color: goldenrod;
+    font-size: 1.5em;
+  }
+  
+  .package-description {
+    margin-bottom: 15px;
+    color: #e2dada;
+  }
+  
+  .enquire-button {
+    background-color: goldenrod;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .enquire-button:hover {
+    background-color: #ffbf00;
+  }
+  
+  @media (max-width: 600px) {
+    .packages-container {
+      padding: 10px;
+    }
+  
+    .packages-title {
+      font-size: 1.5em;
+    }
+  
+    .package-title {
+      font-size: 1.2em;
+    }
+  
+    .enquire-button {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+  }
+  
