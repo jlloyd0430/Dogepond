@@ -30,6 +30,10 @@
     /* color: black; */
   }
 
+  .dropdown-item:hover {
+    color: goldenrod;
+  }
+
   .dropdown-item-logout {
     background-color: goldenrod;
     /* color: black; */

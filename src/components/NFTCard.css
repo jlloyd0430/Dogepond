@@ -23,6 +23,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 100%;
   box-sizing: border-box;
+  color: var(--text-color-light); /* Ensure text color is set for light mode */
 }
 
 .nft-card img {
@@ -42,10 +43,12 @@
 .nft-card h2 {
   margin-top: 0;
   font-size: 1.2em;
+  color: var(--text-color-light); /* Ensure h2 color is set for light mode */
 }
 
 .nft-card p {
   margin: 8px 0;
+  color: var(--text-color-light); /* Ensure p color is set for light mode */
 }
 
 .nft-card button {
@@ -74,10 +77,7 @@
 
 .nft-card-details.expanded {
   display: block; /* Show details when expanded */
-}
-
-.nft-card-details p {
-  margin: 4px 0;
+  color: var(--text-color-light); /* Ensure details text color is set for light mode */
 }
 
 .nft-card a {
@@ -93,11 +93,12 @@
   .nft-card {
     border-color: var(--border-color-dark);
     background-color: var(--background-color-dark);
+    color: var(--text-color-dark); /* Ensure text color is set for dark mode */
   }
 
   .nft-card h2,
   .nft-card p {
-    color: var(--text-color-dark);
+    color: var(--text-color-dark); /* Ensure h2 and p colors are set for dark mode */
   }
 
   .nft-card button {
@@ -111,7 +112,7 @@
   }
 
   .nft-card-details {
-    color: var(--text-color-dark);
+    color: var(--text-color-dark); /* Ensure details text color is set for dark mode */
   }
 }
 
@@ -119,7 +120,7 @@
   .card {
     max-width: 85%;
     width: 100%;
-}
+  }
 
   .nft-card {
     flex-direction: column;

@@ -9,6 +9,8 @@
   --nav-button-background-color-dark: #272424;
   --nav-link-color-light: black;
   --nav-link-color-dark: white;
+  --footer-text-color-light: black;
+  --footer-text-color-dark: goldenrod;
 }
 
 body {
@@ -46,16 +48,6 @@ body.dark-mode h1 {
   color: var(--text-color-dark);
 }
 
-.nft-card {
-  background-color: var(--card-background-color-light);
-  
-}
-
-body.dark-mode .nft-card {
-  background-color: var(--card-background-color-dark);
-  color: var(--text-color-dark);
-}
-
 /* Dark Mode for dropdown menu */
 .dropdown-menu {
   background-color: rgba(24, 23, 23, 0.445);
@@ -81,7 +73,7 @@ body.dark-mode .dropdown-item {
 }
 
 body.dark-mode .dropdown-item:hover {
-  background-color: #666;
+  color: goldenrod;
 }
 
 div {
@@ -156,9 +148,6 @@ div > div {
   cursor: pointer;
 }
 
-.dropdown-menu div:hover {
-  background-color: #f0f0f0;
-}
 
 body.dark-mode .header {
   color: var(--text-color-dark);
@@ -205,6 +194,46 @@ body.dark-mode .nav-button {
 
 .nav-button:hover {
   background-color: var(--nav-button-background-color-dark);
+}
+
+.footer {
+  color: var(--footer-text-color-light);
+  padding: 20px 0;
+  text-align: center;
+  width: 100%;
+}
+
+body.dark-mode .footer {
+  color: var(--footer-text-color-dark);
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-links {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+  display: flex;
+  gap: 15px;
+}
+
+.social-links li {
+  display: inline;
+}
+
+.social-links a {
+  color: inherit; /* Inherit color from parent */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+  color: var(--footer-text-color-dark);
 }
 
 @media (max-width: 600px) {
