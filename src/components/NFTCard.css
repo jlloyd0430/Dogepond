@@ -26,14 +26,6 @@
   color: var(--text-color-light); /* Ensure text color is set for light mode */
 }
 
-body.dark-mode h2 {
-  color: #ffffff;
-}
-
-body.dark-mode p {
-  color:#ffffff ;
-}
-
 .nft-card img {
   max-width: 60%;
   height: auto;
@@ -63,6 +55,11 @@ body.dark-mode p {
 body.dark-mode .nft-card {
   background-color: var(--background-color-dark);
   color: var(--text-color-dark); /* Ensure text color is set for dark mode */
+}
+
+body.dark-mode .nft-card h2,
+body.dark-mode .nft-card p {
+  color: var(--text-color-dark); /* Ensure h2 and p colors are set for dark mode */
 }
 
 .nft-card button {
