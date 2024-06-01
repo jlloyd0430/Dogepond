@@ -8,10 +8,12 @@ body {
   }
   
   .login-container {
+    border: solid 2px goldenrod;
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    /* height: 100vh; */
     /* background-color: #f0f0f0 */
   }
   
