@@ -15,15 +15,25 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  border: 2px solid var(--border-color-light);
+  border: 2px solid var(--border-color-light, gold);
   border-radius: 8px;
   padding: 16px;
   margin: 16px;
-  background-color: var(--background-color-light); /* Use CSS variable for background */
+  background-color: var(--background-color-light, transparent); /* Ensure transparency */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 100%;
   box-sizing: border-box;
-  color: var(--text-color-light); /* Ensure text color is set for light mode */
+  color: var(--text-color-light, #000000); /* Ensure text color is set for light mode */
+}
+
+body.dark-mode .nft-card {
+  background-color: var(--background-color-dark, #131111);
+  color: var(--text-color-dark, #ffffff); /* Ensure text color is set for dark mode */
+}
+
+body.dark-mode .nft-card h2,
+body.dark-mode .nft-card p {
+  color: var(--text-color-dark, #ffffff); /* Ensure h2 and p colors are set for dark mode */
 }
 
 .nft-card img {
@@ -38,37 +48,27 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  color: var(--text-color-light); /* Ensure text color is set for light mode */
+  color: var(--text-color-light, #000000); /* Ensure text color is set for light mode */
 }
 
 .nft-card h2 {
   margin-top: 0;
   font-size: 1.2em;
-  color: var(--text-color-light); /* Ensure h2 color is set for light mode */
+  color: var(--text-color-light, #000000); /* Ensure h2 color is set for light mode */
 }
 
 .nft-card p {
   margin: 8px 0;
-  color: var(--text-color-light); /* Ensure p color is set for light mode */
-}
-
-body.dark-mode .nft-card {
-  background-color: var(--background-color-dark);
-  color: var(--text-color-dark); /* Ensure text color is set for dark mode */
-}
-
-body.dark-mode .nft-card h2,
-body.dark-mode .nft-card p {
-  color: var(--text-color-dark); /* Ensure h2 and p colors are set for dark mode */
+  color: var(--text-color-light, #000000); /* Ensure p color is set for light mode */
 }
 
 .nft-card button {
   margin-top: 8px;
   padding: 10px 20px;
-  background-color: var(--button-background-light);
-  border: 2px solid var(--border-color-light);
+  background-color: var(--button-background-light, goldenrod);
+  border: 2px solid var(--border-color-light, gold);
   border-radius: 5px;
-  color: var(--button-text-color-light);
+  color: var(--button-text-color-light, #000000);
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
@@ -84,7 +84,7 @@ body.dark-mode .nft-card p {
   text-align: left;
   margin-top: 16px;
   display: none; /* Hide details by default */
-  color: var(--text-color-light); /* Ensure details text color is set for light mode */
+  color: var(--text-color-light, #000000); /* Ensure details text color is set for light mode */
 }
 
 .nft-card-details.expanded {
@@ -102,20 +102,20 @@ body.dark-mode .nft-card p {
 
 @media (prefers-color-scheme: dark) {
   .nft-card {
-    border-color: var(--border-color-dark);
-    background-color: var(--background-color-dark);
-    color: var(--text-color-dark); /* Ensure text color is set for dark mode */
+    border-color: var(--border-color-dark, gold);
+    background-color: var(--background-color-dark, #131111);
+    color: var(--text-color-dark, #ffffff); /* Ensure text color is set for dark mode */
   }
 
   .nft-card h2,
   .nft-card p {
-    color: var(--text-color-dark); /* Ensure h2 and p colors are set for dark mode */
+    color: var(--text-color-dark, #ffffff); /* Ensure h2 and p colors are set for dark mode */
   }
 
   .nft-card button {
-    background-color: var(--button-background-dark);
-    color: var(--button-text-color-dark);
-    border-color: var(--border-color-dark);
+    background-color: var(--button-background-dark, darkgoldenrod);
+    color: var(--button-text-color-dark, #ffffff);
+    border-color: var(--border-color-dark, gold);
   }
 
   .nft-card button:hover {
@@ -123,7 +123,7 @@ body.dark-mode .nft-card p {
   }
 
   .nft-card-details {
-    color: var(--text-color-dark); /* Ensure details text color is set for dark mode */
+    color: var(--text-color-dark, #ffffff); /* Ensure details text color is set for dark mode */
   }
 }
 
