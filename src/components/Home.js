@@ -2,8 +2,9 @@ import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import NFTCard from './NFTCard';
 import apiClient from '../services/apiClient';
-import AdBannerCarousel from '../components/AdBannerCarousel'; // Import the carousel component
-
+import AdBannerCarousel from '../components/AdBannerCarousel';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
@@ -11,6 +12,7 @@ const Home = () => {
   const [error, setError] = useState(""); // State to store any errors
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [filter, setFilter] = useState('mostRecent'); // State for filter
+  const [showDropdown, setShowDropdown] = useState(false); // State to show/hide the filter dropdown
   const { auth } = useContext(AuthContext);
 
   useEffect(() => {
@@ -69,8 +71,9 @@ const Home = () => {
     setSearchQuery(e.target.value);
   };
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
+  const handleFilterChange = (filterValue) => {
+    setFilter(filterValue);
+    setShowDropdown(false); // Hide the dropdown after selecting a filter
   };
 
   return (
@@ -84,10 +87,15 @@ const Home = () => {
           value={searchQuery}
           onChange={handleSearchChange}
         />
-        <select id="filter" value={filter} onChange={handleFilterChange}>
-          <option value="mostRecent">Most Recent</option>
-          <option value="mostLiked">Top Voted</option>
-        </select>
+        <div className="filter-dropdown">
+          <FontAwesomeIcon icon={faFilter} onClick={() => setShowDropdown(!showDropdown)} />
+          {showDropdown && (
+            <div className="dropdown-menu">
+              <div onClick={() => handleFilterChange('mostRecent')}>Most Recent</div>
+              <div onClick={() => handleFilterChange('mostLiked')}>Top Voted</div>
+            </div>
+          )}
+        </div>
       </div>
       <div className="card">
         {error && <p>{error}</p>}

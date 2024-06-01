@@ -98,7 +98,7 @@ div {
 }
 
 div > div {
-  width: 100%;
+  /* width: 100%; */
   max-width: 950px;
 }
 
@@ -125,6 +125,8 @@ div > div {
   align-items: center;
   margin-bottom: 20px;
   gap: 10px; /* Adjust the gap as needed */
+  width: 100%;
+  padding: 0 20px; /* Optional: Add padding to the sides if needed */
 }
 
 .search-filter-container input {
@@ -133,14 +135,37 @@ div > div {
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 5px;
-  margin: 10px;
 }
 
-.search-filter-container select {
-  padding: 10px;
-  font-size: 1rem;
+.filter-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.filter-dropdown .fa-filter {
+  font-size: 1.5rem;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
   border: 1px solid #ccc;
   border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.dropdown-menu div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-menu div:hover {
+  background-color: #f0f0f0;
 }
 
 body.dark-mode .header {
