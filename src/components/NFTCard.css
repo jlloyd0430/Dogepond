@@ -50,6 +50,7 @@ body.dark-mode {
 body.dark-mode .nft-card {
   color: var(--text-color-dark);
   background-color: #000000;
+  color: var(--text-color-dark);
 }
 
 .nft-card h2 {
