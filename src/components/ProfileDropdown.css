@@ -27,13 +27,13 @@
     display: block;
     padding: 10px 20px;
     text-decoration: none;
-    color: black;
+    /* color: black; */
   }
 
-  .dropdown-logout {
+  .dropdown-item-logout {
     background-color: goldenrod;
-    color: black;
-    border: 2px solid gold;
+    /* color: black; */
+    /* border: 2px solid gold; */
     border-radius: 5px;
     padding: 10px 20px;
     cursor: pointer;

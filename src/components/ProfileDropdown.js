@@ -30,7 +30,7 @@ const ProfileDropdown = () => {
           {auth.user && auth.user.role === 'admin' && (
             <Link to="/dashboard" className="dropdown-item">Dashboard</Link>
           )}
-          <button className="dropdown-item" onClick={handleLogout}>Logout</button>
+          <button className="dropdown-item-logout" onClick={handleLogout}>Logout</button>
         </div>
       )}
     </div>
