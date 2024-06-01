@@ -46,14 +46,10 @@ body.dark-mode h1 {
   color: var(--text-color-dark);
 }
 
-/* Ensure h2 inside .nft-card is also white in dark mode */
 .nft-card {
   background-color: var(--card-background-color-light);
   
 }
-
-
-
 
 body.dark-mode .nft-card {
   background-color: var(--card-background-color-dark);
@@ -63,7 +59,6 @@ body.dark-mode .nft-card {
 /* Dark Mode for dropdown menu */
 .dropdown-menu {
   background-color: rgba(24, 23, 23, 0.445);
-  background-color: rgba(24, 23, 23, 0.671);
   width: fit-content;
   border-radius: 10px;
 }
@@ -78,12 +73,10 @@ body.dark-mode .dropdown-menu {
 }
 
 body.dark-mode .dropdown-item {
-  color: var(--text-c);
-  
+  color: var(--text-color-dark);
 }
 
 .dropdown-item:hover {
-  /* background-color: #555; */
   color: #f0f0f0;
 }
 
@@ -100,7 +93,6 @@ div {
 }
 
 div > div {
-  /* width: 100%; */
   max-width: 950px;
 }
 
@@ -110,7 +102,6 @@ div > div {
   flex-direction: row;
   padding: 10px;
 }
-
 
 .header {
   color: var(--text-color-light);
@@ -126,9 +117,9 @@ div > div {
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
-  gap: 10px; /* Adjust the gap as needed */
+  gap: 10px;
   width: 92%;
-  padding: 0 20px; /* Optional: Add padding to the sides if needed */
+  padding: 0 20px;
 }
 
 .search-filter-container input {
@@ -196,7 +187,6 @@ body.dark-mode .nav-link, .nav-button {
 
 .nav-link:hover, .nav-button:hover {
   color: goldenrod;
-  /* text-decoration: underline; */
 }
 
 body.dark-mode .nav-link:hover, .nav-button:hover {
@@ -208,7 +198,8 @@ body.dark-mode .nav-link:hover, .nav-button:hover {
   padding: 5px 10px;
   border-radius: 3px;
 }
- .nav-button {
+
+body.dark-mode .nav-button {
   background-color: var(--nav-button-background-color-dark);
 }
 
@@ -218,7 +209,7 @@ body.dark-mode .nav-link:hover, .nav-button:hover {
 
 @media (max-width: 600px) {
   .card {
-      max-width: 85%;
-      width: 100%;
+    max-width: 85%;
+    width: 100%;
   }
 }
