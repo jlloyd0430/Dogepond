@@ -5,7 +5,7 @@ import apiClient from '../services/apiClient';
 import AdBannerCarousel from '../components/AdBannerCarousel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
-
+import "../App.css"
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
   const [filteredDrops, setFilteredDrops] = useState([]);
