@@ -20,6 +20,8 @@ body {
 }
 
 .settings-page {
+  height: 100vh;
+  justify-content: start;
   padding: 20px;
 }
 
