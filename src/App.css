@@ -1,15 +1,3 @@
-:root {
-  --text-color-light: #000000;
-  --text-color-dark: #ffffff;
-  --background-color-light: #ffffff;
-  --background-color-dark: #131111;
-  --nav-button-background-color-light: goldenrod;
-  --nav-button-background-color-dark: #272424;
-  --nav-link-color-light: black;
-  --nav-link-color-dark: white;
-  --footer-text-color-light: goldenrod;
-  --footer-text-color-dark: goldenrod;
-}
 
 body {
   font-family: "Orbitron", sans-serif;
