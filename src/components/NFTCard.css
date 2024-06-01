@@ -103,8 +103,7 @@ body.dark-mode .nft-card p {
 @media (prefers-color-scheme: dark) {
   .nft-card {
     border-color: var(--border-color-dark, gold);
-    background-color: var(--background-color-dark, #131111);
-   /* Ensure text color is set for dark mode */
+    color: var(--text-color-dark, #ffffff); /* Ensure text color is set for dark mode */
   }
 
   .nft-card h2,
