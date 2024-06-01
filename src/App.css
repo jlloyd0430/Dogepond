@@ -67,7 +67,7 @@ body.dark-mode .nft-card {
 }
 
 body.dark-mode .dropdown-menu {
-  border-color: var(--text-color-light);
+  border-color: goldenrod;
 }
 
 /* Dark Mode for dropdown items */
