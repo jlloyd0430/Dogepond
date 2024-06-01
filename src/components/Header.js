@@ -22,6 +22,7 @@ const Header = () => {
           <>
             <Link className="nav-link" to="/login">Login</Link>
             <Link className="nav-link" to="/signup">Signup</Link>
+            <Link className= "nav-link" to="/packages" >Services</Link>
           </>
         )}
         {auth.isAuthenticated && <ProfileDropdown />} {/* Conditionally render ProfileDropdown */}

@@ -48,6 +48,7 @@ const AppContent = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/logout" element={<Logout />} />
+            <Route path="/packages" element={<Packages />} />
             <Route path="/profile" element={<PrivateRoute />}>
               <Route index element={<Profile />} /> {/* This should be relative */}
             </Route>
@@ -58,7 +59,6 @@ const AppContent = () => {
               <Route index element={<PostForm />} /> {/* This should be relative */}
             </Route>
             <Route path="/settings" element={<Settings />} /> {/* Add the settings route */}
-            <Route path="/packages" element={<Packages />} />
             <Route path="/fish" element={<Fish />} /> {/* Add the Fish route */}
           </Routes>
         </div>
