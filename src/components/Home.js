@@ -4,9 +4,12 @@ import NFTCard from './NFTCard';
 import apiClient from '../services/apiClient';
 import AdBannerCarousel from '../components/AdBannerCarousel'; // Import the carousel component
 
+
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
+  const [filteredDrops, setFilteredDrops] = useState([]);
   const [error, setError] = useState(""); // State to store any errors
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [filter, setFilter] = useState('mostRecent'); // State for filter
   const { auth } = useContext(AuthContext);
 
@@ -23,6 +26,7 @@ const Home = () => {
         const result = await apiClient.get(`/nftdrops/approved?sort=${filter}`, config);
         console.log('Fetched approved NFT drops:', result.data);
         setApprovedDrops(result.data);
+        setFilteredDrops(result.data); // Initialize filteredDrops with fetched data
         setError(""); // Clear any previous errors
       } catch (error) {
         console.error('Error fetching approved NFT drops:', error);
@@ -31,6 +35,13 @@ const Home = () => {
     };
     fetchData();
   }, [auth.token, filter]); // Include filter in dependency array
+
+  useEffect(() => {
+    const filtered = approvedDrops.filter(drop =>
+      drop.projectName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredDrops(filtered);
+  }, [searchQuery, approvedDrops]);
 
   const handleLike = async (id) => {
     try {
@@ -54,6 +65,10 @@ const Home = () => {
     }
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
   };
@@ -62,8 +77,13 @@ const Home = () => {
     <div>
       <AdBannerCarousel /> {/* Add the carousel component here */}
       <h1>Upcoming Drops</h1>
-      <div className="filter-container">
-        <label htmlFor="filter">Filter By: </label>
+      <div className="search-filter-container">
+        <input
+          type="text"
+          placeholder="Search by project name..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
         <select id="filter" value={filter} onChange={handleFilterChange}>
           <option value="mostRecent">Most Recent</option>
           <option value="mostLiked">Top Voted</option>
@@ -71,8 +91,8 @@ const Home = () => {
       </div>
       <div className="card">
         {error && <p>{error}</p>}
-        {approvedDrops.length > 0 ? (
-          approvedDrops.map((drop) => (
+        {filteredDrops.length > 0 ? (
+          filteredDrops.map((drop) => (
             <NFTCard
               key={drop._id}
               drop={drop}
@@ -84,7 +104,6 @@ const Home = () => {
           <p>No approved NFT drops found.</p>
         )}
       </div>
-     
     </div>
   );
 };
