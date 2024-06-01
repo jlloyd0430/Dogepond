@@ -1,4 +1,3 @@
-// src/pages/Home.js
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import NFTCard from './NFTCard';
@@ -64,7 +63,7 @@ const Home = () => {
       <AdBannerCarousel /> {/* Add the carousel component here */}
       <h1>Upcoming Drops</h1>
       <div className="filter-container">
-        <label htmlFor="filter">Filter By:  </label>
+        <label htmlFor="filter">Filter By: </label>
         <select id="filter" value={filter} onChange={handleFilterChange}>
           <option value="mostRecent">Most Recent</option>
           <option value="mostLiked">Top Voted</option>
@@ -85,6 +84,7 @@ const Home = () => {
           <p>No approved NFT drops found.</p>
         )}
       </div>
+     
     </div>
   );
 };

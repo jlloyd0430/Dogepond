@@ -11,6 +11,7 @@ import Logout from './components/Logout';
 import Profile from './components/Profile';
 import Settings from './components/Settings';
 import Packages from './components/Packages'; 
+import Footer from './components/Footer'; // Import the Footer component
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
 import './App.css';
@@ -38,25 +39,28 @@ const AppContent = () => {
 
   return (
     <Router>
-      <div>
+      <div className="app">
         <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/profile" element={<PrivateRoute />}>
-            <Route path="/profile" element={<Profile />} />
-          </Route>
-          <Route path="/dashboard" element={<PrivateRoute requiredRole="admin" />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Route>
-          <Route path="/post" element={<PrivateRoute />}>
-            <Route path="/post" element={<PostForm />} />
-          </Route>
-          <Route path="/settings" element={<Settings />} /> {/* Add the settings route */}
-          <Route path="/packages" element={<Packages />} />
-        </Routes>
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/profile" element={<PrivateRoute />}>
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+            <Route path="/dashboard" element={<PrivateRoute requiredRole="admin" />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+            <Route path="/post" element={<PrivateRoute />}>
+              <Route path="/post" element={<PostForm />} />
+            </Route>
+            <Route path="/settings" element={<Settings />} /> {/* Add the settings route */}
+            <Route path="/packages" element={<Packages />} />
+          </Routes>
+        </div>
+        <Footer /> {/* Add the Footer component here */}
       </div>
     </Router>
   );
