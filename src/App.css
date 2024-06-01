@@ -49,7 +49,7 @@ body.dark-mode h1 {
 /* Ensure h2 inside .nft-card is also white in dark mode */
 .nft-card {
   background-color: var(--card-background-color-light);
-  color: var(--text-color-light);
+  
 }
 
 
