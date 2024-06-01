@@ -1,19 +1,23 @@
 import React, { useContext } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
-import '../App.css'; // Add this for your settings page styles
+// import './Settings.css';
 
 const Settings = () => {
-  const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
+
+  const handleThemeChange = (event) => {
+    toggleTheme();
+  };
 
   return (
     <div className="settings-page">
       <h1>Settings</h1>
-      <div className="dark-mode-toggle">
+      <div className="setting-item">
         <label>
           <input 
             type="checkbox" 
             checked={isDarkMode} 
-            onChange={toggleDarkMode} 
+            onChange={handleThemeChange} 
           />
           Dark Mode
         </label>

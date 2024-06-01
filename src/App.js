@@ -52,19 +52,19 @@ const AppContent = () => {
             <Route path="/logout" element={<Logout />} />
             <Route path="/packages" element={<Packages />} />
             <Route path="/profile" element={<PrivateRoute />}>
-              <Route index element={<Profile />} /> {/* This should be relative */}
+              <Route index element={<Profile />} />
             </Route>
             <Route path="/dashboard" element={<PrivateRoute requiredRole="admin" />}>
-              <Route index element={<Dashboard />} /> {/* This should be relative */}
+              <Route index element={<Dashboard />} />
             </Route>
             <Route path="/post" element={<PrivateRoute />}>
-              <Route index element={<PostForm />} /> {/* This should be relative */}
+              <Route index element={<PostForm />} />
             </Route>
-            <Route path="/settings" element={<Settings />} /> {/* Add the settings route */}
-            <Route path="/fish" element={<Fish />} /> {/* Add the Fish route */}
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/fish" element={<Fish />} />
           </Routes>
         </div>
-        <Footer /> {/* Add the Footer component here */}
+        <Footer />
       </div>
     </Router>
   );

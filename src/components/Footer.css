@@ -1,59 +1,63 @@
+:root {
+  --footer-text-color-light: goldenrod;
+  --footer-link-color-light: goldenrod;
+  --footer-link-hover-color: #ffd700;
+  --footer-text-color-dark: goldenrod;
+  --footer-link-color-dark: goldenrod;
+}
 
-  /* Default light mode styling */
-  .footer {
-    color: goldenrod;
-    padding: 20px 0;
-    text-align: center;
-    width: 100%;
-    bottom: 0;
-  }
-  
-  .footer-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .social-links {
-    list-style: none;
-    padding: 5px;
-    margin: 10px 0 0 0;
-    display: flex;
-    gap: 40px;
-    
-  }
-  
-  .social-links li {
-    display: inline;
-    font-size: 1.5rem;
-  }
-  
-  .social-links a {
-    color: var(--footer-link-color-light);
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  
-  .social-links a:hover {
-    color: var(--footer-link-hover-color);
-  }
-  
-  /* Dark mode styling */
-  @media (prefers-color-scheme: dark) {
-    .footer {
-      color: var(--footer-text-color-light);
-    }
-  
-    .footer-content {
-      color: var(--footer-text-color-light);
-    }
-  
-    .social-links a {
-      color: var(--footer-link-color-dark);
-    }
-  
-    .social-links a:hover {
-      color: var(--footer-link-hover-color);
-    }
-  }
+/* Default light mode styling */
+.footer {
+  color: var(--footer-text-color-light);
+  padding: 20px 0;
+  text-align: center;
+  width: 100%;
+  bottom: 0;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-links {
+  list-style: none;
+  padding: 5px;
+  margin: 10px 0 0 0;
+  display: flex;
+  gap: 40px;
+}
+
+.social-links li {
+  display: inline;
+  font-size: 1.5rem;
+}
+
+.social-links a {
+  color: var(--footer-link-color-light);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+  color: var(--footer-link-hover-color);
+}
+
+/* Dark mode styling */
+body.dark-mode .footer {
+  color: var(--footer-text-color-dark);
+}
+
+body.dark-mode .footer-content {
+  color: var(--footer-text-color-dark);
+}
+
+body.dark-mode .social-links a {
+  color: var(--footer-link-color-dark);
+}
+
+body.dark-mode .social-links a:hover {
+  color: var(--footer-link-hover-color);
+}
