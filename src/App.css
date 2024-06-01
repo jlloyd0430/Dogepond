@@ -127,7 +127,7 @@ div > div {
   align-items: center;
   margin-bottom: 20px;
   gap: 10px; /* Adjust the gap as needed */
-  width: 100%;
+  width: 92%;
   padding: 0 20px; /* Optional: Add padding to the sides if needed */
 }
 
@@ -174,7 +174,7 @@ body.dark-mode .header {
 }
 
 .title {
-  font-size: 1.5em;
+  font-size: 1em;
   padding: 5px;
 }
 
