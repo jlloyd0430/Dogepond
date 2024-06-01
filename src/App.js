@@ -11,6 +11,7 @@ import Logout from './components/Logout';
 import Profile from './components/Profile';
 import Settings from './components/Settings';
 import Packages from './components/Packages'; 
+import Fish from './components/Fish'; // Import the Fish component
 import Footer from './components/Footer'; // Import the Footer component
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
@@ -48,16 +49,17 @@ const AppContent = () => {
             <Route path="/signup" element={<Signup />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/profile" element={<PrivateRoute />}>
-              <Route path="/profile" element={<Profile />} />
+              <Route index element={<Profile />} /> {/* This should be relative */}
             </Route>
             <Route path="/dashboard" element={<PrivateRoute requiredRole="admin" />}>
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route index element={<Dashboard />} /> {/* This should be relative */}
             </Route>
             <Route path="/post" element={<PrivateRoute />}>
-              <Route path="/post" element={<PostForm />} />
+              <Route index element={<PostForm />} /> {/* This should be relative */}
             </Route>
             <Route path="/settings" element={<Settings />} /> {/* Add the settings route */}
             <Route path="/packages" element={<Packages />} />
+            <Route path="/fish" element={<Fish />} /> {/* Add the Fish route */}
           </Routes>
         </div>
         <Footer /> {/* Add the Footer component here */}

@@ -1,5 +1,3 @@
-// src/components/Header.js
-
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -11,13 +9,14 @@ const Header = () => {
 
   return (
     <header className="header">
-     <Link className="title" to="/"> <h1>DogePond</h1></Link>
+      <Link className="title" to="/">
+        <h1>DogePond</h1>
+      </Link>
       <nav className="nav">
-        {/* <Link className="nav-link" to="/">Home</Link> */}
         {auth.isAuthenticated ? (
           <>
-            <Link className="nav-link" to="/post">Post</Link> {/* Add the Post link for authenticated users */}
-            {/* <button className="nav-button" onClick={logout}>Logout</button> */}
+            <Link className="nav-link" to="/post">Post</Link> {/* Authenticated users see Post link */}
+            <Link className="nav-link" to="/fish">Fish</Link> {/* Authenticated users see Fish link */}
           </>
         ) : (
           <>
@@ -25,7 +24,7 @@ const Header = () => {
             <Link className="nav-link" to="/signup">Signup</Link>
           </>
         )}
-          {auth.isAuthenticated && <ProfileDropdown />} {/* Conditionally render ProfileDropdown */}
+        {auth.isAuthenticated && <ProfileDropdown />} {/* Conditionally render ProfileDropdown */}
       </nav>
     </header>
   );
