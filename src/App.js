@@ -16,6 +16,8 @@ import Footer from './components/Footer'; // Import the Footer component
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
 import './App.css';
+import './components/NFTCard.css';
+import './components/Footer.css';
 
 const App = () => {
   return (

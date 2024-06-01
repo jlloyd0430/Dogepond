@@ -200,13 +200,6 @@ body.dark-mode .nav-button {
 }
 
 
-.footer-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
 .social-links {
   list-style: none;
   padding: 0;
