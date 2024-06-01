@@ -199,16 +199,6 @@ body.dark-mode .nav-button {
   background-color: var(--nav-button-background-color-dark);
 }
 
-.footer {
-  color: var(--footer-text-color-light);
-  padding: 20px 0;
-  text-align: center;
-  width: 100%;
-}
-
-body.dark-mode .footer {
-  color: var(--footer-text-color-dark);
-}
 
 .footer-content {
   display: flex;
