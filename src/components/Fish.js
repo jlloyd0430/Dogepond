@@ -1,8 +1,9 @@
 import React from 'react';
+import './Fish.css'
 
 const Fish = () => {
   return (
-    <div>
+    <div className='container'>
       <h1>Fish!</h1>
       <p>Welcome.... Fishing coming soon</p>
     </div>
