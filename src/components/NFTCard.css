@@ -46,7 +46,6 @@
 
 .nft-card p {
   margin: 8px 0;
-  color: var(--text-color-light);
 }
 
 .nft-card button {
@@ -79,7 +78,6 @@
 
 .nft-card-details p {
   margin: 4px 0;
-  color: var(--text-color-light);
 }
 
 .nft-card a {
@@ -121,7 +119,7 @@
   .card {
     max-width: 85%;
     width: 100%;
-  }
+}
 
   .nft-card {
     flex-direction: column;
