@@ -7,7 +7,7 @@
   --nav-button-background-color-dark: #272424;
   --nav-link-color-light: black;
   --nav-link-color-dark: white;
-  --footer-text-color-light: black;
+  --footer-text-color-light: goldenrod;
   --footer-text-color-dark: goldenrod;
 }
 
@@ -35,7 +35,6 @@ body.dark-mode h1 {
   color: var(--text-color-dark);
 }
 
-/* Dark Mode for dropdown menu */
 .dropdown-menu {
   background-color: rgba(24, 23, 23, 0.445);
   width: fit-content;
@@ -45,7 +44,6 @@ body.dark-mode h1 {
 body.dark-mode .dropdown-menu {
   border-color: goldenrod;
 }
-
 
 .dropdown-item {
   color: var(--text-color-light);
