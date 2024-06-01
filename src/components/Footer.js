@@ -21,12 +21,7 @@ const Footer = () => {
             </a>
           </li>
           <li>
-            <a href="https://telegram.me/yourprofile" target="_blank" rel="noopener noreferrer">
-              <FontAwesomeIcon icon={faTelegram} />
-            </a>
-          </li>
-          <li>
-            <a href="https://discord.com/invite/yourprofile" target="_blank" rel="noopener noreferrer">
+            <a href="" target="_blank" rel="noopener noreferrer">
               <FontAwesomeIcon icon={faDiscord} />
             </a>
           </li>
