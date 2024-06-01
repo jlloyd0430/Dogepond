@@ -88,7 +88,7 @@ const Home = () => {
           onChange={handleSearchChange}
         />
         <div className="filter-dropdown">
-          <FontAwesomeIcon icon={faFilter} onClick={() => setShowDropdown(!showDropdown)} />
+          <FontAwesomeIcon className='search' icon={faFilter} onClick={() => setShowDropdown(!showDropdown)} />
           {showDropdown && (
             <div className="dropdown-menu">
               <div onClick={() => handleFilterChange('mostRecent')}>Most Recent</div>
