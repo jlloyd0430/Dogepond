@@ -1,28 +1,30 @@
 :root {
   --button-background-light: goldenrod;
-  --button-background-dark: goldenrod;
+  --button-background-dark: darkgoldenrod;
   --button-text-color-light: #000000;
   --button-text-color-dark: #ffffff;
-  --border-color-light: goldenrod;
-  --border-color-dark: goldenrod;
+  --border-color-light: gold;
+  --border-color-dark: gold;
+  --text-color-light: #000000;
+  --text-color-dark: #ffffff;
+  --background-color-light: #ffffff;
+  --background-color-dark: #131111;
 }
 
 .nft-card {
   display: flex;
-  background-color: #ffffff;
   flex-direction: row;
   align-items: center;
   border: 2px solid var(--border-color-light);
   border-radius: 8px;
   padding: 16px;
   margin: 16px;
+  background-color: var(--background-color-light); /* Use CSS variable for background */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 100%;
   box-sizing: border-box;
-  /* Ensure text color is set for light mode */
+  color: var(--text-color-light); /* Ensure text color is set for light mode */
 }
-
-
 
 .nft-card img {
   max-width: 60%;
@@ -38,28 +40,27 @@
   flex-direction: column;
 }
 
-body.dark-mode h1 {
-  color: var(--text-color-dark);
-}
-
-body.dark-mode {
-  background-color: var(--background-color-dark);
-  color: var(--text-color-dark);
-}
-
-body.dark-mode .nft-card {
-  color: var(--text-color-dark);
-  background-color: #000000;
-  color: var(--text-color-dark);
-}
-
 .nft-card h2 {
   margin-top: 0;
-  font-size: 1.2em; /* Ensure h2 color is set for light mode */
+  font-size: 1.2em;
+  color: var(--text-color-light); /* Ensure h2 color is set for light mode */
 }
 
 .nft-card p {
-  margin: 8px 0;/* Ensure p color is set for light mode */
+  margin: 8px 0;
+  color: var(--text-color-light); /* Ensure p color is set for light mode */
+}
+
+body.dark-mode .nft-card {
+  background: #000000;
+}
+
+body.dark-mode p {
+  color: #ffffff;
+}
+
+body.dark-mode h2 {
+  color: #ffffff;
 }
 
 .nft-card button {
@@ -104,9 +105,13 @@ body.dark-mode .nft-card {
   .nft-card {
     border-color: var(--border-color-dark);
     background-color: var(--background-color-dark);
+    color: var(--text-color-dark); /* Ensure text color is set for dark mode */
   }
 
- 
+  .nft-card h2,
+  .nft-card p {
+    color: var(--text-color-dark); /* Ensure h2 and p colors are set for dark mode */
+  }
 
   .nft-card button {
     background-color: var(--button-background-dark);
@@ -118,6 +123,9 @@ body.dark-mode .nft-card {
     background-color: #e6c200;
   }
 
+  .nft-card-details {
+    color: var(--text-color-dark); /* Ensure details text color is set for dark mode */
+  }
 }
 
 @media (max-width: 600px) {

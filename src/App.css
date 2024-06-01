@@ -3,8 +3,6 @@
   --text-color-dark: #ffffff;
   --background-color-light: #ffffff;
   --background-color-dark: #131111;
-  --card-background-color-light: #f0f0f0;
-  --card-background-color-dark: #333333;
   --nav-button-background-color-light: goldenrod;
   --nav-button-background-color-dark: #272424;
   --nav-link-color-light: black;
@@ -15,7 +13,6 @@
 
 body {
   font-family: "Orbitron", sans-serif;
-  color: var(--text-color-light);
   margin: 0;
   padding: 0;
 }
@@ -35,7 +32,6 @@ body.dark-mode {
   background-color: var(--background-color-dark);
   color: var(--text-color-dark);
 }
-
 
 h1 {
   color: var(--text-color-light);
@@ -148,7 +144,6 @@ div > div {
   cursor: pointer;
 }
 
-
 body.dark-mode .header {
   color: var(--text-color-dark);
 }
@@ -196,6 +191,17 @@ body.dark-mode .nav-button {
   background-color: var(--nav-button-background-color-dark);
 }
 
+.footer {
+  color: var(--footer-text-color-light);
+  padding: 20px 0;
+  text-align: center;
+  width: 100%;
+  bottom: 0;
+}
+
+body.dark-mode .footer {
+  color: var(--footer-text-color-dark);
+}
 
 .social-links {
   list-style: none;
