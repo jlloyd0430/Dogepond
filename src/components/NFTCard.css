@@ -9,6 +9,7 @@
 
 .nft-card {
   display: flex;
+  background-color: #ffffff;
   flex-direction: row;
   align-items: center;
   border: 2px solid var(--border-color-light);
@@ -48,6 +49,7 @@ body.dark-mode {
 
 body.dark-mode .nft-card {
   color: var(--text-color-dark);
+  background-color: #000000;
 }
 
 .nft-card h2 {
