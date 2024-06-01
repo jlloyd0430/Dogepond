@@ -193,7 +193,12 @@ body.dark-mode .nav-link, .nav-button {
 }
 
 .nav-link:hover, .nav-button:hover {
-  text-decoration: underline;
+  color: goldenrod;
+  /* text-decoration: underline; */
+}
+
+body.dark-mode .nav-link:hover, .nav-button:hover {
+  color: goldenrod;
 }
 
 .nav-button {
@@ -201,8 +206,7 @@ body.dark-mode .nav-link, .nav-button {
   padding: 5px 10px;
   border-radius: 3px;
 }
-
-body.dark-mode .nav-button {
+ .nav-button {
   background-color: var(--nav-button-background-color-dark);
 }
 
