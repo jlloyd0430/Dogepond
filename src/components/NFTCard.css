@@ -21,7 +21,7 @@
   margin: 16px;
   background-color: var(--background-color-light);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 100%;
+  max-width: 90%;
   box-sizing: border-box;
 }
 
@@ -116,9 +116,15 @@
 }
 
 @media (max-width: 600px) {
+  .card {
+    max-width: 85%;
+    width: 100%;
+}
+
   .nft-card {
     flex-direction: column;
     align-items: center;
+    max-width: 90%;
   }
 
   .nft-card img {
