@@ -27,7 +27,7 @@ const Home = () => {
               },
             }
           : {};
-        const result = await apiClient.get(`/nftdrops/approved?sort=${filter}`, config);
+        const result = await apiClient.get('/nftdrops/approved', config);
         console.log('Fetched approved NFT drops:', result.data);
         setApprovedDrops(result.data);
         setFilteredDrops(result.data); // Initialize filteredDrops with fetched data
@@ -38,17 +38,19 @@ const Home = () => {
       }
     };
     fetchData();
-  }, [auth.token, filter]); // Include filter in dependency array
+  }, [auth.token]);
 
   useEffect(() => {
-    const filtered = approvedDrops.filter(drop =>
+    let filtered = approvedDrops.filter(drop =>
       drop.projectName.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
     if (filter === 'mostLiked') {
       filtered.sort((a, b) => b.likes.length - a.likes.length); // Sort by likes
     } else if (filter === 'mostRecent') {
       filtered.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date
     }
+
     setFilteredDrops(filtered);
   }, [searchQuery, approvedDrops, filter]);
 
