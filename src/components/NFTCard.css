@@ -124,7 +124,7 @@ body.dark-mode .nft-card p {
 
 @media (max-width: 600px) {
   .card {
-    max-width: 85%;
+    max-width: 100%;
     width: 100%;
   }
 
