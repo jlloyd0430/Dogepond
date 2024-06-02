@@ -105,6 +105,7 @@ const Home = () => {
             </div>
           )}
         </div>
+            <p>we are currently testing backend api and things fornour bot so the images may not be showing at the moment for the older drops</p>
       </div>
       <div className="main-content">
         <div className="card">
