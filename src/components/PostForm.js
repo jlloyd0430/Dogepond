@@ -145,6 +145,7 @@ const PostForm = () => {
           accept="image/*"
           onChange={handleChange}
         />
+        <p>note: whitelistprice must be greater then 0. </p>
         <button type="submit">Submit</button>
       </form>
     </div>
