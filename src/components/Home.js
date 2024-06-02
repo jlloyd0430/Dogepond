@@ -108,7 +108,7 @@ const Home = () => {
             
       </div>
       <div className="main-content">
-            <p>we are currently testing backend api and things fornour bot so the images may not be showing at the moment for the older drops</p>
+            <p>we are currently testing backend api and things for our bot so the images may not be showing at the moment for the older drops</p>
         <div className="card">
           {error && <p>{error}</p>}
           {filteredDrops.length > 0 ? (
