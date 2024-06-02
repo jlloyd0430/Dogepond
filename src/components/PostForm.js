@@ -56,7 +56,7 @@ const PostForm = () => {
         },
       };
 
-      const response = await apiClient.post('/nftdrops', formDataToSend, config); // Use apiClient
+      const response = await apiClient.post('/nftdrops', formDataToSend, config); // Correct endpoint usage
       console.log('Submitted post response:', response.data);
       alert('Submission successful! Await approval.');
       navigate('/dashboard');
