@@ -44,6 +44,8 @@ const Packages = () => {
           <button className="enquire-button">Enquire</button>
         </div>
       </div>
+      <h1>HOLDER DISCOUNTS </h1>
+      <p>DoginalDuck holders will recieve Discounted rates for service packages per duck up for to 5 ducks, rates may vary per package/custom job.  </p>
     </div>
   );
 };
