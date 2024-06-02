@@ -221,7 +221,7 @@ body.dark-mode .footer {
 
 @media (max-width: 600px) {
   .card {
-    max-width: 85%;
+    max-width: 100%;
     width: 100%;
   }
 }
