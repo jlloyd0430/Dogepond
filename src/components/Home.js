@@ -14,7 +14,7 @@ const Home = () => {
   const [filteredDrops, setFilteredDrops] = useState([]);
   const [error, setError] = useState(""); // State to store any errors
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const [filter, setFilter] = useState('mostRecent'); // State for filter
+  const [filter, setFilter] = useState('mostLiked'); // State for filter
   const [showDropdown, setShowDropdown] = useState(false); // State to show/hide the filter dropdown
   const { auth } = useContext(AuthContext);
 
