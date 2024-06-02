@@ -27,7 +27,7 @@ const Packages = () => {
             <li>Collection generation</li>
             <li>All Marketplace Metadata</li>
           </ul>
-          <button  src="https://docs.google.com/forms/d/e/1FAIpQLSeZTbkLO_8_nD2ZciRj0TccZwbzjBEwmbcIqdggGD5CFOnfRQ/viewform?usp=sf_link" className="enquire-button">Enquire</button>
+          <button  onClick="window.location.href='https://docs.google.com/forms/d/e/1FAIpQLSeZTbkLO_8_nD2ZciRj0TccZwbzjBEwmbcIqdggGD5CFOnfRQ/viewform?usp=sf_link' class="enquire-button">Enquire</button>className="enquire-button">Enquire</button>
         </div>
       </div>
       <div className="package">
