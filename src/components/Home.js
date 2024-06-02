@@ -3,9 +3,11 @@ import { AuthContext } from '../context/AuthContext';
 import NFTCard from './NFTCard';
 import apiClient from '../services/apiClient';
 import AdBannerCarousel from '../components/AdBannerCarousel';
+import DiscordBotInvite from '../components/discordBotInvite';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import "../App.css"
+
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
   const [filteredDrops, setFilteredDrops] = useState([]);
@@ -97,20 +99,23 @@ const Home = () => {
           )}
         </div>
       </div>
-      <div className="card">
-        {error && <p>{error}</p>}
-        {filteredDrops.length > 0 ? (
-          filteredDrops.map((drop) => (
-            <NFTCard
-              key={drop._id}
-              drop={drop}
-              onLike={() => handleLike(drop._id)}
-              onApprove={null} // No approve functionality on home
-            />
-          ))
-        ) : (
-          <p>No approved NFT drops found.</p>
-        )}
+      <div className="main-content">
+        <div className="card">
+          {error && <p>{error}</p>}
+          {filteredDrops.length > 0 ? (
+            filteredDrops.map((drop) => (
+              <NFTCard
+                key={drop._id}
+                drop={drop}
+                onLike={() => handleLike(drop._id)}
+                onApprove={null} // No approve functionality on home
+              />
+            ))
+          ) : (
+            <p>No approved NFT drops found.</p>
+          )}
+        </div>
+        <DiscordBotInvite /> {/* Add the Discord bot invite component here */}
       </div>
     </div>
   );

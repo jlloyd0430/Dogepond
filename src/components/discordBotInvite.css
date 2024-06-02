@@ -1,0 +1,54 @@
+/* src/components/DiscordBotInvite.css */
+.discord-bot-invite {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 16px;
+    border: solid 2px gold;
+    border-radius: 10px;
+
+  }
+  
+  .discord-bot-image {
+    max-width: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .discord-bot-image:hover {
+    transform: scale(1.05);
+  }
+  
+  .main-content {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .card {
+    flex: 1 1 70%; /* Takes 70% of the width on larger screens */
+  }
+  
+  p {
+    justify-content: center;
+  }
+  .discord-bot-invite {
+    flex: 1 1 25%; /* Takes 25% of the width on larger screens */
+  }
+  
+  @media (max-width: 600px) {
+    .main-content {
+      flex-direction: column;
+    }
+  
+    .card, .discord-bot-invite {
+      flex: 1 1 100%; /* Takes 100% of the width on smaller screens */
+    }
+  } 
+
+  @media (max-width: 600px) {
+    .discord-bot-invite {
+      margin-top: 16px;
+    }
+  }
+  
