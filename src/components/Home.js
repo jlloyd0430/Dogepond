@@ -1,4 +1,3 @@
-// src/pages/Home.js
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import NFTCard from '../components/NFTCard';
@@ -14,7 +13,7 @@ const Home = () => {
   const [filteredDrops, setFilteredDrops] = useState([]);
   const [error, setError] = useState(""); // State to store any errors
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const [filter, setFilter] = useState('mostLiked'); // State for filter
+  const [filter, setFilter] = useState('mostLiked'); // Default to mostLiked
   const [showDropdown, setShowDropdown] = useState(false); // State to show/hide the filter dropdown
   const { auth } = useContext(AuthContext);
 
@@ -45,8 +44,13 @@ const Home = () => {
     const filtered = approvedDrops.filter(drop =>
       drop.projectName.toLowerCase().includes(searchQuery.toLowerCase())
     );
+    if (filter === 'mostLiked') {
+      filtered.sort((a, b) => b.likes.length - a.likes.length); // Sort by likes
+    } else if (filter === 'mostRecent') {
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date
+    }
     setFilteredDrops(filtered);
-  }, [searchQuery, approvedDrops]);
+  }, [searchQuery, approvedDrops, filter]);
 
   const handleLike = async (id) => {
     try {
