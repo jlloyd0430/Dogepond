@@ -11,7 +11,7 @@ const DiscordBotInvite = () => {
       <a href={inviteLink} target="_blank" rel="noopener noreferrer">
         <img src={botImage} alt="Invite Discord Bot" className="discord-bot-image" />
       </a>
-      <p>Invite Dogepond bot to your discord and recieve all the latest drops/updates!</p>
+      <p className='bio'>Invite Dogepond bot to your discord and recieve all the latest drops/updates!</p>
     </div>
   );
 };

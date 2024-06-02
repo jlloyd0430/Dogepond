@@ -1,6 +1,7 @@
 /* src/components/DiscordBotInvite.css */
 .discord-bot-invite {
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     margin: 16px;
@@ -9,7 +10,8 @@
   }
   
   .discord-bot-image {
-    max-width: 100%;
+    justify-content: center;
+    max-width: 85%;
     border-radius: 8px;
     cursor: pointer;
     transition: transform 0.2s;
@@ -23,6 +25,12 @@
     display: flex;
     flex-wrap: wrap;
   }
+
+  .bio {
+    margin: 10px;
+    font-size: xx-large;
+    /* padding: 5px; */
+  }
   
   .card {
     flex: 1 1 70%; /* Takes 70% of the width on larger screens */
@@ -34,6 +42,18 @@
   .discord-bot-invite {
     flex: 1 1 25%; /* Takes 25% of the width on larger screens */
   }
+
+  @media (max-width: 800px) {
+    .bio {
+      font-size: x-large;
+    }
+  }
+
+  @media (max-width: 630px) {
+    .bio {
+      font-size: large;
+    }
+  }
   
   @media (max-width: 600px) {
     .main-content {
@@ -43,10 +63,21 @@
     .card, .discord-bot-invite {
       flex: 1 1 100%; /* Takes 100% of the width on smaller screens */
     }
+
+    .bio {
+      font-size: medium;
+    }
   }
   
   @media (max-width: 600px) {
     .discord-bot-invite {
       margin-top: 16px;
+    }
+  }
+
+  @media (max-width: 520px) {
+
+    .bio {
+      font-size: small;
     }
   }
