@@ -2,6 +2,10 @@ import React from 'react';
 import './Packages.css';
 
 const Packages = () => {
+  const handleButtonClick = () => {
+    window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSeZTbkLO_8_nD2ZciRj0TccZwbzjBEwmbcIqdggGD5CFOnfRQ/viewform?usp=sf_link';
+  };
+
   return (
     <div className="packages-container">
       <h1 className="packages-title">Service Packages</h1>
@@ -13,7 +17,7 @@ const Packages = () => {
         <p className="package-description">
           We will build you a webpage for your project to check the rarity of your traits & individual inscriptions in your collection.
         </p>
-        <button className="enquire-button">Enquire</button>
+        <button onClick={handleButtonClick} className="enquire-button">Enquire</button>
       </div>
       <div className="package">
         <h2 className="package-title">Inscription Services</h2>
@@ -27,7 +31,7 @@ const Packages = () => {
             <li>Collection generation</li>
             <li>All Marketplace Metadata</li>
           </ul>
-          <button  onClick="window.location.href='https://docs.google.com/forms/d/e/1FAIpQLSeZTbkLO_8_nD2ZciRj0TccZwbzjBEwmbcIqdggGD5CFOnfRQ/viewform?usp=sf_link' class="enquire-button">Enquire</button>className="enquire-button">Enquire</button>
+          <button onClick={handleButtonClick} className="enquire-button">Enquire</button>
         </div>
       </div>
       <div className="package">
@@ -39,13 +43,13 @@ const Packages = () => {
           </p>
           <h3>Promotions</h3>
           <p>
-            We offer collaboration and engagement opportunities for projects looking for social media clout and growth,
+            We offer collaboration and engagement opportunities for projects looking for social media clout and growth.
           </p>
-          <button className="enquire-button">Enquire</button>
+          <button onClick={handleButtonClick} className="enquire-button">Enquire</button>
         </div>
       </div>
       <h1>HOLDER DISCOUNTS </h1>
-      <p>DoginalDuck holders will recieve Discounted rates for service packages per duck up for to 5 ducks, rates may vary per package/custom job.  </p>
+      <p>DoginalDuck holders will receive discounted rates for service packages per duck up to 5 ducks. Rates may vary per package/custom job.</p>
     </div>
   );
 };
