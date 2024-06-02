@@ -1,12 +1,13 @@
+// src/pages/Home.js
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import NFTCard from './NFTCard';
+import NFTCard from '../components/NFTCard';
 import apiClient from '../services/apiClient';
 import AdBannerCarousel from '../components/AdBannerCarousel';
 import DiscordBotInvite from '../components/discordBotInvite';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
-import "../App.css"
+import "../App.css";
 
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);

@@ -6,7 +6,6 @@
     margin: 16px;
     border: solid 2px gold;
     border-radius: 10px;
-
   }
   
   .discord-bot-image {
@@ -44,11 +43,10 @@
     .card, .discord-bot-invite {
       flex: 1 1 100%; /* Takes 100% of the width on smaller screens */
     }
-  } 
-
+  }
+  
   @media (max-width: 600px) {
     .discord-bot-invite {
       margin-top: 16px;
     }
   }
-  
