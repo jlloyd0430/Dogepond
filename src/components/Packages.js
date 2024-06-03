@@ -49,7 +49,7 @@ const Packages = () => {
             We offer collaboration and engagement opportunities for projects looking for social media clout and growth.
           </p>
           {/* And yet another URL */}
-          <button onClick={() => handleButtonClick('https://link-to-advertising-marketing-form')} className="enquire-button">Enquire</button>
+          <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLSfv5WILBl9pXQjYDzDbKeE_eg0kOpdY3852gnZkUs82UxBGZQ/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
         </div>
       </div>
       <h1>HOLDER DISCOUNTS </h1>
