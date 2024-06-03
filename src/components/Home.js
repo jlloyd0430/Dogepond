@@ -1,122 +1,124 @@
-import React from 'react';
-import './Packages.css';
-
-const Packages = () => {
-  // Function now accepts a URL as a parameter
-  const handleButtonClick = (url) => {
-    window.location.href = url;
+import React, { useEffect, useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import NFTCard from '../components/NFTCard';
+import apiClient from '../services/apiClient';
+import AdBannerCarousel from '../components/AdBannerCarousel';
+import DiscordBotInvite from '../components/discordBotInvite';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import "../App.css";
+const Home = () => {
+  const [approvedDrops, setApprovedDrops] = useState([]);
+  const [filteredDrops, setFilteredDrops] = useState([]);
+  const [error, setError] = useState(""); // State to store any errors
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [filter, setFilter] = useState('mostLiked'); // Default to mostLiked
+  const [showDropdown, setShowDropdown] = useState(false); // State to show/hide the filter dropdown
+  const { auth } = useContext(AuthContext);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const config = auth.token
+          ? {
+              headers: {
+                'x-auth-token': auth.token,
+              },
+            }
+          : {};
+        const result = await apiClient.get('/nftdrops/approved', config);
+        console.log('Fetched approved NFT drops:', result.data);
+        setApprovedDrops(result.data);
+        setFilteredDrops(result.data); // Initialize filteredDrops with fetched data
+        setError(""); // Clear any previous errors
+      } catch (error) {
+        console.error('Error fetching approved NFT drops:', error);
+        setError("Failed to fetch approved NFT drops. Please try again later.");
+      }
+    };
+    fetchData();
+  }, [auth.token]);
+  useEffect(() => {
+    let filtered = approvedDrops.filter(drop =>
+      drop.projectName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    if (filter === 'mostLiked') {
+      filtered.sort((a, b) => b.likes.length - a.likes.length); // Sort by likes
+    } else if (filter === 'mostRecent') {
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date
+    }
+    setFilteredDrops(filtered);
+  }, [searchQuery, approvedDrops, filter]);
+  const handleLike = async (id) => {
+    try {
+      const config = {
+        headers: {
+          'x-auth-token': auth.token,
+        },
+      };
+      console.log('Sending like request for NFT Drop ID:', id);
+      const response = await apiClient.post(`/nftdrops/${id}/like`, {}, config);
+      console.log('Like response:', response.data);
+      setApprovedDrops((prevDrops) =>
+        prevDrops.map((drop) => (drop._id === id ? response.data : drop))
+      );
+    } catch (error) {
+      if (error.response && error.response.data.msg) {
+        alert(error.response.data.msg);
+      } else {
+        console.error('Error liking drop:', error);
+      }
+    }
   };
-
-  return (
-    <div className="packages-container">
-      <h1 className="packages-title">Service Packages</h1>
-      <p className="packages-description">
-        DogePond offers a variety of different Services for individuals and Projects alike.
-      </p>
-      <div className="package">
-        <h2 className="package-title">Rarity site</h2>
-        <p className="package-description">
-          We will build you a webpage for your project to check the rarity of your traits & individual inscriptions in your collection.
-        </p>
-        {/* Pass specific URL to the function */}
-        <button onClick={() => handleButtonClick('import React from 'react';
-import './Packages.css';
-
-const Packages = () => {
-  // Function now accepts a URL as a parameter
-  const handleButtonClick = (url) => {
-    window.location.href = url;
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
   };
-
+  const handleFilterChange = (filterValue) => {
+    setFilter(filterValue);
+    setShowDropdown(false); // Hide the dropdown after selecting a filter
+  };
   return (
-    <div className="packages-container">
-      <h1 className="packages-title">Service Packages</h1>
-      <p className="packages-description">
-        DogePond offers a variety of different Services for individuals and Projects alike.
-      </p>
-      <div className="package">
-        <h2 className="package-title">Rarity site</h2>
-        <p className="package-description">
-          We will build you a webpage for your project to check the rarity of your traits & individual inscriptions in your collection.
-        </p>
-        {/* Pass specific URL to the function */}
-        <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLScr3IFJQ3IjA55QKVUXcCXwvAlOJW2uHGVW25XKsxfnDhWHrg/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
-      </div>
-      <div className="package">
-        <h2 className="package-title">Inscription Services</h2>
-        <div className="package-description">
-          A full minting resource for your project from start to finish
-          Offering
-          <ul>
-            <li>Resizing/Compression</li>
-            <li>Etching Dunes</li>
-            <li>Large file sizes</li>
-            <li>Collection generation</li>
-            <li>All Marketplace Metadata</li>
-          </ul>
-          {/* Pass another specific URL to the function */}
-          <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLSeZTbkLO_8_nD2ZciRj0TccZwbzjBEwmbcIqdggGD5CFOnfRQ/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
+    <div>
+      <AdBannerCarousel /> {/* Add the carousel component here */}
+      <h1>Upcoming Drops</h1>
+      <div className="search-filter-container">
+        <input
+          type="text"
+          placeholder="Search by project name..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+        <div className="filter-dropdown">
+          <FontAwesomeIcon className='search' icon={faFilter} onClick={() => setShowDropdown(!showDropdown)} />
+          {showDropdown && (
+            <div className="dropdown-menu">
+              <div onClick={() => handleFilterChange('mostRecent')}>Most Recent</div>
+              <div onClick={() => handleFilterChange('mostLiked')}>Top Voted</div>
+            </div>
+          )}
         </div>
+
       </div>
-      <div className="package">
-        <h2 className="package-title">Advertising/Marketing</h2>
-        <div className="package-description">
-          <h3>Banner Ads</h3>
-          <p>
-            Banner Ads are a great way to get your project in front of the Doginal Community. Our Banner pool is front and centre of the Home page as users browse the§ site!
-          </p>
-          <h3>Promotions</h3>
-          <p>
-            We offer collaboration and engagement opportunities for projects looking for social media clout and growth.
-          </p>
-          {/* And yet another URL */}
-          <button onClick={() => handleButtonClick('https://link-to-advertising-marketing-form')} className="enquire-button">Enquire</button>
+      <div className="main-content">
+            <p>we are currently testing backend api and things for our bot so the images may not be showing at the moment for the older drops</p>
+
+        <div className="card">
+          {error && <p>{error}</p>}
+          {filteredDrops.length > 0 ? (
+            filteredDrops.map((drop) => (
+              <NFTCard
+                key={drop._id}
+                drop={drop}
+                onLike={() => handleLike(drop._id)}
+                onApprove={null} // No approve functionality on home
+              />
+            ))
+          ) : (
+            <p>No approved NFT drops found.</p>
+          )}
         </div>
+        <DiscordBotInvite /> {/* Add the Discord bot invite component here */}
       </div>
-      <h1>HOLDER DISCOUNTS </h1>
-      <p>DoginalDuck holders will receive discounted rates for service packages per duck up to 5 ducks. Rates may vary per package/custom job.</p>
     </div>
   );
 };
-
-export default Packages;
-')} className="enquire-button">Enquire</button>
-      </div>
-      <div className="package">
-        <h2 className="package-title">Inscription Services</h2>
-        <div className="package-description">
-          A full minting resource for your project from start to finish
-          Offering
-          <ul>
-            <li>Resizing/Compression</li>
-            <li>Etching Dunes</li>
-            <li>Large file sizes</li>
-            <li>Collection generation</li>
-            <li>All Marketplace Metadata</li>
-          </ul>
-          {/* Pass another specific URL to the function */}
-          <button onClick={() => handleButtonClick('https://link-to-inscription-services-form')} className="enquire-button">Enquire</button>
-        </div>
-      </div>
-      <div className="package">
-        <h2 className="package-title">Advertising/Marketing</h2>
-        <div className="package-description">
-          <h3>Banner Ads</h3>
-          <p>
-            Banner Ads are a great way to get your project in front of the Doginal Community. Our Banner pool is front and centre of the Home page as users browse the§ site!
-          </p>
-          <h3>Promotions</h3>
-          <p>
-            We offer collaboration and engagement opportunities for projects looking for social media clout and growth.
-          </p>
-          {/* And yet another URL */}
-          <button onClick={() => handleButtonClick('https://link-to-advertising-marketing-form')} className="enquire-button">Enquire</button>
-        </div>
-      </div>
-      <h1>HOLDER DISCOUNTS </h1>
-      <p>DoginalDuck holders will receive discounted rates for service packages per duck up to 5 ducks. Rates may vary per package/custom job.</p>
-    </div>
-  );
-};
-
-export default Packages;
+export default Home;
