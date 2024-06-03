@@ -52,6 +52,17 @@ const Packages = () => {
           <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLSfv5WILBl9pXQjYDzDbKeE_eg0kOpdY3852gnZkUs82UxBGZQ/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
         </div>
       </div>
+            <div className="package">
+        <h2 className="package-title">Dogepond Bot Services</h2>
+        <div className="package-description">
+          <h3>Coming soon</h3>
+          <p>
+            Building bots to make a better doginal experience
+          </p>
+          {/* And yet another URL */}
+          <button onClick={() => handleButtonClick('')} className="enquire-button">TBA</button>
+        </div>
+      </div>
       <h1>HOLDER DISCOUNTS </h1>
       <p>DoginalDuck holders will receive discounted rates for service packages per duck up to 5 ducks. Rates may vary per package/custom job.</p>
     </div>
