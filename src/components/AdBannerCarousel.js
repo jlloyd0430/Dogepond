@@ -6,7 +6,7 @@ import catsbanner from "./uploads/catsbanner.jpg";
 import novalabs from "./uploads/novabanner.jpg";
 import wizards from "./uploads/wizardbanner.jpg";
 import rpc from "./uploads/rpc.webp";
-import add from "./uploads/antidogedogs.webp"
+import add from "./uploads/antidogedogs.webp";
 
 const AdBannerCarousel = () => {
   return (
@@ -25,11 +25,11 @@ const AdBannerCarousel = () => {
       </div>
       <div>
         <img src={rpc} alt="Ad Banner 4" />
-        {/* <p className="legend">Ad Banner 3</p> */}
+        {/* <p className="legend">Ad Banner 4</p> */}
       </div>
        <div>
         <img src={add} alt="Ad Banner 5" />
-        {/* <p className="legend">Ad Banner 3</p> */}
+        {/* <p className="legend">Ad Banner 5/p> */}
       </div>
     </Carousel>
   );
