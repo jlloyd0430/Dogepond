@@ -2,8 +2,9 @@ import React from 'react';
 import './Packages.css';
 
 const Packages = () => {
-  const handleButtonClick = () => {
-    window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSeZTbkLO_8_nD2ZciRj0TccZwbzjBEwmbcIqdggGD5CFOnfRQ/viewform?usp=sf_link';
+  // Function now accepts a URL as a parameter
+  const handleButtonClick = (url) => {
+    window.location.href = url;
   };
 
   return (
@@ -17,7 +18,8 @@ const Packages = () => {
         <p className="package-description">
           We will build you a webpage for your project to check the rarity of your traits & individual inscriptions in your collection.
         </p>
-        <button onClick={handleButtonClick} className="enquire-button">Enquire</button>
+        {/* Pass specific URL to the function */}
+        <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLScr3IFJQ3IjA55QKVUXcCXwvAlOJW2uHGVW25XKsxfnDhWHrg/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
       </div>
       <div className="package">
         <h2 className="package-title">Inscription Services</h2>
@@ -31,7 +33,8 @@ const Packages = () => {
             <li>Collection generation</li>
             <li>All Marketplace Metadata</li>
           </ul>
-          <button onClick={handleButtonClick} className="enquire-button">Enquire</button>
+          {/* Pass another specific URL to the function */}
+          <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLSeZTbkLO_8_nD2ZciRj0TccZwbzjBEwmbcIqdggGD5CFOnfRQ/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
         </div>
       </div>
       <div className="package">
@@ -39,13 +42,14 @@ const Packages = () => {
         <div className="package-description">
           <h3>Banner Ads</h3>
           <p>
-            Banner Ads are a great way to get your project in front of the Doginal Community. Our Banner pool is front and centre of the Home page as users browse the site!
+            Banner Ads are a great way to get your project in front of the Doginal Community. Our Banner pool is front and centre of the Home page as users browse the§ site!
           </p>
           <h3>Promotions</h3>
           <p>
             We offer collaboration and engagement opportunities for projects looking for social media clout and growth.
           </p>
-          <button onClick={handleButtonClick} className="enquire-button">Enquire</button>
+          {/* And yet another URL */}
+          <button onClick={() => handleButtonClick('https://link-to-advertising-marketing-form')} className="enquire-button">Enquire</button>
         </div>
       </div>
       <h1>HOLDER DISCOUNTS </h1>
