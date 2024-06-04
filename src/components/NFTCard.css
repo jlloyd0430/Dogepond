@@ -142,7 +142,7 @@ body.dark-mode .nft-card p {
   }
 
   .nft-card-content {
-    align-items: center;
+    align-items: start;
   }
 
   .nft-card h2 {
