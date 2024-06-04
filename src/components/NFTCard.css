@@ -49,6 +49,7 @@ body.dark-mode .nft-card p {
   display: flex;
   flex-direction: column;
   color: var(--text-color-light, #000000); /* Ensure text color is set for light mode */
+  align-items: start;
 }
 
 .nft-card h2 {
