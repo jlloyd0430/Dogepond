@@ -7,6 +7,7 @@ import DiscordBotInvite from '../components/discordBotInvite';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import "../App.css";
+
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
   const [filteredDrops, setFilteredDrops] = useState([]);
@@ -15,6 +16,7 @@ const Home = () => {
   const [filter, setFilter] = useState('mostLiked'); // Default to mostLiked
   const [showDropdown, setShowDropdown] = useState(false); // State to show/hide the filter dropdown
   const { auth } = useContext(AuthContext);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,7 +30,6 @@ const Home = () => {
         const result = await apiClient.get('/nftdrops/approved', config);
         console.log('Fetched approved NFT drops:', result.data);
         setApprovedDrops(result.data);
-        setFilteredDrops(result.data); // Initialize filteredDrops with fetched data
         setError(""); // Clear any previous errors
       } catch (error) {
         console.error('Error fetching approved NFT drops:', error);
@@ -37,17 +38,25 @@ const Home = () => {
     };
     fetchData();
   }, [auth.token]);
+
   useEffect(() => {
+    applyFilter();
+  }, [searchQuery, approvedDrops, filter]);
+
+  const applyFilter = () => {
     let filtered = approvedDrops.filter(drop =>
       drop.projectName.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
     if (filter === 'mostLiked') {
       filtered.sort((a, b) => b.likes.length - a.likes.length); // Sort by likes
     } else if (filter === 'mostRecent') {
       filtered.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date
     }
+
     setFilteredDrops(filtered);
-  }, [searchQuery, approvedDrops, filter]);
+  };
+
   const handleLike = async (id) => {
     try {
       const config = {
@@ -69,13 +78,16 @@ const Home = () => {
       }
     }
   };
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
+
   const handleFilterChange = (filterValue) => {
     setFilter(filterValue);
     setShowDropdown(false); // Hide the dropdown after selecting a filter
   };
+
   return (
     <div>
       <AdBannerCarousel /> {/* Add the carousel component here */}
@@ -96,10 +108,8 @@ const Home = () => {
             </div>
           )}
         </div>
-
       </div>
       <div className="main-content">
-
         <div className="card">
           {error && <p>{error}</p>}
           {filteredDrops.length > 0 ? (
@@ -120,4 +130,5 @@ const Home = () => {
     </div>
   );
 };
+
 export default Home;
