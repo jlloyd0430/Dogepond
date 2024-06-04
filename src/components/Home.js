@@ -54,6 +54,7 @@ const Home = () => {
       filtered.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date
     }
 
+    console.log('Filtered drops:', filtered); // Debug log for filtered drops
     setFilteredDrops(filtered);
   };
 
@@ -84,6 +85,7 @@ const Home = () => {
   };
 
   const handleFilterChange = (filterValue) => {
+    console.log(`Changing filter to: ${filterValue}`); // Debug log for filter change
     setFilter(filterValue);
     setShowDropdown(false); // Hide the dropdown after selecting a filter
   };
