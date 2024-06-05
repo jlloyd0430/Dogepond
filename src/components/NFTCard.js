@@ -17,7 +17,7 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
     <div className="nft-card">
       {drop.image && (
         <img
-          src={`https://drc20calendar-32f6b6f7dd9e.herokuapp.com/uploads/${drop.image}`}
+          src={drop.image}
           alt={drop.projectName}
           className="nft-card-image"
         />

@@ -18,6 +18,8 @@ const PostForm = () => {
     discord: '', // Add Discord field
     image: null, // Add image field
   });
+
+  const [imageUrl, setImageUrl] = useState(null); // State to store image URL
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -58,6 +60,10 @@ const PostForm = () => {
 
       const response = await apiClient.post('/nftdrops', formDataToSend, config); // Correct endpoint usage
       console.log('Submitted post response:', response.data);
+
+      const drop = response.data;
+      setImageUrl(drop.image); // Set image URL in state
+
       alert('Submission successful! Await approval.');
       navigate('/dashboard');
     } catch (error) {
@@ -148,6 +154,12 @@ const PostForm = () => {
         <p>note: whitelistprice must be greater then 0. </p>
         <button type="submit">Submit</button>
       </form>
+      {imageUrl && (
+        <div>
+          <h2>Uploaded Image:</h2>
+          <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '100%' }} />
+        </div>
+      )}
     </div>
   );
 };
