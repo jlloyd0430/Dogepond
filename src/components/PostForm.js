@@ -1,30 +1,33 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import apiClient from '../services/apiClient'; // Import the apiClient
-import './PostForm.css'; // Import the CSS file
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import apiClient from "../services/apiClient";
+import "./PostForm.css"; // Import the CSS file
 
 const PostForm = () => {
   const [formData, setFormData] = useState({
-    projectName: '',
-    price: '',
-    wlPrice: '',
-    date: '',
-    time: '',
-    supply: '',
-    description: '', // Add description field
-    website: '', // Add website field
-    xCom: '', // Add X.com field
-    telegram: '', // Add Telegram field
-    discord: '', // Add Discord field
-    image: null, // Add image field
+    projectName: "",
+    dropType: "new mint", // Default to 'new mint'
+    price: 0,
+    wlPrice: 0,
+    startingPrice: 0,
+    marketplaceLink: "",
+    projectLink: "",
+    date: "",
+    time: "",
+    supply: "",
+    description: "",
+    website: "",
+    xCom: "",
+    telegram: "",
+    discord: "",
+    image: null,
   });
 
-  const [imageUrl, setImageUrl] = useState(null); // State to store image URL
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'image') {
+    if (name === "image") {
       setFormData({
         ...formData,
         image: files[0],
@@ -44,30 +47,25 @@ const PostForm = () => {
       formDataToSend.append(key, formData[key]);
     });
 
-    // Debugging: Check the form data before sending
-    for (let pair of formDataToSend.entries()) {
-      console.log(pair[0] + ', ' + pair[1]);
-    }
-
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const config = {
         headers: {
-          'x-auth-token': token,
-          'Content-Type': 'multipart/form-data',
+          "x-auth-token": token,
+          "Content-Type": "multipart/form-data",
         },
       };
 
-      const response = await apiClient.post('/nftdrops', formDataToSend, config); // Correct endpoint usage
-      console.log('Submitted post response:', response.data);
-
-      const drop = response.data;
-      setImageUrl(drop.image); // Set image URL in state
-
-      alert('Submission successful! Await approval.');
-      navigate('/dashboard');
+      const response = await apiClient.post(
+        "/nftdrops",
+        formDataToSend,
+        config
+      );
+      console.log("Submitted post response:", response.data);
+      alert("Submission successful! Await approval.");
+      navigate("/dashboard");
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -75,45 +73,90 @@ const PostForm = () => {
     <div className="post-form-container">
       <h1>Post your Mint</h1>
       <form className="post-form" onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          name="projectName" 
-          placeholder="Project Name" 
-          onChange={handleChange} 
-          required 
+        <input
+          type="text"
+          name="projectName"
+          placeholder="Project Name"
+          onChange={handleChange}
+          required
         />
-        <input 
-          type="number" 
-          name="price" 
-          placeholder="Price" 
-          onChange={handleChange} 
-          required 
+        <select
+          name="dropType"
+          value={formData.dropType}
+          onChange={handleChange}
+          required
+        >
+          <option value="new mint">New Mint</option>
+          <option value="airdrop">Airdrop</option>
+          <option value="auction">Auction</option>
+        </select>
+
+        {formData.dropType === "new mint" && (
+          <>
+            <input
+              type="number"
+              name="price"
+              placeholder="Price"
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="number"
+              name="wlPrice"
+              placeholder="Whitelist Price"
+              onChange={handleChange}
+              required
+            />
+          </>
+        )}
+
+        {formData.dropType === "auction" && (
+          <>
+            <input
+              type="number"
+              name="startingPrice"
+              placeholder="Starting Price"
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="url"
+              name="marketplaceLink"
+              placeholder="Marketplace Link"
+              onChange={handleChange}
+            />
+          </>
+        )}
+
+        {formData.dropType === "airdrop" && (
+          <input
+            type="url"
+            name="projectLink"
+            placeholder="Project Link"
+            onChange={handleChange}
+          />
+        )}
+
+        <input
+          type="text"
+          name="date"
+          placeholder="Date (or TBA)"
+          onChange={handleChange}
+          value={formData.date === "TBA" ? "" : formData.date}
         />
-        <input 
-          type="number" 
-          name="wlPrice" 
-          placeholder="Whitelist Price" 
-          onChange={handleChange} 
-          required 
+        <input
+          type="time"
+          name="time"
+          placeholder="Time"
+          onChange={handleChange}
+          required
         />
-        <input 
-          type="date" 
-          name="date" 
-          onChange={handleChange} 
-          required 
-        />
-        <input 
-          type="time" 
-          name="time" 
-          onChange={handleChange} 
-          required 
-        />
-        <input 
-          type="number" 
-          name="supply" 
-          placeholder="Supply" 
-          onChange={handleChange} 
-          required 
+        <input
+          type="number"
+          name="supply"
+          placeholder="Supply"
+          onChange={handleChange}
+          required
         />
         <textarea
           name="description"
@@ -145,21 +188,14 @@ const PostForm = () => {
           placeholder="Discord URL"
           onChange={handleChange}
         />
-        <input 
-          type="file" 
-          name="image" 
+        <input
+          type="file"
+          name="image"
           accept="image/*"
           onChange={handleChange}
         />
-        <p>note: whitelistprice must be greater then 0. </p>
         <button type="submit">Submit</button>
       </form>
-      {imageUrl && (
-        <div>
-          <h2>Uploaded Image:</h2>
-          <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '100%' }} />
-        </div>
-      )}
     </div>
   );
 };

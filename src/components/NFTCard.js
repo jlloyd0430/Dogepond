@@ -1,16 +1,58 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import './NFTCard.css';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import "./NFTCard.css";
 
 const NFTCard = ({ drop, onLike, onApprove }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  console.log('Rendering NFTCard with props:', { drop, onLike, onApprove });
+  console.log("Rendering NFTCard with props:", { drop, onLike, onApprove });
 
   const likesCount = Array.isArray(drop.likes) ? drop.likes.length : 0;
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  const renderPriceInfo = () => {
+    if (drop.dropType === "new mint") {
+      return (
+        <>
+          <p>Price: {drop.price !== undefined ? drop.price : "N/A"}</p>
+          <p>
+            Whitelist Price: {drop.wlPrice !== undefined ? drop.wlPrice : "N/A"}
+          </p>
+        </>
+      );
+    } else if (drop.dropType === "auction") {
+      return (
+        <>
+          <p>
+            Starting Price:{" "}
+            {drop.startingPrice !== undefined ? drop.startingPrice : "N/A"}
+          </p>
+          <p>
+            Marketplace Link:{" "}
+            <a
+              href={drop.marketplaceLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {drop.marketplaceLink || "N/A"}
+            </a>
+          </p>
+        </>
+      );
+    } else if (drop.dropType === "airdrop") {
+      return (
+        <p>
+          Project Link:{" "}
+          <a href={drop.projectLink} target="_blank" rel="noopener noreferrer">
+            {drop.projectLink || "N/A"}
+          </a>
+        </p>
+      );
+    }
+    return null;
   };
 
   return (
@@ -24,19 +66,24 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
       )}
       <div className="nft-card-content">
         <h2>{drop.projectName}</h2>
-        <p>Price: {drop.price}</p>
-        <p>Whitelist Price: {drop.wlPrice}</p>
-        <p>Date: {new Date(drop.date).toLocaleDateString()}</p>
+        <p>Drop Type: {drop.dropType}</p>
+        {renderPriceInfo()}
+        <p>
+          Date:{" "}
+          {drop.date === "TBA"
+            ? "TBA"
+            : new Date(drop.date).toLocaleDateString()}
+        </p>
         <p>Time: {drop.time}</p>
         <p>Supply: {drop.supply}</p>
         <p>Likes: {likesCount}</p>
         <button
           onClick={() => {
-            console.log('Like button clicked for drop ID:', drop._id);
-            if (typeof onLike === 'function') {
+            console.log("Like button clicked for drop ID:", drop._id);
+            if (typeof onLike === "function") {
               onLike(drop._id);
             } else {
-              console.error('onLike is not a function');
+              console.error("onLike is not a function");
             }
           }}
         >
@@ -45,11 +92,11 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
         {!drop.approved && (
           <button
             onClick={() => {
-              console.log('Approve button clicked for drop ID:', drop._id);
-              if (typeof onApprove === 'function') {
+              console.log("Approve button clicked for drop ID:", drop._id);
+              if (typeof onApprove === "function") {
                 onApprove(drop._id);
               } else {
-                console.error('onApprove is not a function');
+                console.error("onApprove is not a function");
               }
             }}
           >
@@ -57,13 +104,13 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
           </button>
         )}
         <button onClick={toggleExpand}>
-          {isExpanded ? 'View Less' : 'View More'}
+          {isExpanded ? "View Less" : "View More"}
         </button>
-        <div className={`nft-card-details ${isExpanded ? 'expanded' : ''}`}>
+        <div className={`nft-card-details ${isExpanded ? "expanded" : ""}`}>
           {drop.description && <p>Description: {drop.description}</p>}
           {drop.website && (
             <p>
-              Website:{' '}
+              Website:{" "}
               <a href={drop.website} target="_blank" rel="noopener noreferrer">
                 {drop.website}
               </a>
@@ -71,7 +118,7 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
           )}
           {drop.xCom && (
             <p>
-              X.com:{' '}
+              X.com:{" "}
               <a href={drop.xCom} target="_blank" rel="noopener noreferrer">
                 {drop.xCom}
               </a>
@@ -79,7 +126,7 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
           )}
           {drop.telegram && (
             <p>
-              Telegram:{' '}
+              Telegram:{" "}
               <a href={drop.telegram} target="_blank" rel="noopener noreferrer">
                 {drop.telegram}
               </a>
@@ -87,7 +134,7 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
           )}
           {drop.discord && (
             <p>
-              Discord:{' '}
+              Discord:{" "}
               <a href={drop.discord} target="_blank" rel="noopener noreferrer">
                 {drop.discord}
               </a>
@@ -103,8 +150,12 @@ NFTCard.propTypes = {
   drop: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     projectName: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    wlPrice: PropTypes.number.isRequired,
+    dropType: PropTypes.string.isRequired,
+    price: PropTypes.number,
+    wlPrice: PropTypes.number,
+    startingPrice: PropTypes.number,
+    marketplaceLink: PropTypes.string,
+    projectLink: PropTypes.string,
     date: PropTypes.string.isRequired,
     time: PropTypes.string.isRequired,
     supply: PropTypes.number.isRequired,
@@ -118,7 +169,7 @@ NFTCard.propTypes = {
     discord: PropTypes.string,
   }).isRequired,
   onLike: PropTypes.func.isRequired,
-  onApprove: PropTypes.func.isRequired,
+  onApprove: PropTypes.func,
 };
 
 export default NFTCard;
