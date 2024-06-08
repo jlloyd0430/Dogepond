@@ -23,6 +23,20 @@
     border: 1px solid #ccc;
     border-radius: 5px;
   }
+
+  .droptypes {
+    margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+  }
+
+  .postDetails {
+    margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+  }
   
   .post-form button {
     padding: 10px;

@@ -81,6 +81,7 @@ const PostForm = () => {
           required
         />
         <select
+          className="droptypes"
           name="dropType"
           value={formData.dropType}
           onChange={handleChange}
@@ -159,6 +160,7 @@ const PostForm = () => {
           required
         />
         <textarea
+          className="postDetails"
           name="description"
           placeholder="Description"
           onChange={handleChange}
