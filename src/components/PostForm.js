@@ -141,7 +141,7 @@ const PostForm = () => {
         <input
           type="text"
           name="date"
-          placeholder="Date (or TBA)"
+          placeholder="Date"
           onChange={handleChange}
           value={formData.date === "TBA" ? "" : formData.date}
         />
