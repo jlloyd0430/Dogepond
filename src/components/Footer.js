@@ -21,7 +21,7 @@ const Footer = () => {
             </a>
           </li>
           <li>
-            <a href="" target="_blank" rel="noopener noreferrer">
+            <a href="https://discord.gg/RN2sUtz4CB" target="_blank" rel="noopener noreferrer">
               <FontAwesomeIcon icon={faDiscord} />
             </a>
           </li>
