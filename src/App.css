@@ -1,4 +1,3 @@
-/* src/App.css */
 :root {
   --text-color-light: #000000;
   --text-color-dark: #ffffff;
@@ -74,7 +73,7 @@ div {
   flex-direction: column;
 }
 
-div > div {
+div>div {
   max-width: 950px;
 }
 
@@ -163,22 +162,26 @@ body.dark-mode .header {
   gap: 20px;
 }
 
-.nav-link, .nav-button {
+.nav-link,
+.nav-button {
   color: var(--nav-link-color-light);
   background: none;
   border: none;
   cursor: pointer;
 }
 
-body.dark-mode .nav-link, .nav-button {
+body.dark-mode .nav-link,
+.nav-button {
   color: var(--nav-link-color-dark);
 }
 
-.nav-link:hover, .nav-button:hover {
+.nav-link:hover,
+.nav-button:hover {
   color: goldenrod;
 }
 
-body.dark-mode .nav-link:hover, .nav-button:hover {
+body.dark-mode .nav-link:hover,
+.nav-button:hover {
   color: goldenrod;
 }
 
@@ -221,7 +224,8 @@ body.dark-mode .footer {
 }
 
 .social-links a {
-  color: inherit; /* Inherit color from parent */
+  color: inherit;
+  /* Inherit color from parent */
   text-decoration: none;
   transition: color 0.3s ease;
 }
