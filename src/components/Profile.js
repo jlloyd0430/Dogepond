@@ -1,39 +1,48 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import NFTCard from './NFTCard'; // Assuming you have an NFTCard component to display each NFT drop
-import axios from 'axios';
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
+import NFTCard from "../components/NFTCard";
+import apiClient from "../services/apiClient";
 
 const Profile = () => {
   const { auth } = useContext(AuthContext);
-  const [nftDrops, setNftDrops] = useState([]);
+  const [userDrops, setUserDrops] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchUserNFTDrops = async () => {
-      if (auth.token) {
-        try {
-          const response = await axios.get('https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/nftdrops/user', {
-            headers: { 'x-auth-token': auth.token }
-          });
-          setNftDrops(response.data);
-        } catch (error) {
-          console.error('Error fetching user NFT drops:', error);
-        }
+    const fetchUserDrops = async () => {
+      try {
+        const config = {
+          headers: {
+            "x-auth-token": auth.token,
+          },
+        };
+        const response = await apiClient.get("/nftdrops/user", config);
+        setUserDrops(response.data);
+        setError("");
+      } catch (error) {
+        console.error("Error fetching user NFT drops:", error);
+        setError("Failed to fetch user NFT drops. Please try again later.");
       }
     };
 
-    fetchUserNFTDrops();
+    fetchUserDrops();
   }, [auth.token]);
 
   return (
     <div>
-      <h1>Your NFT Drops</h1>
-      {nftDrops.length > 0 ? (
-        nftDrops.map(drop => (
-          <NFTCard key={drop._id} drop={drop} />
-        ))
-      ) : (
-        <p>You have no NFT drops.</p>
-      )}
+      <h1>My NFT Drops</h1>
+      {error && <p>{error}</p>}
+      <div className="nft-drops">
+        {userDrops.map((drop) => (
+          <NFTCard
+            key={drop._id}
+            drop={drop}
+            onLike={() => {}}
+            isProfilePage={true}
+            userRole={auth.user?.role} // Pass user role to the NFTCard component
+          />
+        ))}
+      </div>
     </div>
   );
 };
