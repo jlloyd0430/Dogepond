@@ -60,7 +60,7 @@ const Home = () => {
     if (filter === "mostLiked") {
       filtered.sort((a, b) => b.likes.length - a.likes.length); // Sort by likes
     } else if (filter === "mostRecent") {
-      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort by creation date
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date
     }
 
     console.log("Filtered drops:", filtered); // Debug log for filtered drops
@@ -163,8 +163,10 @@ const Home = () => {
               <NFTCard
                 key={drop._id}
                 drop={drop}
-                onLike={() => handleLike(drop._id)}
+                onLike={handleLike}
                 onApprove={null} // No approve functionality on home
+                isProfilePage={false}
+                userId={auth.user.id}
               />
             ))
           ) : (
