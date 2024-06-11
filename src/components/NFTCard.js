@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "./NFTCard.css";
 
-const NFTCard = ({ drop, onLike, onApprove }) => {
+const NFTCard = ({ drop, onLike, onApprove, isProfilePage, userRole }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  console.log("Rendering NFTCard with props:", { drop, onLike, onApprove });
 
   const likesCount = Array.isArray(drop.likes) ? drop.likes.length : 0;
 
@@ -77,22 +75,22 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
         <p>Time: {drop.time}</p>
         <p>Supply: {drop.supply}</p>
         <p>Likes: {likesCount}</p>
-        <button
-          onClick={() => {
-            console.log("Like button clicked for drop ID:", drop._id);
-            if (typeof onLike === "function") {
-              onLike(drop._id);
-            } else {
-              console.error("onLike is not a function");
-            }
-          }}
-        >
-          Like
-        </button>
-        {!drop.approved && (
+        {onLike && (
           <button
             onClick={() => {
-              console.log("Approve button clicked for drop ID:", drop._id);
+              if (typeof onLike === "function") {
+                onLike(drop._id);
+              } else {
+                console.error("onLike is not a function");
+              }
+            }}
+          >
+            Like
+          </button>
+        )}
+        {userRole === "admin" && !drop.approved && onApprove && (
+          <button
+            onClick={() => {
               if (typeof onApprove === "function") {
                 onApprove(drop._id);
               } else {
@@ -101,6 +99,15 @@ const NFTCard = ({ drop, onLike, onApprove }) => {
             }}
           >
             Approve
+          </button>
+        )}
+        {isProfilePage && (
+          <button
+            onClick={() => {
+              window.location.href = `/edit/${drop._id}`;
+            }}
+          >
+            Edit
           </button>
         )}
         <button onClick={toggleExpand}>
@@ -168,8 +175,10 @@ NFTCard.propTypes = {
     telegram: PropTypes.string,
     discord: PropTypes.string,
   }).isRequired,
-  onLike: PropTypes.func.isRequired,
+  onLike: PropTypes.func,
   onApprove: PropTypes.func,
+  isProfilePage: PropTypes.bool.isRequired,
+  userRole: PropTypes.string.isRequired,
 };
 
 export default NFTCard;
