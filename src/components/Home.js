@@ -163,10 +163,10 @@ const Home = () => {
               <NFTCard
                 key={drop._id}
                 drop={drop}
-                onLike={handleLike}
+                onLike={() => handleLike(drop._id)}
                 onApprove={null} // No approve functionality on home
-                isProfilePage={false}
-                userId={auth.user.id}
+                userId={auth.user?.id} // Add userId for edit button visibility
+                isProfilePage={false} // Add isProfilePage for conditional rendering
               />
             ))
           ) : (
