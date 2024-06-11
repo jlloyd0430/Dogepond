@@ -46,16 +46,21 @@ const Home = () => {
   }, [searchQuery, approvedDrops, filter, dropType]);
 
   const applyFilter = () => {
+    const currentDate = new Date();
     let filtered = approvedDrops.filter(
       (drop) =>
         drop.projectName.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        (dropType === "" || drop.dropType === dropType)
+        (dropType === "" || drop.dropType === dropType) &&
+        ((filter === "upcoming" && new Date(drop.date) >= currentDate) ||
+          (filter === "past" && new Date(drop.date) < currentDate) ||
+          filter === "mostRecent" ||
+          filter === "mostLiked")
     );
 
     if (filter === "mostLiked") {
       filtered.sort((a, b) => b.likes.length - a.likes.length); // Sort by likes
     } else if (filter === "mostRecent") {
-      filtered.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort by creation date
     }
 
     console.log("Filtered drops:", filtered); // Debug log for filtered drops
@@ -136,6 +141,10 @@ const Home = () => {
           />
           {showDropdown && (
             <div className="dropdown-menu">
+              <div onClick={() => handleFilterChange("upcoming")}>
+                Upcoming Drops
+              </div>
+              <div onClick={() => handleFilterChange("past")}>Past Drops</div>
               <div onClick={() => handleFilterChange("mostRecent")}>
                 Most Recent
               </div>
