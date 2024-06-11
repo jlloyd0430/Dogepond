@@ -1,80 +1,71 @@
-import React, { useEffect, useState, useContext } from 'react';
-import apiClient from '../services/apiClient';
-import NFTCard from './NFTCard';
-import { AuthContext } from '../context/AuthContext';
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
+import NFTCard from "../components/NFTCard";
+import apiClient from "../services/apiClient";
 
 const Dashboard = () => {
-  const [nftDrops, setNftDrops] = useState([]);
   const { auth } = useContext(AuthContext);
+  const [unapprovedDrops, setUnapprovedDrops] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUnapprovedDrops = async () => {
       try {
         const config = {
           headers: {
-            'x-auth-token': auth.token,
+            "x-auth-token": auth.token,
           },
         };
-        const result = await apiClient.get('/nftdrops', config);
-        console.log('Fetched NFT drops:', result.data);
-        setNftDrops(result.data);
+        const response = await apiClient.get("/nftdrops", config);
+        setUnapprovedDrops(response.data.filter((drop) => !drop.approved));
+        setError("");
       } catch (error) {
-        console.error('Error fetching all NFT drops:', error);
+        console.error("Error fetching unapproved NFT drops:", error);
+        setError(
+          "Failed to fetch unapproved NFT drops. Please try again later."
+        );
       }
     };
-    fetchData();
-  }, [auth.token]);
 
-  const handleLike = async (id) => {
-    try {
-      const config = {
-        headers: {
-          'x-auth-token': auth.token,
-        },
-      };
-      console.log('Sending like request for NFT Drop ID:', id);
-      const response = await apiClient.post(`/nftdrops/${id}/like`, {}, config);
-      console.log('Like response:', response.data);
-      setNftDrops(nftDrops.map(drop => drop._id === id ? response.data : drop));
-    } catch (error) {
-      if (error.response && error.response.data.msg) {
-        alert(error.response.data.msg);
-      } else {
-        console.error('Error liking drop:', error);
-      }
-    }
-  };
+    fetchUnapprovedDrops();
+  }, [auth.token]);
 
   const handleApprove = async (id) => {
     try {
       const config = {
         headers: {
-          'x-auth-token': auth.token,
+          "x-auth-token": auth.token,
         },
       };
-      await apiClient.put(`/nftdrops/approve/${id}`, {}, config);
-      setNftDrops(nftDrops.map(drop => drop._id === id ? { ...drop, approved: true } : drop));
+      const response = await apiClient.put(
+        `/nftdrops/approve/${id}`,
+        {},
+        config
+      );
+      setUnapprovedDrops((prevDrops) =>
+        prevDrops.filter((drop) => drop._id !== id)
+      );
     } catch (error) {
-      console.error('Error approving drop:', error);
+      console.error("Error approving NFT drop:", error);
+      setError("Failed to approve NFT drop. Please try again later.");
     }
   };
 
   return (
     <div>
       <h1>Dashboard</h1>
-      <div>
-        {nftDrops.length > 0 ? (
-          nftDrops.map((drop) => (
-            <NFTCard
-              key={drop._id}
-              drop={drop}
-              onLike={() => handleLike(drop._id)}
-              onApprove={() => handleApprove(drop._id)}
-            />
-          ))
-        ) : (
-          <p>No NFT drops found.</p>
-        )}
+      {error && <p>{error}</p>}
+      <div className="nft-drops">
+        {unapprovedDrops.map((drop) => (
+          <NFTCard
+            key={drop._id}
+            drop={drop}
+            onLike={null}
+            onApprove={handleApprove}
+            userRole={auth.user?.role} // Pass user role to the NFTCard component
+            isProfilePage={false} // Ensure this is set to false for dashboard
+          />
+        ))}
       </div>
     </div>
   );
