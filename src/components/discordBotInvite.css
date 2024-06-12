@@ -1,83 +1,48 @@
-/* src/components/DiscordBotInvite.css */
-.discord-bot-invite {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin: 16px;
-    border: solid 2px gold;
-    border-radius: 10px;
-  }
-  
-  .discord-bot-image {
-    justify-content: center;
-    max-width: 85%;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  
-  .discord-bot-image:hover {
-    transform: scale(1.05);
-  }
-  
-  .main-content {
-    display: flex;
-    flex-wrap: wrap;
-  }
+.bot-invite-container {
+  text-align: center;
+  margin: 20px;
+}
 
-  .bio {
-    margin: 10px;
-    font-size: xx-large;
-    /* padding: 5px; */
-  }
-  
-  .card {
-    flex: 1 1 70%; /* Takes 70% of the width on larger screens */
-  }
-  
-  p {
-    justify-content: center;
-  }
-  .discord-bot-invite {
-    flex: 1 1 25%; /* Takes 25% of the width on larger screens */
-  }
+.invite-text {
+  margin-bottom: 20px;
+  font-size: 1.2em;
+}
 
-  @media (max-width: 800px) {
-    .bio {
-      font-size: x-large;
-    }
-  }
+.bot-invites {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
 
-  @media (max-width: 630px) {
-    .bio {
-      font-size: large;
-    }
-  }
-  
-  @media (max-width: 600px) {
-    .main-content {
-      flex-direction: column;
-    }
-  
-    .card, .discord-bot-invite {
-      flex: 1 1 100%; /* Takes 100% of the width on smaller screens */
-    }
+.bot-invite {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
 
-    .bio {
-      font-size: medium;
-    }
-  }
-  
-  @media (max-width: 600px) {
-    .discord-bot-invite {
-      margin-top: 16px;
-    }
-  }
+.bot-image {
+  width: 150px;
+  /* Adjust the size as needed */
+  height: auto;
+  border-radius: 10px;
+  transition: transform 0.3s;
+}
 
-  @media (max-width: 520px) {
+.bot-image:hover {
+  transform: scale(1.1);
+}
 
-    .bio {
-      font-size: small;
-    }
+.bot-invite p {
+  margin-top: 10px;
+  font-size: 1em;
+  color: #333;
+}
+
+@media (max-width: 600px) {
+  .bot-invites {
+    flex-direction: column;
   }
+}
