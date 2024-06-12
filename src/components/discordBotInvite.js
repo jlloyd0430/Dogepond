@@ -23,7 +23,6 @@ const DiscordBotInvite = () => {
               className="bot-image"
             />
           </a>
-          <p>Discord Bot</p>
         </div>
         <div className="bot-invite">
           <a
@@ -37,7 +36,6 @@ const DiscordBotInvite = () => {
               className="bot-image"
             />
           </a>
-          <p>Telegram Bot</p>
         </div>
       </div>
     </div>
