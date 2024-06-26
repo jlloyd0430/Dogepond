@@ -55,7 +55,16 @@ const Packages = () => {
             <div className="package">
         <h2 className="package-title">Dogepond Bot Services</h2>
         <div className="package-description">
-          <h3>Coming soon</h3>
+          <h3>   Offering
+          <ul>
+            <li>Dogepond Bot</li>
+            <li>General Tools bot</li>
+            <li>Doginal WL bot</li>
+            <li>OW Sales bot</li>
+            <li>DM Sales bot</li>
+            <li>Trending24 Alpha Bot</li>
+            <li>Wallet Verification bot</li>
+          </ul></h3>
           <p>
             Building bots to make a better doginal experience
           </p>
