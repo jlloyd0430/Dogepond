@@ -64,6 +64,7 @@ const Packages = () => {
             <li>DM Sales bot</li>
             <li>Trending24 Alpha Bot</li>
             <li>Wallet Verification bot</li>
+            <li>Custom bots at your request</li>  
           </ul>
           <p>
             Building bots to make a better doginal experience
