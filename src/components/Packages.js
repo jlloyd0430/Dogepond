@@ -60,7 +60,7 @@ const Packages = () => {
             Building bots to make a better doginal experience
           </p>
           {/* And yet another URL */}
-          <button onClick={() => handleButtonClick('')} className="enquire-button">TBA</button>
+          <button onClick={() => handleButtonClick('https://discord.gg/jPeSRqkUpe')} className="enquire-button">Enquire</button>
         </div>
       </div>
       <h1>HOLDER DISCOUNTS </h1>
