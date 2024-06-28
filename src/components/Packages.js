@@ -62,6 +62,7 @@ const Packages = () => {
             <li>Doginal WL bot</li>
             <li>OW Sales bot</li>
             <li>DM Sales bot</li>
+            <li>DING wallet tracking</li>
             <li>Trending24 Alpha Bot</li>
             <li>Wallet Verification bot</li>
             <li>Custom bots at your request</li>  
