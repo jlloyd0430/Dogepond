@@ -6,6 +6,29 @@
   font-family: "Orbitron", sans-serif;
 }
 
+
+.responsive-image {
+  width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.package {
+  margin-bottom: 30px;
+}
+
+
+.enquire-button {
+  padding: 10px 20px;
+  font-size: 1em;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+h1, h2, h3, p {
+  margin: 10px 0;
+}
+
 .packages-title {
   text-align: center;
   margin-bottom: 20px;
@@ -62,9 +85,6 @@
   transition: background-color 0.3s ease;
 }
 
-.enquire-button:hover {
-  background-color: #ffbf00;
-}
 
 /* Mobile Styles */
 @media (max-width: 600px) {
