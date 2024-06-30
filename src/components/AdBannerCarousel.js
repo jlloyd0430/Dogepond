@@ -21,10 +21,6 @@ const AdBannerCarousel = () => {
         {/* <p className="legend">Ad Banner 2</p> */}
       </div>
       <div>
-        <img src={wizards} alt="Ad Banner 3" />
-        {/* <p className="legend">Ad Banner 3</p> */}
-      </div>
-      <div>
         <img src={rpc} alt="Ad Banner 4" />
         {/* <p className="legend">Ad Banner 4</p> */}
       </div>
