@@ -4,10 +4,10 @@ import { Carousel } from 'react-responsive-carousel';
 import './AdBannerCarousel.css';
 import catsbanner from "./uploads/catsbanner.jpg";
 import novalabs from "./uploads/novabanner.jpg";
-import wizards from "./uploads/wizardbanner.jpg";
 import rpc from "./uploads/rpc.webp";
 import add from "./uploads/antidogedogs.webp";
 import dwarves from "./uploads/dwarves.webp";
+import bot from "./uploads/botservices.webp";
 
 const AdBannerCarousel = () => {
   return (
@@ -15,7 +15,7 @@ const AdBannerCarousel = () => {
       <div>
         <img src={catsbanner} alt="Ad Banner 1" />
         {/* <p className="legend">Ad Banner 1</p> */}
-      </div>
+      </div>import wizards from "./uploads/wizardbanner.jpg";
       <div>
         <img src={novalabs} alt="Ad Banner 2" />
         {/* <p className="legend">Ad Banner 2</p> */}
@@ -28,9 +28,13 @@ const AdBannerCarousel = () => {
         <img src={rpc} alt="Ad Banner 4" />
         {/* <p className="legend">Ad Banner 4</p> */}
       </div>
+     <div>
+        <img src={bot} alt="Banner" />
+        {/* <p className="legend">Ad Banner 5</p> */}
+      </div>
        <div>
         <img src={add} alt="Ad Banner 5" />
-        {/* <p className="legend">Ad Banner 5/p> */}
+        {/* <p className="legend">Ad Banner 6/p> */}
       </div>
       <div>
         <img src={dwarves} alt="Ad Banner 5" />
