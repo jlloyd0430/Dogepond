@@ -1,5 +1,6 @@
 import React from 'react';
 import './Packages.css';
+import bot from "./uploads/botimage.webp";
 
 const Packages = () => {
   // Function now accepts a URL as a parameter
@@ -9,6 +10,9 @@ const Packages = () => {
 
   return (
     <div className="packages-container">
+     <img src={bot} alt="Banner" 
+        className="responsive-image"
+      />
       <h1 className="packages-title">Service Packages</h1>
       <p className="packages-description">
         DogePond offers a variety of different Services for individuals and Projects alike.
@@ -18,7 +22,6 @@ const Packages = () => {
         <p className="package-description">
           We will build you a webpage for your project to check the rarity of your traits & individual inscriptions in your collection.
         </p>
-        {/* Pass specific URL to the function */}
         <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLScr3IFJQ3IjA55QKVUXcCXwvAlOJW2uHGVW25XKsxfnDhWHrg/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
       </div>
       <div className="package">
@@ -33,7 +36,6 @@ const Packages = () => {
             <li>Collection generation</li>
             <li>All Marketplace Metadata</li>
           </ul>
-          {/* Pass another specific URL to the function */}
           <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLSeZTbkLO_8_nD2ZciRj0TccZwbzjBEwmbcIqdggGD5CFOnfRQ/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
         </div>
       </div>
@@ -48,11 +50,10 @@ const Packages = () => {
           <p>
             We offer collaboration and engagement opportunities for projects looking for social media clout and growth.
           </p>
-          {/* And yet another URL */}
           <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLSfv5WILBl9pXQjYDzDbKeE_eg0kOpdY3852gnZkUs82UxBGZQ/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
         </div>
       </div>
-            <div className="package">
+      <div className="package">
         <h2 className="package-title">Dogepond Bot Services</h2>
         <div className="package-description">
           <h3>   Offering </h3>
@@ -70,7 +71,6 @@ const Packages = () => {
           <p>
             Building bots to make a better doginal experience
           </p>
-          {/* And yet another URL */}
           <button onClick={() => handleButtonClick('https://discord.gg/jPeSRqkUpe')} className="enquire-button">Enquire</button>
         </div>
       </div>
