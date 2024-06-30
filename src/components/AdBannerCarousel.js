@@ -15,7 +15,7 @@ const AdBannerCarousel = () => {
       <div>
         <img src={catsbanner} alt="Ad Banner 1" />
         {/* <p className="legend">Ad Banner 1</p> */}
-      </div>import wizards from "./uploads/wizardbanner.jpg";
+      </div>
       <div>
         <img src={novalabs} alt="Ad Banner 2" />
         {/* <p className="legend">Ad Banner 2</p> */}
