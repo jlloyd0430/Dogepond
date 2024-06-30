@@ -1,6 +1,6 @@
 import React from 'react';
 import './Packages.css';
-import bot from "./uploads/botimage.webp";
+import bot from "./uploads/botimage.jpg";
 
 const Packages = () => {
   // Function now accepts a URL as a parameter
