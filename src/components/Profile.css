@@ -1,95 +1,62 @@
 .profile-container {
-  padding: 20px;
-}
-
-.profile-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.connect-wallet-button,
-button {
-  background-color: goldenrod;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  margin: 4px 2px;
-}
-
-.connect-wallet-button:hover,
-button:hover {
-  background-color: darkgoldenrod;
-}
-
-.nft-drops,
-.wallet-holdings {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.wallet-holding,
-.inscription-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 8px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.wallet-holding img,
-.inscription-card img {
-  max-width: 100px;
-  border-radius: 4px;
-}
-
-.wallet-holding p,
-.inscription-card p {
-  margin: 4px 0;
-}
-
-.snapshot-section {
-  margin-top: 20px;
-}
-
-.snapshot-results {
-  margin-top: 10px;
-}
-
-.snapshot-results ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.snapshot-results ul li {
-  margin: 5px 0;
-}
-
-@media (max-width: 600px) {
+    padding: 20px;
+  }
+  
   .profile-buttons {
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .nft-drops,
-  .wallet-holdings {
-    flex-direction: column;
+    display: flex;
     gap: 10px;
+    margin-bottom: 20px;
   }
-
-  .wallet-holdings,
-  .inscription-card,
-  .snapshot-section {
-    width: 100%;
+  
+  .connect-wallet-button {
+    background-color: goldenrod;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
   }
-}
+  
+  .connect-wallet-button:hover {
+    background-color: darkgoldenrod;
+  }
+  
+  .nft-drops, .wallet-holdings {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .wallet-holding, .inscription-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 8px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .wallet-holding img, .inscription-card img {
+    max-width: 100px;
+    border-radius: 4px;
+  }
+  
+  .wallet-holding p, .inscription-card p {
+    margin: 4px 0;
+  }
+  
+  @media (max-width: 600px) {
+    .profile-buttons {
+      flex-direction: column;
+      gap: 5px;
+    }
+  
+    .nft-drops, .wallet-holdings {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+  
