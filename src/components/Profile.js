@@ -155,7 +155,7 @@ const Profile = () => {
                 <h3>Snapshot Tool</h3>
                 <input
                   type="text"
-                  placeholder="Enter collection slug"
+                  placeholder="Enter OW collection slug"
                   value={collectionSlug}
                   onChange={(e) => setCollectionSlug(e.target.value)}
                 />
