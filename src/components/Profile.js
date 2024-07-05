@@ -150,6 +150,7 @@ const Profile = () => {
                   </div>
                 ))}
               </div>
+                  <h2>General Tools</h2>
               <div className="snapshot-section">
                 <h3>Snapshot Tool</h3>
                 <input
