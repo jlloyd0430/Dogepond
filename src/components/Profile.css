@@ -47,6 +47,87 @@
   .wallet-holding p, .inscription-card p {
     margin: 4px 0;
   }
+
+.connect-wallet-button {
+  background-color: goldenrod;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.inscription-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inscription-card img {
+  max-width: 100px;
+  border-radius: 4px;
+}
+
+.inscription-card p {
+  margin: 4px 0;
+}
+
+.snapshot-section {
+  margin-top: 20px;
+}
+
+.snapshot-results {
+  margin-top: 10px;
+}
+
+.snapshot-results ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.snapshot-results ul li {
+  margin: 5px 0;
+}
+
+button {
+  background-color: goldenrod;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .wallet-holdings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .inscription-card {
+    width: 100%;
+  }
+
+  .snapshot-section {
+    width: 100%;
+  }
+}
+
   
   @media (max-width: 600px) {
     .profile-buttons {
