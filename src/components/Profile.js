@@ -1,9 +1,9 @@
-
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
 import { getWalletAddress, getWalletData, DOGELABS_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
 import apiClient from "../services/apiClient";
+import Papa from 'papaparse'; // Import Papa Parse for CSV export
 import "./Profile.css";
 
 const COLLECTION_SLUG = 'doginal-ducks'; // Replace with your collection slug
@@ -17,6 +17,8 @@ const Profile = () => {
   const [view, setView] = useState("nftDrops"); // "nftDrops" or "wallet"
   const [error, setError] = useState("");
   const [points, setPoints] = useState(0);
+  const [snapshotData, setSnapshotData] = useState([]);
+  const [collectionSlug, setCollectionSlug] = useState("");
 
   useEffect(() => {
     const fetchUserDrops = async () => {
@@ -79,6 +81,34 @@ const Profile = () => {
     }
   };
 
+  const fetchSnapshot = async () => {
+    try {
+      const response = await fetch(`https://dogeturbo.ordinalswallet.com/collection/${collectionSlug}/snapshot`);
+      const snapshotText = await response.text();
+      const parsedData = Papa.parse(snapshotText, {
+        header: false,
+      }).data;
+
+      const snapshotCount = parsedData.reduce((acc, address) => {
+        acc[address] = (acc[address] || 0) + 1;
+        return acc;
+      }, {});
+
+      setSnapshotData(Object.entries(snapshotCount).map(([address, count]) => ({ address, count })));
+    } catch (error) {
+      console.error('Failed to fetch snapshot data:', error);
+    }
+  };
+
+  const exportToCSV = () => {
+    const csv = Papa.unparse(snapshotData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${collectionSlug}_snapshot.csv`;
+    link.click();
+  };
+
   return (
     <div className="profile-container">
       <h1>Profile</h1>
@@ -104,6 +134,7 @@ const Profile = () => {
         </div>
       ) : (
         <div className="wallet-view">
+          <p>Points: {points}</p>
           {!walletAddress ? (
             <button className="connect-wallet-button" onClick={connectWallet}>Connect Wallet</button>
           ) : (
@@ -118,6 +149,27 @@ const Profile = () => {
                     <p>{inscription.meta.name}</p>
                   </div>
                 ))}
+              </div>
+              <div className="snapshot-section">
+                <h3>Snapshot Collection</h3>
+                <input
+                  type="text"
+                  placeholder="Enter collection slug"
+                  value={collectionSlug}
+                  onChange={(e) => setCollectionSlug(e.target.value)}
+                />
+                <button onClick={fetchSnapshot}>Take Snapshot</button>
+                {snapshotData.length > 0 && (
+                  <div className="snapshot-results">
+                    <h4>Snapshot Results</h4>
+                    <ul>
+                      {snapshotData.map(({ address, count }) => (
+                        <li key={address}>{address}: {count}</li>
+                      ))}
+                    </ul>
+                    <button onClick={exportToCSV}>Export to CSV</button>
+                  </div>
+                )}
               </div>
             </div>
           )}
