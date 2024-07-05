@@ -104,7 +104,6 @@ const Profile = () => {
         </div>
       ) : (
         <div className="wallet-view">
-          <p>Points: {points}</p>
           {!walletAddress ? (
             <button className="connect-wallet-button" onClick={connectWallet}>Connect Wallet</button>
           ) : (
