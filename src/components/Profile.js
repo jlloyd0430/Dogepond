@@ -134,7 +134,7 @@ const Profile = () => {
         </div>
       ) : (
         <div className="wallet-view">
-          <p>Points: {points}</p>
+
           {!walletAddress ? (
             <button className="connect-wallet-button" onClick={connectWallet}>Connect Wallet</button>
           ) : (
@@ -151,14 +151,14 @@ const Profile = () => {
                 ))}
               </div>
               <div className="snapshot-section">
-                <h3>Snapshot Collection</h3>
+                <h3>Snapshot Tool</h3>
                 <input
                   type="text"
                   placeholder="Enter collection slug"
                   value={collectionSlug}
                   onChange={(e) => setCollectionSlug(e.target.value)}
                 />
-                <button onClick={fetchSnapshot}>Take Snapshot</button>
+                <button onClick={fetchSnapshot}>Snap!t</button>
                 {snapshotData.length > 0 && (
                   <div className="snapshot-results">
                     <h4>Snapshot Results</h4>
