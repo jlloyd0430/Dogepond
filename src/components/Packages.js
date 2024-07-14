@@ -20,11 +20,13 @@ const Packages = () => {
         <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLScr3IFJQ3IjA55QKVUXcCXwvAlOJW2uHGVW25XKsxfnDhWHrg/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
       </div>
       <div className="package">
-        <h2 className="package-title">Inscription Services</h2>
+        <h2 className="package-title">Launchpad Services</h2>
         <div className="package-description">
           A full minting resource for your project from start to finish
-          Offering
+          Offering, truly automated minting experiences.
           <ul>
+            <li>minting page</li>
+            <li>Inscription services</li>
             <li>Resizing/Compression</li>
             <li>Etching Dunes</li>
             <li>Large file sizes</li>
