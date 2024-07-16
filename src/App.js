@@ -5,7 +5,7 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Dashboard from "./components/Dashboard";
 import PostForm from "./components/PostForm";
-import EditForm from "./components/EditForm"; // Import the EditForm component
+import EditForm from "./components/EditForm";
 import Home from "./components/Home";
 import PrivateRoute from "./components/PrivateRoute";
 import Logout from "./components/Logout";
@@ -19,6 +19,7 @@ import { ThemeProvider, ThemeContext } from "./context/ThemeContext";
 import "./App.css";
 import "./components/NFTCard.css";
 import "./components/Footer.css";
+import Proposals from "./components/Proposals"; // Import the Proposals component
 
 const App = () => {
   return (
@@ -68,6 +69,9 @@ const AppContent = () => {
             <Route path="/fish" element={<Fish />} />
             <Route path="/edit/:id" element={<PrivateRoute />}>
               <Route index element={<EditForm />} />
+            </Route>
+            <Route path="/proposals" element={<PrivateRoute />}>
+              <Route index element={<Proposals />} />
             </Route>
           </Routes>
         </div>
