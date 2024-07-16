@@ -15,17 +15,18 @@ const Header = () => {
       <nav className="nav">
         {auth.isAuthenticated ? (
           <>
-            <Link className="nav-link" to="/post">Post</Link> {/* Authenticated users see Post link */}
-            <Link className="nav-link" to="/fish">Fish</Link> {/* Authenticated users see Fish link */}
+            <Link className="nav-link" to="/post">Post</Link>
+            <Link className="nav-link" to="/fish">Fish</Link>
+            <Link className="nav-link" to="/proposals">Proposals</Link>
+            <ProfileDropdown />
           </>
         ) : (
           <>
             <Link className="nav-link" to="/login">Login</Link>
             <Link className="nav-link" to="/signup">Signup</Link>
-            <Link className= "nav-link" to="/packages" >Services</Link>
+            <Link className="nav-link" to="/packages">Services</Link>
           </>
         )}
-        {auth.isAuthenticated && <ProfileDropdown />} {/* Conditionally render ProfileDropdown */}
       </nav>
     </header>
   );
