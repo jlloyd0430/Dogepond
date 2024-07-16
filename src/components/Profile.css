@@ -4,6 +4,7 @@
 
 .profile-buttons {
   display: flex;
+  flex-direction: row-reverse;
   gap: 10px;
   margin-bottom: 20px;
 }
