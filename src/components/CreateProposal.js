@@ -58,7 +58,7 @@ const CreateProposal = () => {
       ))}
       <label>
         <input type="checkbox" checked={classified} onChange={(e) => setClassified(e.target.checked)} />
-        Classified
+        Classified (only holders from this collection can view)
       </label>
       <button onClick={handleSubmit}>Create Proposal</button>
     </div>
