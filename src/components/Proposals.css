@@ -49,11 +49,9 @@
 .create-proposal-form textarea,
 .create-proposal-form button {
   margin-bottom: 15px;
+    max-width: 100%;
 }
 
-.create-proposal-form input,{
-  max-width: 100%;
-}
 
 
 .create-proposal-form input,
