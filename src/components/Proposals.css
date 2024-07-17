@@ -76,7 +76,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .header-buttons {
-    flex-direction: column;
+    flex-direction: row-reverse;
     align-items: center;
   }
 
