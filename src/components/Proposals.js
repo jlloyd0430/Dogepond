@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import apiClient from '../services/apiClient';
 import { getWalletAddress, getWalletData, DOGELABS_WALLET, DOGINALS_TYPE } from '../wallets/wallets';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import './Proposals.css';
 
 const Proposals = () => {
   const [proposals, setProposals] = useState([]);
+  const [filteredProposals, setFilteredProposals] = useState([]);
   const [walletAddress, setWalletAddress] = useState(null);
   const [walletHoldings, setWalletHoldings] = useState([]);
   const [showCreateProposal, setShowCreateProposal] = useState(false);
@@ -19,14 +20,16 @@ const Proposals = () => {
     weightInputs: {},
     image: null,
   });
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('mostRecent');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
   useEffect(() => {
     const fetchProposals = async () => {
       try {
         const response = await apiClient.get('/proposals');
         setProposals(response.data);
+        setFilteredProposals(response.data);
       } catch (error) {
         console.error('Error fetching proposals:', error);
       }
@@ -34,6 +37,10 @@ const Proposals = () => {
 
     fetchProposals();
   }, []);
+
+  useEffect(() => {
+    filterProposals();
+  }, [searchTerm, filterType, proposals]);
 
   const handleConnectWallet = async () => {
     try {
@@ -136,10 +143,36 @@ const Proposals = () => {
     setNewProposal({ ...newProposal, image: e.target.files[0] });
   };
 
-  const filteredProposals = proposals.filter(proposal =>
-    proposal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    proposal.collectionName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filterProposals = () => {
+    let filtered = proposals;
+
+    if (searchTerm) {
+      filtered = filtered.filter((proposal) =>
+        proposal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        proposal.collectionName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    switch (filterType) {
+      case 'past':
+        filtered = filtered.filter((proposal) => new Date(proposal.endDate) < new Date());
+        break;
+      case 'mostRecent':
+        filtered = filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        break;
+      case 'topVotes':
+        filtered = filtered.sort((a, b) => {
+          const totalVotesA = a.votes.reduce((acc, vote) => acc + vote.weight, 0);
+          const totalVotesB = b.votes.reduce((acc, vote) => acc + vote.weight, 0);
+          return totalVotesB - totalVotesA;
+        });
+        break;
+      default:
+        break;
+    }
+
+    setFilteredProposals(filtered);
+  };
 
   return (
     <div className="proposals-container">
@@ -148,6 +181,29 @@ const Proposals = () => {
           {walletAddress ? `Connected: ${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : 'Connect Wallet'}
         </button>
         <button className="button" onClick={() => setShowCreateProposal(true)}>Create Proposal</button>
+      </div>
+
+      <div className="search-filter-container">
+        <input
+          type="text"
+          placeholder="Search Proposals"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <div className="filter-dropdown">
+          <FontAwesomeIcon
+            className="search"
+            icon={faFilter}
+            onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+          />
+          {showFilterDropdown && (
+            <div className="dropdown-menu">
+              <div onClick={() => setFilterType('mostRecent')}>Most Recent</div>
+              <div onClick={() => setFilterType('past')}>Past</div>
+              <div onClick={() => setFilterType('topVotes')}>Top Votes</div>
+            </div>
+          )}
+        </div>
       </div>
 
       {showCreateProposal && (
@@ -208,25 +264,6 @@ const Proposals = () => {
           <div>Note: you must hold an inscription from the collection you are making a proposal for.</div>
         </div>
       )}
-
-      <div className="search-filter-container">
-        <input
-          type="text"
-          placeholder="Search Proposals"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <div className="filter-dropdown" onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}>
-          <FontAwesomeIcon className="search" icon={faFilter} />
-          {filterDropdownOpen && (
-            <div className="dropdown-menu">
-              <div onClick={() => setSearchQuery('')}>All</div>
-              <div onClick={() => setSearchQuery('most votes')}>Most Votes</div>
-              <div onClick={() => setSearchQuery('recent')}>Recent</div>
-            </div>
-          )}
-        </div>
-      </div>
 
       <div className="proposals-list">
         {filteredProposals.map((proposal) => (
