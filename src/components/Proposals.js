@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../services/apiClient';
 import { getWalletAddress, getWalletData, DOGELABS_WALLET, DOGINALS_TYPE } from '../wallets/wallets';
+import { FaSearch, FaFilter } from 'react-icons/fa';
 import './Proposals.css';
 
 const Proposals = () => {
@@ -17,6 +18,8 @@ const Proposals = () => {
     weightInputs: {},
     image: null,
   });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('');
 
   useEffect(() => {
     const fetchProposals = async () => {
@@ -132,6 +135,30 @@ const Proposals = () => {
     setNewProposal({ ...newProposal, image: e.target.files[0] });
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleFilterChange = (newFilter) => {
+    setFilter(newFilter);
+  };
+
+  const filteredProposals = proposals.filter((proposal) => {
+    return (
+      proposal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      proposal.collectionName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
+  const sortedProposals = [...filteredProposals].sort((a, b) => {
+    if (filter === 'most-votes') {
+      return b.votes.length - a.votes.length;
+    } else if (filter === 'recent') {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+    return 0;
+  });
+
   return (
     <div className="proposals-container">
       <div className="header-buttons">
@@ -174,7 +201,7 @@ const Proposals = () => {
           />
           <input
             type="text"
-            placeholder="OW Collection name"
+            placeholder="Collection Name"
             value={newProposal.collectionName}
             onChange={(e) => setNewProposal({ ...newProposal, collectionName: e.target.value })}
           />
@@ -200,30 +227,44 @@ const Proposals = () => {
         </div>
       )}
 
-<div className="proposals-list">
-  {proposals.map((proposal) => (
-    <div key={proposal._id} className="proposal">
-      <h2>{proposal.name}</h2>
-      <p>{proposal.description}</p>
-      <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
-      <p>Collection Name: {proposal.collectionName}</p>
-      <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
-      {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
-      {new Date(proposal.endDate) > new Date() ? (
-        proposal.options.map((option) => (
-          <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
-            Vote for {option}
-          </button>
-        ))
-      ) : (
-        <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
-          proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
-        ) : 'No votes cast'}</p>
-      )}
-    </div>
-  ))}
-</div>
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search Proposals..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+        <button className="filter-button" onClick={() => handleFilterChange('most-votes')}>
+          <FaFilter /> Most Votes
+        </button>
+        <button className="filter-button" onClick={() => handleFilterChange('recent')}>
+          <FaFilter /> Recent
+        </button>
+      </div>
 
+      <div className="proposals-list">
+        {sortedProposals.map((proposal) => (
+          <div key={proposal._id} className="proposal">
+            <h2>{proposal.name}</h2>
+            <p>{proposal.description}</p>
+            <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
+            <p>Collection Name: {proposal.collectionName}</p>
+            <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
+            {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
+            {new Date(proposal.endDate) > new Date() ? (
+              proposal.options.map((option) => (
+                <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
+                  Vote for {option}
+                </button>
+              ))
+            ) : (
+              <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
+                proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
+              ) : 'No votes cast'}</p>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
