@@ -5,12 +5,10 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Dashboard from "./components/Dashboard";
 import PostForm from "./components/PostForm";
-import EditForm from "./components/EditForm"; // Import the EditForm component
+import EditForm from "./components/EditForm";
 import Home from "./components/Home";
 import PrivateRoute from "./components/PrivateRoute";
 import Logout from "./components/Logout";
-import { ThemeProvider, ThemeContext } from "./context/ThemeContext";
-  
 import Profile from "./components/Profile";
 import Settings from "./components/Settings";
 import Packages from "./components/Packages";
@@ -21,12 +19,10 @@ import { ThemeProvider, ThemeContext } from "./context/ThemeContext";
 import "./App.css";
 import "./components/NFTCard.css";
 import "./components/Footer.css";
+import Proposals from "./components/Proposals"; // Import the Proposals component
 
 const App = () => {
   return (
-
-const App = () => {
-  
     <AuthProvider>
       <ThemeProvider>
         <AppContent />
@@ -34,8 +30,10 @@ const App = () => {
     </AuthProvider>
   );
 };
+
 const AppContent = () => {
   const { isDarkMode } = useContext(ThemeContext);
+
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add("dark-mode");
@@ -43,13 +41,10 @@ const AppContent = () => {
       document.body.classList.remove("dark-mode");
     }
   }, [isDarkMode]);
+
   return (
     <Router>
       <div className="app">
-
-    
-const AppContent = () => {
-  
         <Header />
         <div className="content">
           <Routes>
@@ -75,6 +70,9 @@ const AppContent = () => {
             <Route path="/edit/:id" element={<PrivateRoute />}>
               <Route index element={<EditForm />} />
             </Route>
+            <Route path="/proposals" element={<PrivateRoute />}>
+              <Route index element={<Proposals />} />
+            </Route>
           </Routes>
         </div>
         <Footer />
@@ -82,4 +80,5 @@ const AppContent = () => {
     </Router>
   );
 };
+
 export default App;
