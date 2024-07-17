@@ -79,10 +79,9 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .header-buttons {
-    flex-direction: row-reverse;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    width: 80%;
+    width: 95%;
   }
 
   .create-proposal-form,
