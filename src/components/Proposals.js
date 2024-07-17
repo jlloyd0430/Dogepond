@@ -57,11 +57,17 @@ const Proposals = () => {
     console.log('Proposal ID:', proposal._id);
     console.log('Option:', option);
 
+    const token = localStorage.getItem('token'); // Get JWT token from local storage
+
     try {
       const response = await apiClient.post('/proposals/vote', {
         proposalId: proposal._id,
         walletAddress: walletAddress.trim(),
         option,
+      }, {
+        headers: {
+          'x-auth-token': token
+        }
       });
       console.log('Vote response:', response);
       alert('Vote cast successfully!');
@@ -79,6 +85,8 @@ const Proposals = () => {
       alert('Please connect your wallet first.');
       return;
     }
+
+    const token = localStorage.getItem('token'); // Get JWT token from local storage
 
     try {
       const formData = new FormData();
@@ -99,7 +107,8 @@ const Proposals = () => {
 
       await apiClient.post('/proposals/create', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'x-auth-token': token
         }
       });
       alert('Proposal created successfully!');
@@ -200,30 +209,29 @@ const Proposals = () => {
         </div>
       )}
 
-<div className="proposals-list">
-  {proposals.map((proposal) => (
-    <div key={proposal._id} className="proposal">
-      <h2>{proposal.name}</h2>
-      <p>{proposal.description}</p>
-      <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
-      <p>Collection Name: {proposal.collectionName}</p>
-      <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
-      {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
-      {new Date(proposal.endDate) > new Date() ? (
-        proposal.options.map((option) => (
-          <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
-            Vote for {option}
-          </button>
-        ))
-      ) : (
-        <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
-          proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
-        ) : 'No votes cast'}</p>
-      )}
-    </div>
-  ))}
-</div>
-
+      <div className="proposals-list">
+        {proposals.map((proposal) => (
+          <div key={proposal._id} className="proposal">
+            <h2>{proposal.name}</h2>
+            <p>{proposal.description}</p>
+            <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
+            <p>Collection Name: {proposal.collectionName}</p>
+            <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
+            {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
+            {new Date(proposal.endDate) > new Date() ? (
+              proposal.options.map((option) => (
+                <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
+                  Vote for {option}
+                </button>
+              ))
+            ) : (
+              <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
+                proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
+              ) : 'No votes cast'}</p>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
