@@ -280,12 +280,13 @@ const Proposals = () => {
                 <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
                   Vote for {option}
                 </button>
+             </div>                     
               ))
             ) : (
               <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
                 proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
               ) : 'No votes cast'}</p>
-              </div>
+           
             )}
           </div>
         ))}
