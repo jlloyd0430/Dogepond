@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import apiClient from '../services/apiClient';
 import { getWalletAddress, getWalletData, DOGELABS_WALLET, DOGINALS_TYPE } from '../wallets/wallets';
 import './Proposals.css';
@@ -215,7 +217,7 @@ const Proposals = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <div className="filter-dropdown" onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}>
-          <i className="fa fa-filter"></i>
+          <FontAwesomeIcon className="search" icon={faFilter} />
           {filterDropdownOpen && (
             <div className="dropdown-menu">
               <div onClick={() => setSearchQuery('')}>All</div>
