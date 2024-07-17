@@ -8,6 +8,7 @@ const CreateProposal = () => {
   const [endDate, setEndDate] = useState('');
   const [collectionName, setCollectionName] = useState('');
   const [weightInputs, setWeightInputs] = useState({});
+  const [classified, setClassified] = useState(false);
 
   const handleAddOption = () => {
     setOptions([...options, '']);
@@ -31,6 +32,7 @@ const CreateProposal = () => {
       endDate,
       collectionName,
       weightInputs,
+      classified, // Include classified field
     };
 
     await apiClient.post('/proposals/create', payload);
@@ -54,6 +56,10 @@ const CreateProposal = () => {
           <input type="number" placeholder="Weight" value={weightInputs[nft]} onChange={(e) => handleWeightInputChange(nft, e.target.value)} />
         </div>
       ))}
+      <label>
+        <input type="checkbox" checked={classified} onChange={(e) => setClassified(e.target.checked)} />
+        Classified
+      </label>
       <button onClick={handleSubmit}>Create Proposal</button>
     </div>
   );
