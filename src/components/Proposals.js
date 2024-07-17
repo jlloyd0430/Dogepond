@@ -23,6 +23,7 @@ const Proposals = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('mostRecent');
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [viewingClassified, setViewingClassified] = useState({});
 
   useEffect(() => {
     const fetchProposals = async () => {
@@ -85,62 +86,27 @@ const Proposals = () => {
     }
   };
 
-  const handleCreateProposal = async () => {
+  const handleViewClassified = async (proposal) => {
     if (!walletAddress) {
       alert('Please connect your wallet first.');
       return;
     }
 
     try {
-      const formData = new FormData();
-      formData.append('name', newProposal.name);
-      formData.append('description', newProposal.description);
-      formData.append('endDate', newProposal.endDate);
-      formData.append('collectionName', newProposal.collectionName);
-      formData.append('walletAddress', walletAddress); // Add walletAddress to form data
-      newProposal.options.forEach((option, index) => {
-        formData.append(`options[${index}]`, option);
+      const response = await apiClient.post('/proposals/view', {
+        proposalId: proposal._id,
+        walletAddress: walletAddress.trim(),
       });
-      Object.keys(newProposal.weightInputs).forEach((key) => {
-        formData.append(`weightInputs[${key}]`, newProposal.weightInputs[key]);
-      });
-      if (newProposal.image) {
-        formData.append('image', newProposal.image);
-      }
 
-      await apiClient.post('/proposals/create', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      alert('Proposal created successfully!');
-      setShowCreateProposal(false);
-      // Fetch updated proposals
-      const response = await apiClient.get('/proposals');
-      setProposals(response.data);
-    } catch (error) {
-      console.error('Error creating proposal:', error);
-      if (error.response && error.response.data && error.response.data.error) {
-        alert(error.response.data.error);
+      if (response.data.allowed) {
+        setViewingClassified({ ...viewingClassified, [proposal._id]: true });
       } else {
-        alert('Failed to create proposal. Please try again later.');
+        alert('You do not have the required NFTs to view this proposal.');
       }
+    } catch (error) {
+      console.error('Error viewing classified proposal:', error);
+      alert('Failed to view proposal. Please try again later.');
     }
-  };
-
-  const handleProposalOptionChange = (index, value) => {
-    const newOptions = [...newProposal.options];
-    newOptions[index] = value;
-    setNewProposal({ ...newProposal, options: newOptions });
-  };
-
-  const handleWeightInputChange = (nft, weight) => {
-    const weightInputs = { ...newProposal.weightInputs, [nft]: weight };
-    setNewProposal({ ...newProposal, weightInputs });
-  };
-
-  const handleImageChange = (e) => {
-    setNewProposal({ ...newProposal, image: e.target.files[0] });
   };
 
   const filterProposals = () => {
@@ -260,6 +226,14 @@ const Proposals = () => {
             </div>
           ))}
           <input type="file" accept="image/*" onChange={handleImageChange} />
+          <label>
+            <input
+              type="checkbox"
+              checked={newProposal.classified}
+              onChange={(e) => setNewProposal({ ...newProposal, classified: e.target.checked })}
+            />
+            Classified
+          </label>
           <button className="button" onClick={handleCreateProposal}>Create Proposal</button>
           <div>Note: you must hold an inscription from the collection you are making a proposal for.</div>
         </div>
@@ -269,22 +243,26 @@ const Proposals = () => {
         {filteredProposals.map((proposal) => (
           <div key={proposal._id} className="proposal">
             <h2>{proposal.name}</h2>
-            {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
-            <p>{proposal.description}</p>
-            <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
             <p>Collection Name: {proposal.collectionName}</p>
-            <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
-            {new Date(proposal.endDate) > new Date() ? (
-              proposal.options.map((option) => (
-                <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
-                  Vote for {option}
-                </button>            
-              ))
+            {viewingClassified[proposal._id] ? (
+              <>
+                <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
+                <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
+                {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
+                <p>{proposal.description}</p>
+                {proposal.options.map((option) => (
+                  <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
+                    Vote for {option}
+                  </button>
+                ))}
+              </>
             ) : (
-              <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
-                proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
-              ) : 'No votes cast'}</p>
-           
+              <>
+                <p>Classified</p>
+                <button className="button" onClick={() => handleViewClassified(proposal)}>
+                  View
+                </button>
+              </>
             )}
           </div>
         ))}
