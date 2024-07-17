@@ -1,199 +1,231 @@
-const express = require('express');
-const axios = require('axios');
-const router = express.Router();
-const Proposal = require('../models/Proposal');
-const Vote = require('../models/Votes');
-const Snapshot = require('../models/Snapshot');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
-const { S3Client } = require('@aws-sdk/client-s3');
+import React, { useState, useEffect } from 'react';
+import { apiClient, setAuthHeader } from '../services/apiClient';
+import { getWalletAddress, getWalletData, DOGELABS_WALLET, DOGINALS_TYPE } from '../wallets/wallets';
+import './Proposals.css';
 
-// Configure AWS SDK v3
-const s3 = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
-
-// Configure Multer-S3
-const upload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: process.env.S3_BUCKET_NAME,
-    metadata: (req, file, cb) => {
-      cb(null, { fieldName: file.fieldname });
-    },
-    key: (req, file, cb) => {
-      const fileName = `${Date.now().toString()}_${file.originalname}`;
-      cb(null, fileName);
-    },
-  }),
-});
-
-// Create a new proposal
-router.post('/create', upload.single('image'), async (req, res) => {
-  const { name, description, options, endDate, collectionName, weightInputs, walletAddress } = req.body;
-  const image = req.file ? req.file.location : null; // Store URL of the image
-
-  if (!walletAddress) {
-    return res.status(400).json({ error: 'Wallet must be connected.' });
-  }
-
-  if (!collectionName) {
-    return res.status(400).json({ error: 'Collection name is required.' });
-  }
-
-  try {
-    // Take a snapshot of the collection
-    const snapshotResponse = await axios.get(`https://dogeturbo.ordinalswallet.com/collection/${collectionName}/snapshot`);
-    const snapshot = snapshotResponse.data.split('\n').filter(address => address.trim());
-
-    // Count the occurrences of each address in the snapshot
-    const addressCounts = snapshot.reduce((acc, address) => {
-      const normalizedAddress = address.trim(); // Ensure addresses are trimmed and normalized
-      if (normalizedAddress) {
-        acc[normalizedAddress] = (acc[normalizedAddress] || 0) + 1;
-      }
-      return acc;
-    }, {});
-
-    // Check if the connected wallet address is in the snapshot
-    const normalizedWalletAddress = walletAddress.trim();
-    if (!addressCounts[normalizedWalletAddress]) {
-      return res.status(403).json({ error: 'You must hold an NFT from this collection to create a proposal.' });
-    }
-
-    const proposal = new Proposal({
-      name,
-      description,
-      options,
-      endDate,
-      collectionName,
-      weightInputs,
-      image, // Include the image URL
-      votes: [],
-    });
-
-    await proposal.save();
-
-    const snapshotDoc = new Snapshot({
-      proposalId: proposal._id,
-      collectionName,
-      addressCounts,
-    });
-
-    await snapshotDoc.save();
-
-    res.status(201).json(proposal);
-  } catch (error) {
-    console.error('Error creating proposal:', error);
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// Get all proposals
-router.get('/', async (req, res) => {
-  try {
-    const proposals = await Proposal.find().populate('votes');
-    res.json(proposals);
-  } catch (error) {
-    console.error('Error fetching proposals:', error);
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// Get a specific proposal by ID
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const proposal = await Proposal.findById(id).populate('votes');
-    if (!proposal) {
-      return res.status(404).json({ message: 'Proposal not found.' });
-    }
-    res.status(200).json(proposal);
-  } catch (error) {
-    console.error('Error fetching proposal:', error);
-    res.status(500).json({ message: 'An error occurred while fetching the proposal.', error });
-  }
-});
-
-// Function to calculate the winning option
-const calculateWinningOption = (votes, options) => {
-  const optionCounts = options.reduce((acc, option) => {
-    acc[option] = 0;
-    return acc;
-  }, {});
-
-  votes.forEach(vote => {
-    if (optionCounts[vote.option] !== undefined) {
-      optionCounts[vote.option] += vote.weight;
-    }
+const Proposals = () => {
+  const [proposals, setProposals] = useState([]);
+  const [walletAddress, setWalletAddress] = useState(null);
+  const [walletHoldings, setWalletHoldings] = useState([]);
+  const [showCreateProposal, setShowCreateProposal] = useState(false);
+  const [newProposal, setNewProposal] = useState({
+    name: '',
+    description: '',
+    options: [''],
+    endDate: '',
+    collectionName: '',
+    weightInputs: {},
+    image: null,
   });
 
-  return Object.keys(optionCounts).reduce((a, b) => (optionCounts[a] > optionCounts[b] ? a : b));
+  useEffect(() => {
+    const fetchProposals = async () => {
+      try {
+        const response = await apiClient.get('/proposals');
+        setProposals(response.data);
+      } catch (error) {
+        console.error('Error fetching proposals:', error);
+      }
+    };
+
+    fetchProposals();
+  }, []);
+
+  const handleConnectWallet = async () => {
+    try {
+      const address = await getWalletAddress(DOGELABS_WALLET, DOGINALS_TYPE);
+      setWalletAddress(address);
+      const data = await getWalletData(address);
+      setWalletHoldings(data.inscriptions);
+      setAuthHeader('YOUR_TEST_TOKEN'); // Set the authorization header
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+    }
+  };
+
+  const handleVote = async (proposal, option) => {
+    if (!walletAddress) {
+      alert('Please connect your wallet first.');
+      return;
+    }
+
+    if (!option) {
+      alert('Please select an option to vote.');
+      return;
+    }
+
+    console.log('Wallet Address:', walletAddress);
+    console.log('Proposal ID:', proposal._id);
+    console.log('Option:', option);
+
+    try {
+      const response = await apiClient.post('/proposals/vote', {
+        proposalId: proposal._id,
+        walletAddress: walletAddress.trim(),
+        option,
+      });
+      console.log('Vote response:', response);
+      alert('Vote cast successfully!');
+      // Fetch updated proposals
+      const updatedProposals = await apiClient.get('/proposals');
+      setProposals(updatedProposals.data);
+    } catch (error) {
+      console.error('Error casting vote:', error);
+      alert('Failed to cast vote. Please try again later.');
+    }
+  };
+
+  const handleCreateProposal = async () => {
+    if (!walletAddress) {
+      alert('Please connect your wallet first.');
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('name', newProposal.name);
+      formData.append('description', newProposal.description);
+      formData.append('endDate', newProposal.endDate);
+      formData.append('collectionName', newProposal.collectionName);
+      formData.append('walletAddress', walletAddress); // Add walletAddress to form data
+      newProposal.options.forEach((option, index) => {
+        formData.append(`options[${index}]`, option);
+      });
+      Object.keys(newProposal.weightInputs).forEach((key) => {
+        formData.append(`weightInputs[${key}]`, newProposal.weightInputs[key]);
+      });
+      if (newProposal.image) {
+        formData.append('image', newProposal.image);
+      }
+
+      await apiClient.post('/proposals/create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      alert('Proposal created successfully!');
+      setShowCreateProposal(false);
+      // Fetch updated proposals
+      const response = await apiClient.get('/proposals');
+      setProposals(response.data);
+    } catch (error) {
+      console.error('Error creating proposal:', error);
+      if (error.response && error.response.data && error.response.data.error) {
+        alert(error.response.data.error);
+      } else {
+        alert('Failed to create proposal. Please try again later.');
+      }
+    }
+  };
+
+  const handleProposalOptionChange = (index, value) => {
+    const newOptions = [...newProposal.options];
+    newOptions[index] = value;
+    setNewProposal({ ...newProposal, options: newOptions });
+  };
+
+  const handleWeightInputChange = (nft, weight) => {
+    const weightInputs = { ...newProposal.weightInputs, [nft]: weight };
+    setNewProposal({ ...newProposal, weightInputs });
+  };
+
+  const handleImageChange = (e) => {
+    setNewProposal({ ...newProposal, image: e.target.files[0] });
+  };
+
+  return (
+    <div className="proposals-container">
+      <div className="header-buttons">
+        <button className="button" onClick={handleConnectWallet}>
+          {walletAddress ? `Connected: ${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : 'Connect Wallet'}
+        </button>
+        <button className="button" onClick={() => setShowCreateProposal(true)}>Create Proposal</button>
+      </div>
+
+      {showCreateProposal && (
+        <div className="create-proposal-form">
+          <h3>Create Proposal</h3>
+          <input
+            type="text"
+            placeholder="Proposal Name"
+            value={newProposal.name}
+            onChange={(e) => setNewProposal({ ...newProposal, name: e.target.value })}
+          />
+          <textarea
+            placeholder="Proposal Description"
+            value={newProposal.description}
+            onChange={(e) => setNewProposal({ ...newProposal, description: e.target.value })}
+          />
+          {newProposal.options.map((option, index) => (
+            <input
+              key={index}
+              type="text"
+              placeholder={`Option ${index + 1}`}
+              value={option}
+              onChange={(e) => handleProposalOptionChange(index, e.target.value)}
+            />
+          ))}
+          <button className="button" onClick={() => setNewProposal({ ...newProposal, options: [...newProposal.options, ''] })}>
+            Add Option
+          </button>
+          <input
+            type="datetime-local"
+            value={newProposal.endDate}
+            onChange={(e) => setNewProposal({ ...newProposal, endDate: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="OW Collection name"
+            value={newProposal.collectionName}
+            onChange={(e) => setNewProposal({ ...newProposal, collectionName: e.target.value })}
+          />
+          {Object.keys(newProposal.weightInputs).map((nft, index) => (
+            <div key={index}>
+              <input
+                type="text"
+                placeholder="NFT"
+                value={nft}
+                onChange={(e) => handleWeightInputChange(e.target.value, newProposal.weightInputs[nft])}
+              />
+              <input
+                type="number"
+                placeholder="Weight"
+                value={newProposal.weightInputs[nft]}
+                onChange={(e) => handleWeightInputChange(nft, e.target.value)}
+              />
+            </div>
+          ))}
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+          <button className="button" onClick={handleCreateProposal}>Create Proposal</button>
+          <div>Note: you must hold an inscription from the collection you are making a proposal for.</div>
+        </div>
+      )}
+
+      <div className="proposals-list">
+        {proposals.map((proposal) => (
+          <div key={proposal._id} className="proposal">
+            <h2>{proposal.name}</h2>
+            <p>{proposal.description}</p>
+            <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
+            <p>Collection Name: {proposal.collectionName}</p>
+            <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
+            {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
+            {new Date(proposal.endDate) > new Date() ? (
+              proposal.options.map((option) => (
+                <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
+                  Vote for {option}
+                </button>
+              ))
+            ) : (
+              <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
+                proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
+              ) : 'No votes cast'}</p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
-// Vote on a proposal
-router.post('/vote', async (req, res) => {
-  const { proposalId, walletAddress, option } = req.body;
-
-  console.log('Received vote request:', req.body);
-
-  if (!proposalId || !walletAddress || !option) {
-    return res.status(400).json({ message: 'Missing required fields.' });
-  }
-
-  try {
-    const proposal = await Proposal.findById(proposalId);
-    if (!proposal) {
-      return res.status(404).json({ message: 'Proposal not found.' });
-    }
-
-    const currentTime = new Date();
-    if (currentTime > new Date(proposal.endDate)) {
-      const winningOption = calculateWinningOption(proposal.votes, proposal.options);
-      return res.status(400).json({ message: `Voting has ended. The winning option is ${winningOption}.` });
-    }
-
-    const existingVote = await Vote.findOne({ proposalId, walletAddress: walletAddress.trim() });
-    if (existingVote) {
-      return res.status(400).json({ message: 'You have already voted.' });
-    }
-
-    const snapshot = await Snapshot.findOne({ proposalId });
-    if (!snapshot) {
-      return res.status(404).json({ message: 'Snapshot not found.' });
-    }
-
-    console.log(`Snapshot address counts: ${JSON.stringify(snapshot.addressCounts)}`);
-
-    const normalizedWalletAddress = walletAddress.trim(); // Normalize the wallet address
-    const nftCount = snapshot.addressCounts[normalizedWalletAddress];
-    if (!nftCount) {
-      return res.status(403).json({ message: 'No eligible NFTs found in the wallet.' });
-    }
-
-    const vote = new Vote({
-      proposalId,
-      walletAddress: normalizedWalletAddress,
-      weight: nftCount, // Use the weight from snapshot
-      nftCount: nftCount, // Use the count from snapshot
-      option,
-      createdAt: new Date()
-    });
-    await vote.save();
-
-    proposal.votes.push(vote);
-    await proposal.save();
-
-    res.status(200).json({ message: 'Vote recorded successfully.' });
-  } catch (error) {
-    console.error('Error voting on proposal:', error);
-    res.status(500).json({ message: 'An error occurred while voting on the proposal.', error });
-  }
-});
-
-module.exports = router;
+export default Proposals;
