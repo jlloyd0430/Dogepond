@@ -39,7 +39,8 @@
   border: 2px solid gold;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  margin: 16px;
+  padding: 16px;
   width: 90%;
   max-width: 600px;
 }
@@ -62,7 +63,7 @@
 }
 
 .proposal-image {
-  width: 90%;
+  width: 100%;
   height: auto;
   margin: 10px 0;
   border-radius: 10px;
@@ -91,13 +92,14 @@
   }
 
   .proposal-image {
-    width: 90%;
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
   .proposals-container {
     padding: 10px;
+    margin: 16px;
   }
 
   .button {
