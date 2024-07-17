@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { apiClient, setAuthHeader } from '../services/apiClient';
+import apiClient from '../services/apiClient';
 import { getWalletAddress, getWalletData, DOGELABS_WALLET, DOGINALS_TYPE } from '../wallets/wallets';
 import './Proposals.css';
 
@@ -37,7 +37,6 @@ const Proposals = () => {
       setWalletAddress(address);
       const data = await getWalletData(address);
       setWalletHoldings(data.inscriptions);
-      setAuthHeader('YOUR_TEST_TOKEN'); // Set the authorization header
     } catch (error) {
       console.error('Error connecting wallet:', error);
     }
@@ -201,29 +200,30 @@ const Proposals = () => {
         </div>
       )}
 
-      <div className="proposals-list">
-        {proposals.map((proposal) => (
-          <div key={proposal._id} className="proposal">
-            <h2>{proposal.name}</h2>
-            <p>{proposal.description}</p>
-            <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
-            <p>Collection Name: {proposal.collectionName}</p>
-            <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
-            {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
-            {new Date(proposal.endDate) > new Date() ? (
-              proposal.options.map((option) => (
-                <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
-                  Vote for {option}
-                </button>
-              ))
-            ) : (
-              <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
-                proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
-              ) : 'No votes cast'}</p>
-            )}
-          </div>
-        ))}
-      </div>
+<div className="proposals-list">
+  {proposals.map((proposal) => (
+    <div key={proposal._id} className="proposal">
+      <h2>{proposal.name}</h2>
+      <p>{proposal.description}</p>
+      <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
+      <p>Collection Name: {proposal.collectionName}</p>
+      <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
+      {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
+      {new Date(proposal.endDate) > new Date() ? (
+        proposal.options.map((option) => (
+          <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
+            Vote for {option}
+          </button>
+        ))
+      ) : (
+        <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
+          proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
+        ) : 'No votes cast'}</p>
+      )}
+    </div>
+  ))}
+</div>
+
     </div>
   );
 };
