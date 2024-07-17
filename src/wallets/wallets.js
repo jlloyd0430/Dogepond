@@ -33,7 +33,7 @@ export async function signPsbt(walletProvider, psbtHex) {
     case DOGELABS_WALLET:
       return await window.dogeLabs?.signPsbt(psbtHex);
     default:
-      throw `PSBTs not supported for ${walletProvider}`;
+      throw new Error(`PSBTs not supported for ${walletProvider}`);
   }
 }
 
@@ -42,7 +42,7 @@ export async function sendDoge(walletProvider, address, dogeAmount, originator) 
     case DOGELABS_WALLET:
       return await sendDogeFromDogeLabs(dogeAmount, address, originator);
     default:
-      throw `Sending DOGE not supported for ${walletProvider}`;
+      throw new Error(`Sending DOGE not supported for ${walletProvider}`);
   }
 }
 
@@ -50,7 +50,7 @@ export async function directInscribe(walletProvider, contentType, payloadType, c
   switch (walletProvider) {
     case DOGELABS_WALLET:
     default:
-      throw `Direct inscriptions not supported for ${walletProvider}`;
+      throw new Error(`Direct inscriptions not supported for ${walletProvider}`);
   }
 }
 
@@ -65,6 +65,6 @@ export async function getWalletBalance(walletProvider) {
     case DOGELABS_WALLET:
       return await window.dogeLabs?.getBalance();
     default:
-      throw `Getting balance not supported for ${walletProvider}`;
+      throw new Error(`Getting balance not supported for ${walletProvider}`);
   }
 }
