@@ -9,16 +9,7 @@ import EditForm from "./components/EditForm"; // Import the EditForm component
 import Home from "./components/Home";
 import PrivateRoute from "./components/PrivateRoute";
 import Logout from "./components/Logout";
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -19,7 +19,6 @@ import { ThemeProvider, ThemeContext } from "./context/ThemeContext";
+import { ThemeProvider, ThemeContext } from "./context/ThemeContext";
   
 import Profile from "./components/Profile";
 import Settings from "./components/Settings";
@@ -34,15 +25,7 @@ import "./components/Footer.css";
 const App = () => {
   return (
 
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -30,18 +29,15 @@ const App = () => {
+const App = () => {
   
     <AuthProvider>
       <ThemeProvider>
@@ -65,20 +48,7 @@ const AppContent = () => {
       <div className="app">
 
     
-          
-            
-    
-
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -70,15 +66,11 @@ const AppContent = () => {
+const AppContent = () => {
   
         <Header />
         <div className="content">
