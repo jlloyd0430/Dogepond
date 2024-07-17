@@ -21,7 +21,8 @@
   margin: 16px;
   background-color: var(--background-color-light, transparent); /* Ensure transparency */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 100%;
+  max-width: 950px;
+  width: 95%
   box-sizing: border-box;
   color: var(--text-color-light, #000000); /* Ensure text color is set for light mode */
 }
