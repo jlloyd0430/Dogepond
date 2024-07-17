@@ -1,5 +1,5 @@
 // src/services/apiClient.js
-import axios from "axios";
+import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:4000/api";
 
@@ -9,5 +9,13 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+export const setAuthToken = (token) => {
+  if (token) {
+    apiClient.defaults.headers.common['x-auth-token'] = token;
+  } else {
+    delete apiClient.defaults.headers.common['x-auth-token'];
+  }
+};
 
 export default apiClient;
