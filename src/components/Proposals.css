@@ -51,6 +51,11 @@
   margin-bottom: 15px;
 }
 
+.create-proposal-form input,{
+  max-width: 100%;
+}
+
+
 .create-proposal-form input,
 .create-proposal-form textarea {
   padding: 10px;
