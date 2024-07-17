@@ -270,6 +270,7 @@ const Proposals = () => {
           <div key={proposal._id} className="proposal">
             <h2>{proposal.name}</h2>
             {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
+        <div className="voteinfo">
             <p>{proposal.description}</p>
             <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
             <p>Collection Name: {proposal.collectionName}</p>
@@ -284,6 +285,7 @@ const Proposals = () => {
               <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
                 proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
               ) : 'No votes cast'}</p>
+              </div>
             )}
           </div>
         ))}
