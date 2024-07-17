@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../services/apiClient';
 import { getWalletAddress, getWalletData, DOGELABS_WALLET, DOGINALS_TYPE } from '../wallets/wallets';
-import { FaSearch, FaFilter } from 'react-icons/fa';
 import './Proposals.css';
 
 const Proposals = () => {
@@ -18,8 +17,8 @@ const Proposals = () => {
     weightInputs: {},
     image: null,
   });
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
 
   useEffect(() => {
     const fetchProposals = async () => {
@@ -135,29 +134,10 @@ const Proposals = () => {
     setNewProposal({ ...newProposal, image: e.target.files[0] });
   };
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleFilterChange = (newFilter) => {
-    setFilter(newFilter);
-  };
-
-  const filteredProposals = proposals.filter((proposal) => {
-    return (
-      proposal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      proposal.collectionName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
-
-  const sortedProposals = [...filteredProposals].sort((a, b) => {
-    if (filter === 'most-votes') {
-      return b.votes.length - a.votes.length;
-    } else if (filter === 'recent') {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    }
-    return 0;
-  });
+  const filteredProposals = proposals.filter(proposal =>
+    proposal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    proposal.collectionName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="proposals-container">
@@ -201,7 +181,7 @@ const Proposals = () => {
           />
           <input
             type="text"
-            placeholder="Collection Name"
+            placeholder="OW Collection name"
             value={newProposal.collectionName}
             onChange={(e) => setNewProposal({ ...newProposal, collectionName: e.target.value })}
           />
@@ -227,23 +207,27 @@ const Proposals = () => {
         </div>
       )}
 
-      <div className="search-bar">
+      <div className="search-filter-container">
         <input
           type="text"
-          placeholder="Search Proposals..."
-          value={searchTerm}
-          onChange={handleSearchChange}
+          placeholder="Search Proposals"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button className="filter-button" onClick={() => handleFilterChange('most-votes')}>
-          <FaFilter /> Most Votes
-        </button>
-        <button className="filter-button" onClick={() => handleFilterChange('recent')}>
-          <FaFilter /> Recent
-        </button>
+        <div className="filter-dropdown" onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}>
+          <i className="fa fa-filter"></i>
+          {filterDropdownOpen && (
+            <div className="dropdown-menu">
+              <div onClick={() => setSearchQuery('')}>All</div>
+              <div onClick={() => setSearchQuery('most votes')}>Most Votes</div>
+              <div onClick={() => setSearchQuery('recent')}>Recent</div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="proposals-list">
-        {sortedProposals.map((proposal) => (
+        {filteredProposals.map((proposal) => (
           <div key={proposal._id} className="proposal">
             <h2>{proposal.name}</h2>
             <p>{proposal.description}</p>
