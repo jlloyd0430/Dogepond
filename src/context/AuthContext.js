@@ -68,6 +68,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const handleDiscordLogin = async (token) => {
+    console.log('Handling Discord Login with Token:', token);
     localStorage.setItem('token', token);
     setAuth((prevAuth) => ({
       ...prevAuth,
