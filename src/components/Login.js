@@ -56,6 +56,7 @@ const Login = () => {
                     required
                 />
                 <button type="submit">Login</button>
+                        or
                 <button
                     type="button"
                     onClick={handleDiscordLoginButton}
