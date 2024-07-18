@@ -1,51 +1,65 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import './Login.css';
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const { login, handleDiscordLogin } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        if (token) {
+            handleDiscordLogin(token);
+            navigate('/dashboard');
+        }
+    }, [handleDiscordLogin, navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await login(formData.email, formData.password);
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Login error:', error);
-    }
-  };
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-  return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-    </div>
-  );
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await login(formData.email, formData.password);
+            navigate('/dashboard');
+        } catch (error) {
+            console.error('Login error:', error);
+        }
+    };
+
+    const handleDiscordLoginButton = () => {
+        window.location.href = 'https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth/discord';
+    };
+
+    return (
+        <div className="login-container">
+            <form className="login-form" onSubmit={handleSubmit}>
+                <h2>Login</h2>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                />
+                <button type="submit">Login</button>
+                <button type="button" onClick={handleDiscordLoginButton}>Login with Discord</button>
+            </form>
+        </div>
+    );
 };
 
 export default Login;
