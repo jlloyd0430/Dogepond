@@ -55,7 +55,7 @@ const Login = () => {
                     onChange={handleChange}
                     required
                 />
-                <button type="submit">Login</button>
+                <button type="submit">Submit</button>
                         or
                 <button
                     type="button"
