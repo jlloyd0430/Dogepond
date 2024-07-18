@@ -51,7 +51,6 @@ const AppContent = () => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
     if (token) {
-      console.log('Received Token:', token);
       handleDiscordLogin(token).then(() => {
         navigate('/'); // Redirect to home after storing token
       });
@@ -68,33 +67,23 @@ const AppContent = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/packages" element={<Packages />} />
-          <Route path="/profile" element={
-            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
-              <Profile />
-            </PrivateRoute>
-          } />
-          <Route path="/dashboard" element={
-            <PrivateRoute isAuthenticated={auth.isAuthenticated} requiredRole="admin">
-              <Dashboard />
-            </PrivateRoute>
-          } />
-          <Route path="/post" element={
-            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
-              <PostForm />
-            </PrivateRoute>
-          } />
+          <Route path="/profile" element={<PrivateRoute />}>
+            <Route index element={<Profile />} />
+          </Route>
+          <Route path="/dashboard" element={<PrivateRoute requiredRole="admin" />}>
+            <Route index element={<Dashboard />} />
+          </Route>
+          <Route path="/post" element={<PrivateRoute />}>
+            <Route index element={<PostForm />} />
+          </Route>
           <Route path="/settings" element={<Settings />} />
           <Route path="/fish" element={<Fish />} />
-          <Route path="/edit/:id" element={
-            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
-              <EditForm />
-            </PrivateRoute>
-          } />
-          <Route path="/proposals" element={
-            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
-              <Proposals />
-            </PrivateRoute>
-          } />
+          <Route path="/edit/:id" element={<PrivateRoute />}>
+            <Route index element={<EditForm />} />
+          </Route>
+          <Route path="/proposals" element={<PrivateRoute />}>
+            <Route index element={<Proposals />} />
+          </Route>
         </Routes>
       </div>
       <Footer />
