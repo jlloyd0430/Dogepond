@@ -1,43 +1,39 @@
-/* Signup.css */
-
 body {
-    /* font-family: Arial, sans-serif; */
     font-family: "Orbitron", sans-serif;
     margin: 0;
     padding: 0;
-  }
-  
-  .signup-container {
+}
+
+.signup-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-  }
-  
-  .signup-form {
+}
+
+.signup-form {
     border: solid 2px goldenrod;
     border-radius: 10px;
     padding: 40px;
-    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 80%;
     text-align: center;
-  }
-  
-  .signup-form h2 {
+}
+
+.signup-form h2 {
     margin-bottom: 20px;
     font-family: "Orbitron", sans-serif;
-  }
-  
-  .signup-form input {
+}
+
+.signup-form input {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid goldenrod;
     border-radius: 4px;
-  }
-  
-  .signup-form button {
+}
+
+.signup-form button {
     width: 100%;
     padding: 10px;
     background-color: goldenrod;
@@ -46,24 +42,34 @@ body {
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-  }
-  
-  .signup-form button:hover {
+}
+
+.signup-form button:hover {
     background-color: #ffbf00;
-  }
-  
-  @media (max-width: 600px) {
+}
+
+/* Add styles for the Discord signup button */
+.discord-login-button {
+    background-color: #7289da; /* Discord purple */
+    margin-top: 10px;
+    color: white;
+}
+
+.discord-login-button:hover {
+    background-color: #5b6eae;
+}
+
+@media (max-width: 600px) {
     .signup-form {
-      padding: 20px;
+        padding: 20px;
     }
-  
+
     .signup-form input {
-      padding: 8px;
+        padding: 8px;
     }
-  
+
     .signup-form button {
-      padding: 8px;
-      font-size: 14px;
+        padding: 8px;
+        font-size: 14px;
     }
-  }
-  
+}
