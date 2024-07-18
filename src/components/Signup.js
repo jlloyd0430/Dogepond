@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../services/apiClient'; // Import the apiClient
+import { AuthContext } from '../context/AuthContext'; // Import AuthContext
 import './Signup.css'; // Import the CSS file
 
 const Signup = () => {
@@ -9,6 +10,7 @@ const Signup = () => {
     email: '',
     password: '',
   });
+  const { handleDiscordLogin } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,6 +30,10 @@ const Signup = () => {
     } catch (error) {
       console.error('Error signing up:', error);
     }
+  };
+
+  const handleDiscordLoginButton = () => {
+    window.location.href = 'https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth/discord';
   };
 
   return (
@@ -59,6 +65,13 @@ const Signup = () => {
           required
         />
         <button type="submit">Signup</button>
+        <button
+          type="button"
+          onClick={handleDiscordLoginButton}
+          className="discord-login-button"
+        >
+          Signup with Discord
+        </button>
       </form>
     </div>
   );
