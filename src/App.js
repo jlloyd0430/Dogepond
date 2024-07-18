@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
@@ -14,7 +14,7 @@ import Settings from "./components/Settings";
 import Packages from "./components/Packages";
 import Fish from "./components/Fish";
 import Footer from "./components/Footer";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, AuthContext } from "./context/AuthContext";
 import { ThemeProvider, ThemeContext } from "./context/ThemeContext";
 import "./App.css";
 import "./components/NFTCard.css";
@@ -33,6 +33,9 @@ const App = () => {
 
 const AppContent = () => {
   const { isDarkMode } = useContext(ThemeContext);
+  const { handleDiscordLogin, auth } = useContext(AuthContext);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isDarkMode) {
@@ -42,42 +45,57 @@ const AppContent = () => {
     }
   }, [isDarkMode]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    if (token) {
+      console.log('Received Token:', token);
+      handleDiscordLogin(token);
+      navigate('/dashboard'); // Redirect to dashboard after storing token
+    }
+  }, [location, handleDiscordLogin, navigate]);
+
   return (
-    <Router>
-      <div className="app">
-        <Header />
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/packages" element={<Packages />} />
-            <Route path="/profile" element={<PrivateRoute />}>
-              <Route index element={<Profile />} />
-            </Route>
-            <Route
-              path="/dashboard"
-              element={<PrivateRoute requiredRole="admin" />}
-            >
-              <Route index element={<Dashboard />} />
-            </Route>
-            <Route path="/post" element={<PrivateRoute />}>
-              <Route index element={<PostForm />} />
-            </Route>
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/fish" element={<Fish />} />
-            <Route path="/edit/:id" element={<PrivateRoute />}>
-              <Route index element={<EditForm />} />
-            </Route>
-            <Route path="/proposals" element={<PrivateRoute />}>
-              <Route index element={<Proposals />} />
-            </Route>
-          </Routes>
-        </div>
-        <Footer />
+    <div className="app">
+      <Header />
+      <div className="content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/packages" element={<Packages />} />
+          <Route path="/profile" element={
+            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
+              <Profile />
+            </PrivateRoute>
+          } />
+          <Route path="/dashboard" element={
+            <PrivateRoute isAuthenticated={auth.isAuthenticated} requiredRole="admin">
+              <Dashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/post" element={
+            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
+              <PostForm />
+            </PrivateRoute>
+          } />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/fish" element={<Fish />} />
+          <Route path="/edit/:id" element={
+            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
+              <EditForm />
+            </PrivateRoute>
+          } />
+          <Route path="/proposals" element={
+            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
+              <Proposals />
+            </PrivateRoute>
+          } />
+        </Routes>
       </div>
-    </Router>
+      <Footer />
+    </div>
   );
 };
 
