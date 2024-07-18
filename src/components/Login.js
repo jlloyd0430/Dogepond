@@ -13,7 +13,7 @@ const Login = () => {
         const token = urlParams.get('token');
         if (token) {
             handleDiscordLogin(token);
-            navigate('/dashboard');
+            navigate('/');
         }
     }, [handleDiscordLogin, navigate]);
 
@@ -25,7 +25,7 @@ const Login = () => {
         e.preventDefault();
         try {
             await login(formData.email, formData.password);
-            navigate('/dashboard');
+            navigate('/');
         } catch (error) {
             console.error('Login error:', error);
         }
@@ -56,7 +56,13 @@ const Login = () => {
                     required
                 />
                 <button type="submit">Login</button>
-                <button type="button" onClick={handleDiscordLoginButton}>Login with Discord</button>
+                <button
+                    type="button"
+                    onClick={handleDiscordLoginButton}
+                    className="discord-login-button"
+                >
+                    Login with Discord
+                </button>
             </form>
         </div>
     );
