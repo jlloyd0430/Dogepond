@@ -64,7 +64,8 @@ const Signup = () => {
           onChange={handleChange}
           required
         />
-        <button type="submit">Signup</button>
+        <button type="submit">Submit</button>
+        or
         <button
           type="button"
           onClick={handleDiscordLoginButton}
