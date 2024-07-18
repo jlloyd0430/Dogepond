@@ -48,6 +48,7 @@ const AppContent = () => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
     if (token) {
+      console.log('Received Token:', token);
       handleDiscordLogin(token);
       window.location.href = '/dashboard'; // Redirect to dashboard after storing token
     }
