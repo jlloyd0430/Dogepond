@@ -11,35 +11,35 @@ const AuthProvider = ({ children }) => {
     user: null
   });
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (auth.token) {
-        try {
-          const response = await axios.get('https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth', {
-            headers: { 'x-auth-token': auth.token }
-          });
-          setAuth((prevAuth) => ({
-            ...prevAuth,
-            isAuthenticated: true,
-            loading: false,
-            user: response.data
-          }));
-        } catch (error) {
-          setAuth((prevAuth) => ({
-            ...prevAuth,
-            isAuthenticated: false,
-            loading: false,
-            user: null
-          }));
-          console.error('Error fetching user:', error);
-        }
-      } else {
-        setAuth((prevAuth) => ({ ...prevAuth, loading: false }));
+  const fetchUser = async (token) => {
+    if (token) {
+      try {
+        const response = await axios.get('https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth', {
+          headers: { 'x-auth-token': token }
+        });
+        setAuth((prevAuth) => ({
+          ...prevAuth,
+          isAuthenticated: true,
+          loading: false,
+          user: response.data
+        }));
+      } catch (error) {
+        setAuth((prevAuth) => ({
+          ...prevAuth,
+          isAuthenticated: false,
+          loading: false,
+          user: null
+        }));
+        console.error('Error fetching user:', error);
       }
-    };
+    } else {
+      setAuth((prevAuth) => ({ ...prevAuth, loading: false }));
+    }
+  };
 
-    fetchUser();
-  }, [auth.token]); // Added auth.token as a dependency
+  useEffect(() => {
+    fetchUser(auth.token);
+  }, [auth.token]);
 
   const login = async (email, password) => {
     try {
@@ -67,6 +67,17 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const handleDiscordLogin = async (token) => {
+    localStorage.setItem('token', token);
+    setAuth((prevAuth) => ({
+      ...prevAuth,
+      token: token,
+      isAuthenticated: true,
+      loading: false
+    }));
+    await fetchUser(token);
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setAuth((prevAuth) => ({
@@ -79,7 +90,7 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ auth, login, logout }}>
+    <AuthContext.Provider value={{ auth, login, handleDiscordLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );
