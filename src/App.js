@@ -51,51 +51,53 @@ const AppContent = () => {
     if (token) {
       console.log('Received Token:', token);
       handleDiscordLogin(token);
-      navigate('/dashboard'); // Redirect to dashboard after storing token
+      navigate('/'); // Redirect to home after storing token
     }
   }, [location, handleDiscordLogin, navigate]);
 
   return (
-    <div className="app">
-      <Header />
-      <div className="content">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/packages" element={<Packages />} />
-          <Route path="/profile" element={
-            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
-              <Profile />
-            </PrivateRoute>
-          } />
-          <Route path="/dashboard" element={
-            <PrivateRoute isAuthenticated={auth.isAuthenticated} requiredRole="admin">
-              <Dashboard />
-            </PrivateRoute>
-          } />
-          <Route path="/post" element={
-            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
-              <PostForm />
-            </PrivateRoute>
-          } />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/fish" element={<Fish />} />
-          <Route path="/edit/:id" element={
-            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
-              <EditForm />
-            </PrivateRoute>
-          } />
-          <Route path="/proposals" element={
-            <PrivateRoute isAuthenticated={auth.isAuthenticated}>
-              <Proposals />
-            </PrivateRoute>
-          } />
-        </Routes>
+    <Router>
+      <div className="app">
+        <Header />
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/packages" element={<Packages />} />
+            <Route path="/profile" element={
+              <PrivateRoute isAuthenticated={auth.isAuthenticated}>
+                <Profile />
+              </PrivateRoute>
+            } />
+            <Route path="/dashboard" element={
+              <PrivateRoute isAuthenticated={auth.isAuthenticated} requiredRole="admin">
+                <Dashboard />
+              </PrivateRoute>
+            } />
+            <Route path="/post" element={
+              <PrivateRoute isAuthenticated={auth.isAuthenticated}>
+                <PostForm />
+              </PrivateRoute>
+            } />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/fish" element={<Fish />} />
+            <Route path="/edit/:id" element={
+              <PrivateRoute isAuthenticated={auth.isAuthenticated}>
+                <EditForm />
+              </PrivateRoute>
+            } />
+            <Route path="/proposals" element={
+              <PrivateRoute isAuthenticated={auth.isAuthenticated}>
+                <Proposals />
+              </PrivateRoute>
+            } />
+          </Routes>
+        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </Router>
   );
 };
 
