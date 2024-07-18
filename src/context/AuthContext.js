@@ -67,16 +67,17 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const handleDiscordLogin = async (token) => {
-    localStorage.setItem('token', token);
-    setAuth((prevAuth) => ({
-      ...prevAuth,
-      token: token,
-      isAuthenticated: true,
-      loading: false
-    }));
-    await fetchUser(token);
-  };
+const handleDiscordLogin = async (token) => {
+  localStorage.setItem('token', token);
+  await fetchUser(token);
+  setAuth((prevAuth) => ({
+    ...prevAuth,
+    token: token,
+    isAuthenticated: true,
+    loading: false,
+  }));
+};
+
 
   const logout = () => {
     localStorage.removeItem('token');
