@@ -1,70 +1,73 @@
-/* Login.css */
-
 body {
     font-family: Arial, sans-serif;
-    /* background-color: #f0f0f0; */
     margin: 0;
     padding: 0;
-  }
-  
-  .login-container {
+}
+
+.login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    /* background-color: #f0f0f0 */
-  }
-  
-  .login-form {
-    /* background: white; */
+}
+
+.login-form {
     border: solid 2px goldenrod;
     border-radius: 10px;
     padding: 40px;
-    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 80%;
     text-align: center;
-  }
-  
-  .login-form h2 {
+}
+
+.login-form h2 {
     margin-bottom: 20px;
-  }
-  
-  .login-form input {
+}
+
+.login-form input {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid goldenrod;
     border-radius: 4px;
-  }
-  
-  .login-form button {
+}
+
+.login-form button {
     width: 100%;
-    padding: 10px;;
+    padding: 10px;
     background-color: goldenrod;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-  }
-  
-  .login-form button:hover {
+}
+
+.login-form button:hover {
     background-color: #ffbf00;
-  }
-  
-  @media (max-width: 600px) {
+}
+
+/* Add styles for the Discord login button */
+.discord-login-button {
+    background-color: #7289da; /* Discord purple */
+    margin-top: 10px;
+}
+
+.discord-login-button:hover {
+    background-color: #5b6eae;
+}
+
+@media (max-width: 600px) {
     .login-form {
-      padding: 20px;
+        padding: 20px;
     }
-  
+
     .login-form input {
-      padding: 8px;
+        padding: 8px;
     }
-  
+
     .login-form button {
-      padding: 8px;
-      font-size: 14px;
+        padding: 8px;
+        font-size: 14px;
     }
-  }
-  
+}
