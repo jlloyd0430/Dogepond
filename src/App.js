@@ -50,8 +50,9 @@ const AppContent = () => {
     const token = params.get('token');
     if (token) {
       console.log('Received Token:', token);
-      handleDiscordLogin(token);
-      navigate('/'); // Redirect to home after storing token
+      handleDiscordLogin(token).then(() => {
+        navigate('/'); // Redirect to home after storing token
+      });
     }
   }, [location, handleDiscordLogin, navigate]);
 
