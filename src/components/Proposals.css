@@ -89,10 +89,13 @@
     width: 95%;
   }
 
-  .create-proposal-form,
   .proposal {
     width: 95%;
   }
+
+.create-proposal-form {
+  width: 80%;
+}
 
   .button {
     width: 100%;
