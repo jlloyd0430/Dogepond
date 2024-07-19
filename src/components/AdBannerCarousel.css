@@ -12,6 +12,11 @@
     font-size: 1em;
     text-align: center;
   }
+
+carousel-root {
+    outline: none;
+    max-width: 1200px;
+}
   
   .carousel .control-arrow,
   .carousel .control-next,
