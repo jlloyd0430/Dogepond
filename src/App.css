@@ -79,9 +79,6 @@ div {
   flex-direction: column;
 }
 
-div>div {
-  max-width: 950px;
-}
 
 .filter-container {
   justify-content: space-between;
