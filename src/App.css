@@ -228,6 +228,13 @@ body.dark-mode .footer {
   color: var(--footer-text-color-dark);
 }
 
+.main-content {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+}
+
+
 @media (max-width: 600px) {
   .card {
     max-width: 100%;
