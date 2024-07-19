@@ -48,19 +48,49 @@
   color: #333;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1200px) {
 
-  .bot-invite-container {
-  text-align: center;
-  margin: 20px;
+  ot-invite-container {
+    /* border: 2px solid gold; */
+    border-radius: 11px;
+    display: flex;
+    margin: 20px;
+    text-align: center;
 }
 
     .invite-text {
     font-size: 1.2em;
     margin-bottom: 20px;
 }
-  
   .bot-invites {
-    flex-direction: column;
-  }
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+@media (max-width: 600px) {
+
+ot-invite-container {
+    /* border: 2px solid gold; */
+    border-radius: 11px;
+    display: flex;
+    margin: 20px;
+    text-align: center;
+}
+
+    .invite-text {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+  .bot-invites {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+    
 }
