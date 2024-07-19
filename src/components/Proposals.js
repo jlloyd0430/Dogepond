@@ -271,6 +271,7 @@ const Proposals = () => {
           />
           <label>
             <input
+              className="checkbox"
               type="checkbox"
               checked={newProposal.classified}
               onChange={(e) => setNewProposal({ ...newProposal, classified: e.target.checked })}
