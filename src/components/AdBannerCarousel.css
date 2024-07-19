@@ -13,7 +13,7 @@
     text-align: center;
   }
 
-carousel-root {
+.carousel-root {
     outline: none;
     max-width: 1200px;
 }
