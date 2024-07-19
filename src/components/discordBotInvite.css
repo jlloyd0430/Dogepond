@@ -11,8 +11,9 @@
 }
 
 .invite-text {
-  margin-bottom: 20px;
-  font-size: 1.2em;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    max-width: 200px;
 }
 
 .bot-invites {
