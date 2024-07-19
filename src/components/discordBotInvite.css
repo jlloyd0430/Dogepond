@@ -69,7 +69,7 @@
 
 @media (max-width: 600px) {
     .bot-invite-container {
-        border-radius: 11px;
+        border: none;
         display: flex;
         margin: 20px;
         text-align: center;
