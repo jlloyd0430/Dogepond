@@ -49,6 +49,10 @@ body.dark-mode .dropdown-menu {
   color: var(--text-color-light);
 }
 
+.main-content {
+  display: flex;
+}
+
 body.dark-mode .dropdown-item {
   color: var(--text-color-dark);
 }
