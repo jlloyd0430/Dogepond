@@ -45,6 +45,11 @@ body.dark-mode .dropdown-menu {
   border-color: goldenrod;
 }
 
+.sides {
+display: flex;
+flex-direction: column;
+}
+
 .dropdown-item {
   color: var(--text-color-light);
 }
