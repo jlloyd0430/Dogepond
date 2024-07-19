@@ -205,9 +205,10 @@ const Home = () => {
             <p>No approved NFT drops found.</p>
           )}
         </div>
+      <div className="sides">
         <DiscordBotInvite /> {/* Add the Discord bot invite component here */}
         <div className="snapshot-section">
-          <h2>General Tools</h2>
+        <h2>General Tools</h2>
           <h3>Snapshot Tool</h3>
           <input
             type="text"
@@ -226,6 +227,7 @@ const Home = () => {
               </ul>
               <button onClick={exportToCSV}>Export to CSV</button>
             </div>
+        </div>
           )}
         </div>
       </div>
