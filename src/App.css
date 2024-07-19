@@ -244,19 +244,17 @@ body.dark-mode .footer {
   }
 
   .main-content {
-    align-items: start;
     display: flex;
 }
-}
+
   @media (max-width: 1200px) {
  
 .main-content {
-    align-items: start;
     display: flex;
 }
     
-  
-}
+  }  
+
 
 }
 
