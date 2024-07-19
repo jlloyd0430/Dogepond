@@ -11,6 +11,10 @@
   padding: 20px;
 }
 
+.checkbox {
+  display: flex;
+}
+
 .header-buttons {
   display: flex;
   flex-direction: row-reverse;
