@@ -50,7 +50,9 @@ body.dark-mode .dropdown-menu {
 }
 
 .main-content {
-  display: flex;
+    display: flex;
+    flex-direction: row;
+    align-items: start;
 }
 
 body.dark-mode .dropdown-item {
