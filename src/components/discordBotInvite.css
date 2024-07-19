@@ -72,7 +72,7 @@
 
 @media (max-width: 600px) {
 
-ot-invite-container {
+.bot-invite-container {
     /* border: 2px solid gold; */
     border-radius: 11px;
     display: flex;
