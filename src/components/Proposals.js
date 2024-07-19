@@ -269,9 +269,8 @@ const Proposals = () => {
             value={newProposal.collectionName}
             onChange={(e) => setNewProposal({ ...newProposal, collectionName: e.target.value })}
           />
-          <label>
+          <label className="checkbox" >
             <input
-              className="checkbox"
               type="checkbox"
               checked={newProposal.classified}
               onChange={(e) => setNewProposal({ ...newProposal, classified: e.target.checked })}
