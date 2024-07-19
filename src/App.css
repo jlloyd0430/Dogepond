@@ -241,13 +241,15 @@ body.dark-mode .footer {
     width: 100%;
   }
 
-  .main-content {
-    display: flex;
-  }
+     .main-content {
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 @media (max-width: 1200px) {
-  .main-content {
-    display: flex;
-  }
+      .main-content {
+        display: flex;
+        flex-direction: column;
+    }
 }
