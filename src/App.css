@@ -46,8 +46,9 @@ body.dark-mode .dropdown-menu {
 }
 
 .sides {
-display: flex;
-flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .dropdown-item {
@@ -234,11 +235,10 @@ body.dark-mode .footer {
 }
 
 .main-content {
-    display: flex;
-    flex-direction: row;
-    align-items: start;
+  display: flex;
+  flex-direction: row;
+  align-items: start;
 }
-
 
 .snapshot-section {
   margin-top: 20px;
@@ -262,25 +262,23 @@ body.dark-mode .footer {
   margin: 5px 0;
 }
 
-
-
 @media (max-width: 600px) {
   .card {
     max-width: 100%;
     width: 100%;
   }
 
-     .main-content {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-    }
+  .main-content {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 1200px) {
-      .main-content {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-    }
+  .main-content {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
 }
