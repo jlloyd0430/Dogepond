@@ -54,6 +54,11 @@
   text-align: center;
   margin: 20px;
 }
+
+    .invite-text {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
   
   .bot-invites {
     flex-direction: column;
