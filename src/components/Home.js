@@ -6,6 +6,7 @@ import AdBannerCarousel from "../components/AdBannerCarousel";
 import DiscordBotInvite from "../components/discordBotInvite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import Papa from 'papaparse'; // Import Papa parse
 import "../App.css";
 
 const Home = () => {
@@ -18,6 +19,9 @@ const Home = () => {
   const [showDropdown, setShowDropdown] = useState(false); // State to show/hide the filter dropdown
   const [showDropTypeDropdown, setShowDropTypeDropdown] = useState(false); // State to show/hide the drop type dropdown
   const { auth } = useContext(AuthContext);
+
+  const [collectionSlug, setCollectionSlug] = useState(""); // State for collection slug
+  const [snapshotData, setSnapshotData] = useState([]); // State for snapshot data
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,6 +109,34 @@ const Home = () => {
     setShowDropTypeDropdown(false); // Hide the dropdown after selecting a drop type
   };
 
+  const fetchSnapshot = async () => {
+    try {
+      const response = await fetch(`https://dogeturbo.ordinalswallet.com/collection/${collectionSlug}/snapshot`);
+      const snapshotText = await response.text();
+      const parsedData = Papa.parse(snapshotText, {
+        header: false,
+      }).data;
+
+      const snapshotCount = parsedData.reduce((acc, address) => {
+        acc[address] = (acc[address] || 0) + 1;
+        return acc;
+      }, {});
+
+      setSnapshotData(Object.entries(snapshotCount).map(([address, count]) => ({ address, count })));
+    } catch (error) {
+      console.error('Failed to fetch snapshot data:', error);
+    }
+  };
+
+  const exportToCSV = () => {
+    const csv = Papa.unparse(snapshotData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${collectionSlug}_snapshot.csv`;
+    link.click();
+  };
+
   return (
     <div>
       <AdBannerCarousel /> {/* Add the carousel component here */}
@@ -174,6 +206,28 @@ const Home = () => {
           )}
         </div>
         <DiscordBotInvite /> {/* Add the Discord bot invite component here */}
+        <div className="snapshot-section">
+          <h2>General Tools</h2>
+          <h3>Snapshot Tool</h3>
+          <input
+            type="text"
+            placeholder="Enter OW collection slug"
+            value={collectionSlug}
+            onChange={(e) => setCollectionSlug(e.target.value)}
+          />
+          <button onClick={fetchSnapshot}>Snap!t</button>
+          {snapshotData.length > 0 && (
+            <div className="snapshot-results">
+              <h4>Snapshot Results</h4>
+              <ul>
+                {snapshotData.map(({ address, count }) => (
+                  <li key={address}>{address}: {count}</li>
+                ))}
+              </ul>
+              <button onClick={exportToCSV}>Export to CSV</button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
