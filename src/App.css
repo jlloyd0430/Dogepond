@@ -242,6 +242,7 @@ body.dark-mode .footer {
   }
 
      .main-content {
+        align-items: center;
         display: flex;
         flex-direction: column;
     }
@@ -249,6 +250,7 @@ body.dark-mode .footer {
 
 @media (max-width: 1200px) {
       .main-content {
+        align-items: center;
         display: flex;
         flex-direction: column;
     }
