@@ -90,7 +90,7 @@ h1, h2, h3, p {
 @media (max-width: 600px) {
   .package {
     margin-bottom: 30px;
-    max-width: 300px;
+    margin: 25px;
     border: 2px solid goldenrod;
     border-radius: 8px;
     padding: 10px;
