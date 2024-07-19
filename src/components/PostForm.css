@@ -55,3 +55,17 @@
     background-color: #d4af37;
   }
   
+@media (max-width: 600px) {
+  .post-form {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border: 2px solid gold;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    max-width: 100%;
+  }
+    
+}
