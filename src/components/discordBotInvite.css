@@ -1,6 +1,13 @@
+
 .bot-invite-container {
-  text-align: center;
-  margin: 20px;
+    margin: 20px;
+    text-align: center;
+    border: 2px solid gold;
+    /* justify-content: start; */
+    display: flex;
+    flex-direction: column-reverse;
+    /* width: 80px; */
+    border-radius: 11px;
 }
 
 .invite-text {
@@ -42,6 +49,12 @@
 }
 
 @media (max-width: 600px) {
+
+  .bot-invite-container {
+  text-align: center;
+  margin: 20px;
+}
+  
   .bot-invites {
     flex-direction: column;
   }
