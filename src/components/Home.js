@@ -3,25 +3,25 @@ import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
 import apiClient from "../services/apiClient";
 import AdBannerCarousel from "../components/AdBannerCarousel";
-import DiscordBotInvite from "../components/discordBotInvite";
+import DiscordBotInvite from "../components/DiscordBotInvite"; // Corrected component name case
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import Papa from 'papaparse'; // Import Papa parse
+import Papa from 'papaparse';
 import "../App.css";
 
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
   const [filteredDrops, setFilteredDrops] = useState([]);
-  const [error, setError] = useState(""); // State to store any errors
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const [filter, setFilter] = useState("mostLiked"); // Default to mostLiked
-  const [dropType, setDropType] = useState(""); // State for drop type filter
-  const [showDropdown, setShowDropdown] = useState(false); // State to show/hide the filter dropdown
-  const [showDropTypeDropdown, setShowDropTypeDropdown] = useState(false); // State to show/hide the drop type dropdown
+  const [error, setError] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState("mostLiked");
+  const [dropType, setDropType] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showDropTypeDropdown, setShowDropTypeDropdown] = useState(false);
   const { auth } = useContext(AuthContext);
 
-  const [collectionSlug, setCollectionSlug] = useState(""); // State for collection slug
-  const [snapshotData, setSnapshotData] = useState([]); // State for snapshot data
+  const [collectionSlug, setCollectionSlug] = useState("");
+  const [snapshotData, setSnapshotData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,7 +36,7 @@ const Home = () => {
         const result = await apiClient.get("/nftdrops/approved", config);
         console.log("Fetched approved NFT drops:", result.data);
         setApprovedDrops(result.data);
-        setError(""); // Clear any previous errors
+        setError("");
       } catch (error) {
         console.error("Error fetching approved NFT drops:", error);
         setError("Failed to fetch approved NFT drops. Please try again later.");
@@ -62,12 +62,12 @@ const Home = () => {
     );
 
     if (filter === "mostLiked") {
-      filtered.sort((a, b) => b.likes.length - a.likes.length); // Sort by likes
+      filtered.sort((a, b) => b.likes.length - a.likes.length);
     } else if (filter === "mostRecent") {
-      filtered.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
     }
 
-    console.log("Filtered drops:", filtered); // Debug log for filtered drops
+    console.log("Filtered drops:", filtered);
     setFilteredDrops(filtered);
   };
 
@@ -98,15 +98,15 @@ const Home = () => {
   };
 
   const handleFilterChange = (filterValue) => {
-    console.log(`Changing filter to: ${filterValue}`); // Debug log for filter change
+    console.log(`Changing filter to: ${filterValue}`);
     setFilter(filterValue);
-    setShowDropdown(false); // Hide the dropdown after selecting a filter
+    setShowDropdown(false);
   };
 
   const handleDropTypeChange = (type) => {
-    console.log(`Changing drop type to: ${type}`); // Debug log for drop type change
+    console.log(`Changing drop type to: ${type}`);
     setDropType(type);
-    setShowDropTypeDropdown(false); // Hide the dropdown after selecting a drop type
+    setShowDropTypeDropdown(false);
   };
 
   const fetchSnapshot = async () => {
@@ -139,7 +139,7 @@ const Home = () => {
 
   return (
     <div>
-      <AdBannerCarousel /> {/* Add the carousel component here */}
+      <AdBannerCarousel />
       <h1>Upcoming Drops</h1>
       <div className="search-filter-container">
         <div className="filter-dropdown">
@@ -196,39 +196,39 @@ const Home = () => {
                 key={drop._id}
                 drop={drop}
                 onLike={() => handleLike(drop._id)}
-                onApprove={null} // No approve functionality on home
-                userId={auth.user?.id} // Add userId for edit button visibility
-                isProfilePage={false} // Add isProfilePage for conditional rendering
+                onApprove={null}
+                userId={auth.user?.id}
+                isProfilePage={false}
               />
             ))
           ) : (
             <p>No approved NFT drops found.</p>
           )}
         </div>
-      <div className="sides">
-        <DiscordBotInvite /> {/* Add the Discord bot invite component here */}
-        <div className="snapshot-section">
-        <h2>General Tools</h2>
-          <h3>Snapshot Tool</h3>
-          <input
-            type="text"
-            placeholder="Enter OW collection slug"
-            value={collectionSlug}
-            onChange={(e) => setCollectionSlug(e.target.value)}
-          />
-          <button onClick={fetchSnapshot}>Snap!t</button>
-          {snapshotData.length > 0 && (
-            <div className="snapshot-results">
-              <h4>Snapshot Results</h4>
-              <ul>
-                {snapshotData.map(({ address, count }) => (
-                  <li key={address}>{address}: {count}</li>
-                ))}
-              </ul>
-              <button onClick={exportToCSV}>Export to CSV</button>
-            </div>
-        </div>
-          )}
+        <div className="sides">
+          <DiscordBotInvite />
+          <div className="snapshot-section">
+            <h2>General Tools</h2>
+            <h3>Snapshot Tool</h3>
+            <input
+              type="text"
+              placeholder="Enter OW collection slug"
+              value={collectionSlug}
+              onChange={(e) => setCollectionSlug(e.target.value)}
+            />
+            <button onClick={fetchSnapshot}>Snap!t</button>
+            {snapshotData.length > 0 && (
+              <div className="snapshot-results">
+                <h4>Snapshot Results</h4>
+                <ul>
+                  {snapshotData.map(({ address, count }) => (
+                    <li key={address}>{address}: {count}</li>
+                  ))}
+                </ul>
+                <button onClick={exportToCSV}>Export to CSV</button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
