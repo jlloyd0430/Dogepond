@@ -3,7 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
 import apiClient from "../services/apiClient";
 import AdBannerCarousel from "../components/AdBannerCarousel";
-import DiscordBotInvite from "../components/DiscordBotInvite"; // Corrected component name case
+import DiscordBotInvite from "../components/discordBotInvite"; // Corrected component name case
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import Papa from 'papaparse';
