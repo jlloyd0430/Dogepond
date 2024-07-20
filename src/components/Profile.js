@@ -81,34 +81,6 @@ const Profile = () => {
     }
   };
 
-  const fetchSnapshot = async () => {
-    try {
-      const response = await fetch(`https://dogeturbo.ordinalswallet.com/collection/${collectionSlug}/snapshot`);
-      const snapshotText = await response.text();
-      const parsedData = Papa.parse(snapshotText, {
-        header: false,
-      }).data;
-
-      const snapshotCount = parsedData.reduce((acc, address) => {
-        acc[address] = (acc[address] || 0) + 1;
-        return acc;
-      }, {});
-
-      setSnapshotData(Object.entries(snapshotCount).map(([address, count]) => ({ address, count })));
-    } catch (error) {
-      console.error('Failed to fetch snapshot data:', error);
-    }
-  };
-
-  const exportToCSV = () => {
-    const csv = Papa.unparse(snapshotData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${collectionSlug}_snapshot.csv`;
-    link.click();
-  };
-
   return (
     <div className="profile-container">
       <h1>Profile</h1>
@@ -150,26 +122,6 @@ const Profile = () => {
                   </div>
                 ))}
               </div>
-                  <h2>General Tools</h2>
-              <div className="snapshot-section">
-                <h3>Snapshot Tool</h3>
-                <input
-                  type="text"
-                  placeholder="Enter OW collection slug"
-                  value={collectionSlug}
-                  onChange={(e) => setCollectionSlug(e.target.value)}
-                />
-                <button onClick={fetchSnapshot}>Snap!t</button>
-                {snapshotData.length > 0 && (
-                  <div className="snapshot-results">
-                    <h4>Snapshot Results</h4>
-                    <ul>
-                      {snapshotData.map(({ address, count }) => (
-                        <li key={address}>{address}: {count}</li>
-                      ))}
-                    </ul>
-                    <button onClick={exportToCSV}>Export to CSV</button>
-                  </div>
                 )}
               </div>
             </div>
