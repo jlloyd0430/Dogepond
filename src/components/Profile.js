@@ -106,7 +106,6 @@ const Profile = () => {
         </div>
       ) : (
         <div className="wallet-view">
-
           {!walletAddress ? (
             <button className="connect-wallet-button" onClick={connectWallet}>Connect Wallet</button>
           ) : (
@@ -121,8 +120,6 @@ const Profile = () => {
                     <p>{inscription.meta.name}</p>
                   </div>
                 ))}
-              </div>
-                )}
               </div>
             </div>
           )}
