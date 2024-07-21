@@ -71,6 +71,13 @@ body.dark-mode .dropdown-item:hover {
   color: goldenrod;
 }
 
+.snapshot-section {
+    border: 2px solid gold;
+    border-radius: 25px;
+    margin-top: 20px;
+    padding: 20px;
+}
+
 div {
   display: flex;
   padding: 5px;
