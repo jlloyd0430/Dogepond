@@ -59,12 +59,6 @@ button:hover {
   margin: 4px 0;
 }
 
-.snapshot-section {
-  margin-top: 20px;
-  border: 1px solid goldenrod;
-  border-radius: 25px;
-  padding: 20px;
-}
 
 .snapshot-results {
   margin-top: 10px;
