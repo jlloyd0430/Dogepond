@@ -240,12 +240,6 @@ body.dark-mode .footer {
   align-items: start;
 }
 
-.snapshot-section {
-    border: 2px solid gold;
-    border-radius: 25px;
-    margin-top: 20px;
-    padding: 20px;
-}
 
 .snapshot-results {
   margin-top: 10px;
