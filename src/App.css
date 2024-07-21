@@ -269,6 +269,10 @@ body.dark-mode .footer {
     width: 100%;
   }
 
+     .snapshot-section {
+    width: 95%;
+  }
+
   .main-content {
     align-items: center;
     display: flex;
@@ -286,6 +290,8 @@ body.dark-mode .footer {
     display: flex;
     flex-direction: column;
   }
+
+
 
   .sides {
     flex-direction: column;
