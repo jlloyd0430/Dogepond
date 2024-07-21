@@ -1,4 +1,7 @@
 #  Dogepond 
+
+https://dogepond.com
+
 The first mint calendar website and resource hub for doge projects,
 
 create an account
@@ -36,7 +39,6 @@ votes
 # of nfts = voting power
 
 vote once per proposal, only can vote if u hold
-
 
 
 # To do List
