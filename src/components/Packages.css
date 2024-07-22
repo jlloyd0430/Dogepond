@@ -13,10 +13,6 @@
   margin-bottom: 20px;
 }
 
-.package {
-  margin-bottom: 30px;
-}
-
 
 .enquire-button {
   padding: 10px 20px;
@@ -53,11 +49,12 @@ h1, h2, h3, p {
 }
 
 .package {
-  margin-bottom: 30px;
-  border: 2px solid goldenrod;
-  border-radius: 8px;
-  padding: 10px;
-  /* background-color: #1e1e1e;  */
+    border: 2px solid #daa520;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    padding: 10px;
+    width: 650px;
+    align-items: center;
 }
 
 .package-title {
