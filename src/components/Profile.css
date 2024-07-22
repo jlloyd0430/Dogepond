@@ -91,6 +91,6 @@ button:hover {
   .wallet-holdings,
   .inscription-card,
   .snapshot-section {
-    width: 100%;
+    width: 95%;
   }
 }
