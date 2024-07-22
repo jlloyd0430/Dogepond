@@ -13,6 +13,9 @@
   margin-bottom: 20px;
 }
 
+.services{
+  align-items: center;
+}
 
 .enquire-button {
   padding: 10px 20px;
