@@ -16,7 +16,7 @@
   flex-direction: row;
   align-items: center;
   border: 2px solid var(--border-color-light, gold);
-  border-radius: 8px;
+  border-radius: 25px;
   padding: 16px;
   margin: 16px;
   background-color: var(--background-color-light, transparent); /* Ensure transparency */
