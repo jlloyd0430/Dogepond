@@ -116,6 +116,10 @@ body.dark-mode .header {
   padding: 0 20px;
 }
 
+.ads {
+  align-items: center;
+}
+
 .search-filter-container input {
   flex: 1;
   padding: 10px;
