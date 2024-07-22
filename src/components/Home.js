@@ -139,8 +139,10 @@ const Home = () => {
 
   return (
     <div>
+    <div className="ads">
       <AdBannerCarousel />
       <h1>Upcoming Drops</h1>
+    </div>
       <div className="search-filter-container">
         <div className="filter-dropdown">
           <FontAwesomeIcon
