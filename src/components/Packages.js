@@ -11,7 +11,7 @@ const Packages = () => {
       <p className="packages-description">
         DogePond offers a variety of different Services for individuals and Projects alike.
       </p>
-    <div className="package">
+    <div className="services">
       <div className="package">
         <h2 className="package-title">Rarity site</h2>
         <p className="package-description">
