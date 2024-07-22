@@ -11,6 +11,7 @@ const Packages = () => {
       <p className="packages-description">
         DogePond offers a variety of different Services for individuals and Projects alike.
       </p>
+    <div className="package">
       <div className="package">
         <h2 className="package-title">Rarity site</h2>
         <p className="package-description">
@@ -77,6 +78,7 @@ const Packages = () => {
       <h1>HOLDER DISCOUNTS </h1>
       <p>DoginalDuck holders will receive discounted rates for service packages per duck up to 5 ducks. Rates may vary per package/custom job.</p>
     </div>
+  </div>
   );
 };
 export default Packages;
