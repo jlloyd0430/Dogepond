@@ -7,6 +7,7 @@
   flex-direction: row-reverse;
   gap: 10px;
   margin-bottom: 20px;
+  justify-content: space-between;
 }
 
 .connect-wallet-button,
