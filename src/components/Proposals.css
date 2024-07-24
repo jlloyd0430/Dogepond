@@ -11,6 +11,11 @@
   padding: 20px;
 }
 
+.prop {
+  display: flex;
+  flex-direction: row;
+}
+
 .checkbox {
   display: flex;
 }
