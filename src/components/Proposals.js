@@ -352,8 +352,11 @@ const Proposals = () => {
             <h2>{proposal.name}</h2>
             {proposal.isClassified && viewingProposalId !== proposal._id ? (
               <>
-                <p>Collection Name: {proposal.collectionName}</p>
-                {proposal.ticker && <p>Project Ticker: {proposal.ticker}</p>}
+                {proposal.collectionName ? (
+                  <p>Collection Name: {proposal.collectionName}</p>
+                ) : (
+                  <p>Project Ticker: {proposal.ticker}</p>
+                )}
                 <p>This proposal is classified.</p>
                 <button className="button" onClick={() => handleViewProposal(proposal._id)}>View</button>
               </>
@@ -362,8 +365,11 @@ const Proposals = () => {
                <div className="prop">
                 {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
                 <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
-                <p>Collection Name: {proposal.collectionName}</p>
-                {proposal.ticker && <p>Project Ticker: {proposal.ticker}</p>}
+                {proposal.collectionName ? (
+                  <p>Collection Name: {proposal.collectionName}</p>
+                ) : (
+                  <p>Project Ticker: {proposal.ticker}</p>
+                )}
                 <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
                 </div>
                  <p>{proposal.description}</p>
