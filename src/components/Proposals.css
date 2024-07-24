@@ -146,6 +146,12 @@
   .create-proposal-form textarea {
     padding: 8px;
   }
+
+    .prop, .prop-buttons {
+    display: flex;
+    flex-direction: column;
+}
+  
 }
 
 /* New styles for search filter */
