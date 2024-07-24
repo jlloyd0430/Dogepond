@@ -353,6 +353,7 @@ const Proposals = () => {
             {proposal.isClassified && viewingProposalId !== proposal._id ? (
               <>
                 <p>Collection Name: {proposal.collectionName}</p>
+                {proposal.ticker && <p>Project Ticker: {proposal.ticker}</p>}
                 <p>This proposal is classified.</p>
                 <button className="button" onClick={() => handleViewProposal(proposal._id)}>View</button>
               </>
@@ -362,6 +363,7 @@ const Proposals = () => {
                 <p>{proposal.description}</p>
                 <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
                 <p>Collection Name: {proposal.collectionName}</p>
+                {proposal.ticker && <p>Project Ticker: {proposal.ticker}</p>}
                 <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
                 {new Date(proposal.endDate) > new Date() ? (
                   proposal.options.map((option) => (
