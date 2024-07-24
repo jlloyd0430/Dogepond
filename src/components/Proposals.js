@@ -201,7 +201,8 @@ const Proposals = () => {
     if (searchTerm) {
       filtered = filtered.filter((proposal) =>
         proposal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        proposal.collectionName.toLowerCase().includes(searchTerm.toLowerCase())
+        proposal.collectionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        proposal.ticker.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -291,14 +292,14 @@ const Proposals = () => {
           />
           <input
             type="text"
-            placeholder="OW Collection Name"
+            placeholder="Collection Name"
             value={newProposal.collectionName}
             onChange={(e) => setNewProposal({ ...newProposal, collectionName: e.target.value })}
             disabled={newProposal.ticker !== ''}
           />
           <input
             type="text"
-            placeholder="DRC-20 Ticker CAPS"
+            placeholder="DRC-20 Ticker"
             value={newProposal.ticker}
             onChange={(e) => setNewProposal({ ...newProposal, ticker: e.target.value })}
             disabled={newProposal.collectionName !== ''}
@@ -352,39 +353,33 @@ const Proposals = () => {
             <h2>{proposal.name}</h2>
             {proposal.isClassified && viewingProposalId !== proposal._id ? (
               <>
-                {proposal.collectionName ? (
-                  <p>Collection Name: {proposal.collectionName}</p>
-                ) : (
-                  <p>Project Ticker: {proposal.ticker}</p>
-                )}
+                <p><strong>Collection Name:</strong> {proposal.collectionName}</p>
+                {proposal.ticker && <p><strong>Project Ticker:</strong> {proposal.ticker}</p>}
                 <p>This proposal is classified.</p>
                 <button className="button" onClick={() => handleViewProposal(proposal._id)}>View</button>
               </>
             ) : (
               <>
-               <div className="prop">
-                {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
-                <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
-                {proposal.collectionName ? (
-                  <p>Collection Name: {proposal.collectionName}</p>
-                ) : (
-                  <p>Project Ticker: {proposal.ticker}</p>
-                )}
-                <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
+                <div className="prop">
+                  {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
+                  <p><strong>End Date:</strong> {new Date(proposal.endDate).toLocaleString()}</p>
+                  <p><strong>Collection Name:</strong> {proposal.collectionName}</p>
+                  {proposal.ticker && <p><strong>Project Ticker:</strong> {proposal.ticker}</p>}
+                  <p><strong>Total Votes:</strong> {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
                 </div>
-                 <p>{proposal.description}</p>
-                 <div className="prop-buttons">
-                {new Date(proposal.endDate) > new Date() ? (
-                  proposal.options.map((option) => (
-                    <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
-                      Vote for {option}
-                    </button>
-                  ))
-                ) : (
-                  <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
-                    proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
-                  ) : 'No votes cast'}</p>
-                )}
+                <p>{proposal.description}</p>
+                <div className="prop-buttons">
+                  {new Date(proposal.endDate) > new Date() ? (
+                    proposal.options.map((option) => (
+                      <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
+                        Vote for {option}
+                      </button>
+                    ))
+                  ) : (
+                    <p>Winning Option: {proposal.votes.length > 0 ? proposal.options.reduce((a, b) =>
+                      proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
+                    ) : 'No votes cast'}</p>
+                  )}
                 </div>
               </>
             )}
