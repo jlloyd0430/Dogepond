@@ -359,8 +359,8 @@ const Proposals = () => {
               </>
             ) : (
               <>
-                {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
                <div className="prop">
+                {proposal.image && <img src={proposal.image} alt={proposal.name} className="proposal-image" />}
                 <p>{proposal.description}</p>
                 <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
                 <p>Collection Name: {proposal.collectionName}</p>
