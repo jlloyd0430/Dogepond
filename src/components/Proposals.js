@@ -17,14 +17,17 @@ const Proposals = () => {
     options: [''],
     endDate: '',
     collectionName: '',
+    ticker: '',
     weightInputs: {},
     image: null,
     classified: false,
+    drc20Weight: 1,
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('mostRecent');
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [viewingProposalId, setViewingProposalId] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchProposals = async () => {
@@ -93,13 +96,28 @@ const Proposals = () => {
       return;
     }
 
+    if (!newProposal.collectionName && !newProposal.ticker) {
+      setError('You must provide either a collection name or a DRC-20 ticker.');
+      return;
+    }
+
+    if (newProposal.collectionName && newProposal.ticker) {
+      setError('You cannot provide both a collection name and a DRC-20 ticker. Please choose one.');
+      return;
+    }
+
     try {
       const formData = new FormData();
       formData.append('name', newProposal.name);
       formData.append('description', newProposal.description);
       formData.append('endDate', newProposal.endDate);
-      formData.append('collectionName', newProposal.collectionName);
-      formData.append('walletAddress', walletAddress); // Add walletAddress to form data
+      if (newProposal.collectionName) {
+        formData.append('collectionName', newProposal.collectionName);
+      }
+      if (newProposal.ticker) {
+        formData.append('ticker', newProposal.ticker);
+      }
+      formData.append('walletAddress', walletAddress);
       formData.append('classified', newProposal.classified);
       newProposal.options.forEach((option, index) => {
         formData.append(`options[${index}]`, option);
@@ -110,8 +128,15 @@ const Proposals = () => {
       if (newProposal.image) {
         formData.append('image', newProposal.image);
       }
+      formData.append('drc20Weight', newProposal.drc20Weight);
 
-      await apiClient.post('/proposals/create', formData, {
+      // Log the FormData
+      console.log('FormData before sending:');
+      for (let pair of formData.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
+
+      const response = await apiClient.post('/proposals/create', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -119,8 +144,9 @@ const Proposals = () => {
       alert('Proposal created successfully!');
       setShowCreateProposal(false);
       // Fetch updated proposals
-      const response = await apiClient.get('/proposals');
-      setProposals(response.data);
+      const updatedProposals = await apiClient.get('/proposals');
+      setProposals(updatedProposals.data);
+      setError('');
     } catch (error) {
       console.error('Error creating proposal:', error);
       if (error.response && error.response.data && error.response.data.error) {
@@ -265,11 +291,19 @@ const Proposals = () => {
           />
           <input
             type="text"
-            placeholder="OW Collection name"
+            placeholder="Collection Name"
             value={newProposal.collectionName}
             onChange={(e) => setNewProposal({ ...newProposal, collectionName: e.target.value })}
+            disabled={newProposal.ticker !== ''}
           />
-          <label className="checkbox" >
+          <input
+            type="text"
+            placeholder="DRC-20 Ticker"
+            value={newProposal.ticker}
+            onChange={(e) => setNewProposal({ ...newProposal, ticker: e.target.value })}
+            disabled={newProposal.collectionName !== ''}
+          />
+          <label className="checkbox">
             <input
               type="checkbox"
               checked={newProposal.classified}
@@ -293,9 +327,22 @@ const Proposals = () => {
               />
             </div>
           ))}
+          {newProposal.ticker && (
+            <div>
+              <label>
+                DRC-20 Voting Power (Number of tokens for 1 vote)
+                <input
+                  type="number"
+                  value={newProposal.drc20Weight}
+                  onChange={(e) => setNewProposal({ ...newProposal, drc20Weight: e.target.value })}
+                />
+              </label>
+            </div>
+          )}
           <input type="file" accept="image/*" onChange={handleImageChange} />
           <button className="button" onClick={handleCreateProposal}>Create Proposal</button>
-          <div>Note: you must hold an inscription from the collection you are making a proposal for.</div>
+          {error && <div className="error-message">{error}</div>}
+          <div>Note: you must hold an inscription or DRC-20 token from the collection you are making a proposal for.</div>
         </div>
       )}
 
