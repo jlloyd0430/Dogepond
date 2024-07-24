@@ -24,6 +24,19 @@
   
 }
 
+.proposal strong {
+  font-weight: bold;
+}
+
+.proposal .prop {
+  margin-bottom: 1em;
+}
+
+.proposal .prop-buttons {
+  margin-top: 1em;
+}
+
+
 .checkbox {
   display: flex;
 }
