@@ -111,6 +111,10 @@
     width: 70%;
   }
 
+  .proposal p {
+    padding: 1px:
+  }
+
   .prop, .prop-buttons {
     display: flex;
     flex-direction: column;
@@ -147,6 +151,11 @@
   .create-proposal-form textarea {
     padding: 8px;
   }
+
+    .proposal p {
+    padding: 1px:
+  }
+
 
     .prop, .prop-buttons {
     display: flex;
