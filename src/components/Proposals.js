@@ -365,8 +365,8 @@ const Proposals = () => {
                 <p>End Date: {new Date(proposal.endDate).toLocaleString()}</p>
                 <p>Collection Name: {proposal.collectionName}</p>
                 {proposal.ticker && <p>Project Ticker: {proposal.ticker}</p>}
-               </div>
                 <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
+                </div>
                 {new Date(proposal.endDate) > new Date() ? (
                   proposal.options.map((option) => (
                     <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
