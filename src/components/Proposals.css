@@ -14,6 +14,7 @@
 .prop {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .checkbox {
@@ -88,6 +89,7 @@
 
 .proposal p {
   margin: 5px 0;
+  padding: 10px;
 }
 
 /* Responsive Design */
