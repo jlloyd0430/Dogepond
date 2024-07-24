@@ -291,14 +291,14 @@ const Proposals = () => {
           />
           <input
             type="text"
-            placeholder="Collection Name"
+            placeholder="OW Collection Name"
             value={newProposal.collectionName}
             onChange={(e) => setNewProposal({ ...newProposal, collectionName: e.target.value })}
             disabled={newProposal.ticker !== ''}
           />
           <input
             type="text"
-            placeholder="DRC-20 Ticker"
+            placeholder="DRC-20 Ticker CAPS"
             value={newProposal.ticker}
             onChange={(e) => setNewProposal({ ...newProposal, ticker: e.target.value })}
             disabled={newProposal.collectionName !== ''}
