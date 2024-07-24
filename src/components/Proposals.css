@@ -110,6 +110,12 @@
     width: 70%;
   }
 
+  .prop, .prop-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+
 .create-proposal-form {
   width: 80%;
 }
