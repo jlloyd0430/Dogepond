@@ -367,6 +367,7 @@ const Proposals = () => {
                 <p>Total Votes: {proposal.votes.reduce((acc, vote) => acc + vote.weight, 0)}</p>
                 </div>
                  <p>{proposal.description}</p>
+                 <div className"buttons">
                 {new Date(proposal.endDate) > new Date() ? (
                   proposal.options.map((option) => (
                     <button key={option} className="button" onClick={() => handleVote(proposal, option)}>
@@ -378,6 +379,7 @@ const Proposals = () => {
                     proposal.votes.filter(vote => vote.option === a).length >= proposal.votes.filter(vote => vote.option === b).length ? a : b
                   ) : 'No votes cast'}</p>
                 )}
+                </div>
               </>
             )}
           </div>
