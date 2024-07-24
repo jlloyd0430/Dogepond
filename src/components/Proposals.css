@@ -17,6 +17,12 @@
   align-items: center;
 }
 
+.prop-buttons {
+  display: flex;
+  flex-direction: row;
+  
+}
+
 .checkbox {
   display: flex;
 }
