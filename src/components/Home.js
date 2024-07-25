@@ -264,7 +264,7 @@ const Home = () => {
             <h3>DRC-20 Snapshot</h3>
             <input
               type="text"
-              placeholder="Enter DRC-20 ticker"
+              placeholder="Enter DRC-20 ticker CAPS"
               value={drc20Ticker}
               onChange={(e) => setDrc20Ticker(e.target.value)}
             />
