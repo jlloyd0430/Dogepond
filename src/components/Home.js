@@ -22,6 +22,7 @@ const Home = () => {
 
   const [collectionSlug, setCollectionSlug] = useState("");
   const [snapshotData, setSnapshotData] = useState([]);
+
   const [drc20Ticker, setDrc20Ticker] = useState("");
   const [drc20SnapshotData, setDrc20SnapshotData] = useState([]);
 
@@ -132,14 +133,15 @@ const Home = () => {
 
   const fetchDrc20Snapshot = async () => {
     try {
-      const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders`);
-      const data = await response.json();
-      const holders = data.data.map(({ address, balance }) => ({
-        address,
-        balance,
-      }));
+      const response = await apiClient.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders`, {
+        headers: {
+          'Accept': 'application/json',
+          'api-key': process.env.API_KEY
+        }
+      });
+      const data = response.data?.data || [];
 
-      setDrc20SnapshotData(holders);
+      setDrc20SnapshotData(data.map(({ address, balance }) => ({ address, balance })));
     } catch (error) {
       console.error('Failed to fetch DRC-20 snapshot data:', error);
     }
@@ -165,10 +167,10 @@ const Home = () => {
 
   return (
     <div>
-      <div className="ads">
-        <AdBannerCarousel />
-        <h1>Upcoming Drops</h1>
-      </div>
+    <div className="ads">
+      <AdBannerCarousel />
+      <h1>Upcoming Drops</h1>
+    </div>
       <div className="search-filter-container">
         <div className="filter-dropdown">
           <FontAwesomeIcon
@@ -257,8 +259,6 @@ const Home = () => {
               </div>
             )}
           </div>
-
-          {/* New DRC-20 Snapshot Tool */}
           <div className="snapshot-section">
             <h3>DRC-20 Snapshot Tool</h3>
             <input
