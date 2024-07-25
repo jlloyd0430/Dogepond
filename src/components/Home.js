@@ -253,17 +253,15 @@ const Home = () => {
               <div className="snapshot-results">
                 <h4>Snapshot Results</h4>
                 <ul>
-                  {snapshotData.map((item, index) => (
-                    <li key={index}>
-                      {item.address}: {item.count}
-                    </li>
+                  {snapshotData.map(({ address, count }) => (
+                    <li key={address}>{address}: {count}</li>
                   ))}
                 </ul>
                 <button onClick={exportToCSV}>Export to CSV</button>
               </div>
             )}
           </div>
-          <div className="drc20-snapshot-section">
+          <div className="snapshot-section">
             <h3>DRC-20 Snapshot Tool</h3>
             <input
               type="text"
@@ -273,13 +271,11 @@ const Home = () => {
             />
             <button onClick={fetchDrc20Snapshot}>Snap!t</button>
             {drc20SnapshotData.length > 0 && (
-              <div className="drc20-snapshot-results">
+              <div className="snapshot-results">
                 <h4>Snapshot Results</h4>
                 <ul>
-                  {drc20SnapshotData.map((item, index) => (
-                    <li key={index}>
-                      {item.address}: {item.balance}
-                    </li>
+                  {drc20SnapshotData.map(({ address, balance }) => (
+                    <li key={address}>{address}: {balance}</li>
                   ))}
                 </ul>
                 <button onClick={exportDrc20ToCSV}>Export to CSV</button>
