@@ -132,17 +132,18 @@ const Home = () => {
 
   const fetchDrc20Snapshot = async () => {
     try {
-      const apiKey = process.env.API_KEY;
       const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders`, {
         headers: {
           'Accept': 'application/json',
-          'api-key': apiKey,
-        },
+          'api-key': process.env.API_KEY
+        }
       });
       const data = await response.json();
-      if (data.data) {
-        setDrc20SnapshotData(data.data);
-      }
+
+      setDrc20SnapshotData(data.data.map(item => ({
+        address: item.address,
+        balance: item.balance
+      })));
     } catch (error) {
       console.error('Failed to fetch DRC-20 snapshot data:', error);
     }
@@ -162,16 +163,16 @@ const Home = () => {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${drc20Ticker}_snapshot.csv`;
+    link.download = `${drc20Ticker}_drc20_snapshot.csv`;
     link.click();
   };
 
   return (
     <div>
-    <div className="ads">
-      <AdBannerCarousel />
-      <h1>Upcoming Drops</h1>
-    </div>
+      <div className="ads">
+        <AdBannerCarousel />
+        <h1>Upcoming Drops</h1>
+      </div>
       <div className="search-filter-container">
         <div className="filter-dropdown">
           <FontAwesomeIcon
