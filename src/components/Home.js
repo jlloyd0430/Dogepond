@@ -240,8 +240,7 @@ const Home = () => {
         <div className="sides">
           <DiscordBotInvite />
           <div className="snapshot-section">
-            <h2>General Tools</h2>
-            <h3>Snapshot Tool</h3>
+            <h3>NFT Collection Snapshot</h3>
             <input
               type="text"
               placeholder="Enter OW collection slug"
@@ -262,7 +261,7 @@ const Home = () => {
             )}
           </div>
           <div className="snapshot-section">
-            <h3>DRC-20 Snapshot Tool</h3>
+            <h3>DRC-20 Snapshot</h3>
             <input
               type="text"
               placeholder="Enter DRC-20 ticker"
