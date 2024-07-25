@@ -291,6 +291,9 @@ body.dark-mode .footer {
     width: 100%;
   }
 
+  .snapshot-section {
+    width: 80%;
+  }
 
 
   .main-content {
