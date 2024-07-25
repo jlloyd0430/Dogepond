@@ -135,7 +135,7 @@ const Home = () => {
       const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders`, {
         headers: {
           'Accept': 'application/json',
-          'api-key': process.env.API_KEY
+          'api-key': process.env.REACT_APP_API_KEY
         }
       });
       const data = await response.json();
