@@ -78,6 +78,23 @@ body.dark-mode .dropdown-item:hover {
     padding: 20px;
 }
 
+
+.snapshot-results {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 25px;
+}
+
+.snapshot-results ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.snapshot-results ul li {
+  margin: 5px 0;
+}
+
+
 div {
   display: flex;
   padding: 5px;
