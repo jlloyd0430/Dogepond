@@ -22,7 +22,6 @@ const Home = () => {
 
   const [collectionSlug, setCollectionSlug] = useState("");
   const [snapshotData, setSnapshotData] = useState([]);
-
   const [drc20Ticker, setDrc20Ticker] = useState("");
   const [drc20SnapshotData, setDrc20SnapshotData] = useState([]);
 
@@ -131,22 +130,6 @@ const Home = () => {
     }
   };
 
-  const fetchDrc20Snapshot = async () => {
-    try {
-      const response = await apiClient.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders`, {
-        headers: {
-          'Accept': 'application/json',
-          'api-key': process.env.API_KEY
-        }
-      });
-      const data = response.data?.data || [];
-
-      setDrc20SnapshotData(data.map(({ address, balance }) => ({ address, balance })));
-    } catch (error) {
-      console.error('Failed to fetch DRC-20 snapshot data:', error);
-    }
-  };
-
   const exportToCSV = () => {
     const csv = Papa.unparse(snapshotData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -156,21 +139,39 @@ const Home = () => {
     link.click();
   };
 
+  const fetchDrc20Snapshot = async () => {
+    try {
+      const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders`, {
+        headers: {
+          'api-key': process.env.API_KEY,
+        },
+      });
+      const result = await response.json();
+      const holdersData = result.data.map(({ address, balance }) => ({
+        address,
+        balance: parseFloat(balance),
+      }));
+      setDrc20SnapshotData(holdersData);
+    } catch (error) {
+      console.error('Failed to fetch DRC-20 snapshot data:', error);
+    }
+  };
+
   const exportDrc20ToCSV = () => {
     const csv = Papa.unparse(drc20SnapshotData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${drc20Ticker}_drc20_snapshot.csv`;
+    link.download = `${drc20Ticker}_snapshot.csv`;
     link.click();
   };
 
   return (
     <div>
-    <div className="ads">
-      <AdBannerCarousel />
-      <h1>Upcoming Drops</h1>
-    </div>
+      <div className="ads">
+        <AdBannerCarousel />
+        <h1>Upcoming Drops</h1>
+      </div>
       <div className="search-filter-container">
         <div className="filter-dropdown">
           <FontAwesomeIcon
@@ -263,14 +264,14 @@ const Home = () => {
             <h3>DRC-20 Snapshot Tool</h3>
             <input
               type="text"
-              placeholder="Enter DRC-20 Ticker"
+              placeholder="Enter DRC-20 ticker"
               value={drc20Ticker}
               onChange={(e) => setDrc20Ticker(e.target.value)}
             />
             <button onClick={fetchDrc20Snapshot}>Snap!t</button>
             {drc20SnapshotData.length > 0 && (
               <div className="snapshot-results">
-                <h4>Snapshot Results</h4>
+                <h4>DRC-20 Snapshot Results</h4>
                 <ul>
                   {drc20SnapshotData.map(({ address, balance }) => (
                     <li key={address}>{address}: {balance}</li>
