@@ -130,6 +130,24 @@ const Home = () => {
     }
   };
 
+  const fetchDrc20Snapshot = async () => {
+    try {
+      const apiKey = process.env.API_KEY;
+      const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders`, {
+        headers: {
+          'Accept': 'application/json',
+          'api-key': apiKey,
+        },
+      });
+      const data = await response.json();
+      if (data.data) {
+        setDrc20SnapshotData(data.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch DRC-20 snapshot data:', error);
+    }
+  };
+
   const exportToCSV = () => {
     const csv = Papa.unparse(snapshotData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -137,24 +155,6 @@ const Home = () => {
     link.href = URL.createObjectURL(blob);
     link.download = `${collectionSlug}_snapshot.csv`;
     link.click();
-  };
-
-  const fetchDrc20Snapshot = async () => {
-    try {
-      const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders`, {
-        headers: {
-          'api-key': process.env.API_KEY,
-        },
-      });
-      const result = await response.json();
-      const holdersData = result.data.map(({ address, balance }) => ({
-        address,
-        balance: parseFloat(balance),
-      }));
-      setDrc20SnapshotData(holdersData);
-    } catch (error) {
-      console.error('Failed to fetch DRC-20 snapshot data:', error);
-    }
   };
 
   const exportDrc20ToCSV = () => {
@@ -168,10 +168,10 @@ const Home = () => {
 
   return (
     <div>
-      <div className="ads">
-        <AdBannerCarousel />
-        <h1>Upcoming Drops</h1>
-      </div>
+    <div className="ads">
+      <AdBannerCarousel />
+      <h1>Upcoming Drops</h1>
+    </div>
       <div className="search-filter-container">
         <div className="filter-dropdown">
           <FontAwesomeIcon
@@ -271,7 +271,7 @@ const Home = () => {
             <button onClick={fetchDrc20Snapshot}>Snap!t</button>
             {drc20SnapshotData.length > 0 && (
               <div className="snapshot-results">
-                <h4>DRC-20 Snapshot Results</h4>
+                <h4>Snapshot Results</h4>
                 <ul>
                   {drc20SnapshotData.map(({ address, balance }) => (
                     <li key={address}>{address}: {balance}</li>
