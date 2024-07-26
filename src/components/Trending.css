@@ -22,6 +22,55 @@
   align-items: center;
 }
 
+
+
+.search-container, .balance-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.search-container input, .balance-container input {
+  padding: 10px;
+  font-size: 16px;
+  width: 300px;
+}
+
+.search-container button, .balance-container button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.dune-list, .wallet-dunes-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.dune-card, .wallet-dune-card {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  width: 200px;
+  text-align: center;
+}
+
+.dune-card a, .wallet-dune-card a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.dune-card h2, .wallet-dune-card h2 {
+  font-size: 18px;
+}
+
+.wallet-dune-card p {
+  font-size: 16px;
+}
+
 .error {
   color: red;
 }
