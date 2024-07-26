@@ -6,6 +6,10 @@ import "./Trending.css"; // Add appropriate styles
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
+  const [walletDunes, setWalletDunes] = useState([]);
+  const [balanceError, setBalanceError] = useState("");
 
   useEffect(() => {
     const fetchTrendingDunes = async () => {
@@ -35,10 +39,74 @@ const TrendingDunes = () => {
     fetchTrendingDunes();
   }, []);
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleWalletAddressChange = (e) => {
+    setWalletAddress(e.target.value);
+  };
+
+  const handleSearch = () => {
+    if (!searchTerm) {
+      setError("Please enter a search term.");
+      return;
+    }
+
+    const filteredDunes = dunes.filter(dune => dune.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    setDunes(filteredDunes);
+  };
+
+  const handleFetchBalance = async () => {
+    if (!walletAddress) {
+      setBalanceError("Please enter a wallet address.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
+      setWalletDunes(response.data.dunes);
+      setBalanceError("");
+    } catch (error) {
+      console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
+      setBalanceError("Failed to fetch dunes balance. Please try again later.");
+    }
+  };
+
   return (
     <div className="trending-container">
       <h1>All Dunes</h1>
       {error && <p className="error">{error}</p>}
+      
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search for a dune..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+        <button onClick={handleSearch}>Search</button>
+      </div>
+
+      <div className="balance-container">
+        <input
+          type="text"
+          placeholder="Enter wallet address..."
+          value={walletAddress}
+          onChange={handleWalletAddressChange}
+        />
+        <button onClick={handleFetchBalance}>Check Balance</button>
+      </div>
+
+      {balanceError && <p className="error">{balanceError}</p>}
+      <div className="wallet-dunes-list">
+        {walletDunes.map((dune, index) => (
+          <div key={index} className="wallet-dune-card">
+            <p>{dune.dune} ({dune.symbol}): {dune.total_balance / (10 ** dune.divisibility)} {dune.symbol}</p>
+          </div>
+        ))}
+      </div>
+
       <div className="dune-list">
         {dunes.map((dune, index) => (
           <div key={index} className="dune-card">
