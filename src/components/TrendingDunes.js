@@ -53,8 +53,13 @@ const TrendingDunes = () => {
       return;
     }
 
-    const filteredDunes = dunes.filter(dune => dune.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    const encodedSearchTerm = encodeDuneName(searchTerm);
+    const filteredDunes = dunes.filter(dune => dune.name.toLowerCase().includes(encodedSearchTerm.toLowerCase()));
     setDunes(filteredDunes);
+  };
+
+  const encodeDuneName = (duneName) => {
+    return duneName.split(' ').join('%E2%80%A2');
   };
 
   const handleFetchBalance = async () => {
