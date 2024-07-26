@@ -104,16 +104,6 @@ const TrendingDunes = () => {
     <div className="trending-container">
       <h1>All Dunes</h1>
       {error && <p className="error">{error}</p>}
-      
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Search for a dune..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-        <button onClick={handleSearch}>Search</button>
-      </div>
 
       <div className="balance-container">
         <input
