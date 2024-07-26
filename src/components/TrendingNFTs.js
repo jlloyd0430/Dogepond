@@ -25,7 +25,7 @@ const TrendingNFTs = () => {
       {error && <p className="error">{error}</p>}
       <div className="nft-list">
         {nfts.map((nft, index) => (
-          <div key={index} className="nftCard">
+          <div key={index} className="nft-card">
             <img src={nft.collection.image} alt={nft.collection.name} />
             <h2>{nft.collection.name}</h2>
             <p>{nft.collection.description}</p>
