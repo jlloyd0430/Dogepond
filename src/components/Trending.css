@@ -68,3 +68,10 @@
     flex-direction: column;
   }
 }
+
+
+@media (max-width: 1200px) {
+  .nftCard {
+    flex-direction: column;
+  }
+}
