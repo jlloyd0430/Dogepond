@@ -26,7 +26,7 @@ const TrendingNFTs = () => {
       <div className="nft-list">
         {nfts.map((nft, index) => (
           <div key={index} className="nftCard">
-            <img src={nft.collection.image} alt={nft.collection.name} />
+            <img src={nft.collection.image} alt={nft.collection.name} style={{ width: '150px', height: '150px' }} />
             <h2>{nft.collection.name}</h2>
             <p>{nft.collection.description}</p>
             <p>24h Volume: {nft.volume24h}</p>
