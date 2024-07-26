@@ -37,7 +37,7 @@ const TrendingDunes = () => {
 
   return (
     <div className="trending-container">
-      <h1>Trending Dunes</h1>
+      <h1>All Dunes</h1>
       {error && <p className="error">{error}</p>}
       <div className="dune-list">
         {dunes.map((dune, index) => (
