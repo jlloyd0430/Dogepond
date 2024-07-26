@@ -20,6 +20,7 @@ import "./App.css";
 import "./components/NFTCard.css";
 import "./components/Footer.css";
 import Proposals from "./components/Proposals"; // Import the Proposals component
+import Info from "./components/info"; // Import the Info component
 
 const App = () => {
   return (
@@ -83,6 +84,9 @@ const AppContent = () => {
           </Route>
           <Route path="/proposals" element={<PrivateRoute />}>
             <Route index element={<Proposals />} />
+          </Route>
+          <Route path="/info" element={<PrivateRoute />}> {/* Add the new Info route */}
+            <Route index element={<Info />} />
           </Route>
         </Routes>
       </div>
