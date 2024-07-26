@@ -50,9 +50,9 @@
 }
 
 .dune-card, .wallet-dune-card {
-  border: 1px solid #ccc;
+  border: 2px solid green;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 11px;
   text-align: center;
 }
 
