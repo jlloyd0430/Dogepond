@@ -10,7 +10,7 @@ const TrendingNFTs = () => {
     const fetchTrendingNFTs = async () => {
       try {
         const response = await axios.get(`/api/nfts/trending?offset=0&limit=100&sortBy=volume24h&sortOrder=desc`);
-        setNFTs(response.data);
+        setNFTs(Array.isArray(response.data) ? response.data : []);  // Ensure nfts is an array
       } catch (error) {
         console.error("Error fetching trending NFTs:", error);
         setError("Failed to fetch trending NFTs. Please try again later.");
@@ -24,15 +24,15 @@ const TrendingNFTs = () => {
       <h1>Trending NFTs</h1>
       {error && <p className="error">{error}</p>}
       <div className="nft-list">
-        {nfts.map((nft, index) => (
+        {nfts.length > 0 ? nfts.map((nft, index) => (
           <div key={index} className="nft-card">
-            <img src={nft.collection.image} alt={nft.collection.name} />
-            <h2>{nft.collection.name}</h2>
-            <p>{nft.collection.description}</p>
+            <img src={nft.collection?.image} alt={nft.collection?.name} style={{ width: '150px', height: '150px' }} />
+            <h2>{nft.collection?.name}</h2>
+            <p>{nft.collection?.description}</p>
             <p>24h Volume: {nft.volume24h}</p>
             <p>24h Trades: {nft.trades24h}</p>
           </div>
-        ))}
+        )) : <p>No NFTs available</p>}
       </div>
     </div>
   );
