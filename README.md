@@ -35,8 +35,11 @@ inscription voting
 create proposals for collections only if you hold nfts from that col
 token gate proposals as (classified) only certain holders can view
 
-votes
-# of nfts = voting power
+#governance 
+proposal page
+number of nfts = voting power
+set the weight you want for the voting power of DRC-20 tokens
+dune voting coming soon
 
 vote once per proposal, only can vote if u hold
 
