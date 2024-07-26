@@ -47,15 +47,21 @@ const TrendingDunes = () => {
     setWalletAddress(e.target.value);
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!searchTerm) {
       setError("Please enter a search term.");
       return;
     }
 
     const encodedSearchTerm = encodeDuneName(searchTerm);
-    const filteredDunes = dunes.filter(dune => dune.name.toLowerCase().includes(encodedSearchTerm.toLowerCase()));
-    setDunes(filteredDunes);
+    try {
+      const response = await fetchDuneDetails(encodedSearchTerm);
+      setDunes([response]);
+      setError("");
+    } catch (error) {
+      setError("Dune not found.");
+      console.error(error);
+    }
   };
 
   const encodeDuneName = (duneName) => {
@@ -76,6 +82,22 @@ const TrendingDunes = () => {
       console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
       setBalanceError("Failed to fetch dunes balance. Please try again later.");
     }
+  };
+
+  const fetchDuneDetails = async (duneName) => {
+    const duneUrl = `https://ord.dunesprotocol.com/dune/${duneName}`;
+    const response = await axios.get(duneUrl);
+    const $ = cheerio.load(response.data);
+
+    const title = $('h1').text().trim();
+    const details = {};
+    $('dl dt').each((i, el) => {
+      const key = $(el).text().trim();
+      const value = $(el).next('dd').text().trim();
+      details[key] = value;
+    });
+
+    return { title, details, duneUrl };
   };
 
   return (
