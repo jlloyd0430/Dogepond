@@ -16,7 +16,6 @@ const Header = () => {
         {auth.isAuthenticated ? (
           <>
             <Link className="nav-link" to="/post">Post</Link>
-            <Link className="nav-link" to="/fish">Fish</Link>
             <Link className="nav-link" to="/proposals">Vote</Link>
             <Link className="nav-link" to="/info">Hot</Link> {/* Add link to Info page */}
             <ProfileDropdown />
