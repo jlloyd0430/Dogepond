@@ -9,8 +9,8 @@ const TrendingTokens = () => {
   useEffect(() => {
     const fetchTrendingTokens = async () => {
       try {
-        const response = await axios.get(`/api/token/trending?period=all&offset=0&limit=100&sortBy=volume24h&sortOrder=desc`);
-        setTokens(Array.isArray(response.data.data) ? response.data.data : []);  // Ensure tokens is an array
+        const response = await axios.get('/api/trendingTokens');
+        setTokens(response.data.data);
       } catch (error) {
         console.error("Error fetching trending tokens:", error);
         setError("Failed to fetch trending tokens. Please try again later.");
@@ -23,15 +23,17 @@ const TrendingTokens = () => {
     <div className="trending-container">
       <h1>Trending Tokens</h1>
       {error && <p className="error">{error}</p>}
-      <div className="token-list">
-        {tokens.length > 0 ? tokens.map((token, index) => (
-          <div key={index} className="token-card">
+      <div className="drc20-list">
+        {tokens.map((token, index) => (
+          <div key={index} className="drc20-card">
             <img src={token.pic} alt={token.tick} style={{ width: '150px', height: '150px' }} />
             <h2>{token.tick}</h2>
-            <p>24h Volume: {token.volume24h}</p>
-            <p>24h Trades: {token.trades24h}</p>
+            <div className="drci">
+              <p>24h Volume: {token.volume24h}</p>
+              <p>24h Trades: {token.trades24h}</p>
+            </div>
           </div>
-        )) : <p>No tokens available</p>}
+        ))}
       </div>
     </div>
   );
