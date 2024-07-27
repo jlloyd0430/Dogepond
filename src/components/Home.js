@@ -6,6 +6,7 @@ import AdBannerCarousel from "../components/AdBannerCarousel";
 import DiscordBotInvite from "../components/discordBotInvite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import Papa from 'papaparse';
 import "../App.css";
 
 const Home = () => {
@@ -18,7 +19,6 @@ const Home = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showDropTypeDropdown, setShowDropTypeDropdown] = useState(false);
   const { auth } = useContext(AuthContext);
-
   const [collectionSlug, setCollectionSlug] = useState("");
   const [snapshotData, setSnapshotData] = useState([]);
   const [drc20Ticker, setDrc20Ticker] = useState("");
@@ -106,9 +106,11 @@ const Home = () => {
     try {
       const response = await fetch(`https://dogeturbo.ordinalswallet.com/collection/${collectionSlug}/snapshot`);
       const snapshotText = await response.text();
-      const parsedData = snapshotText.split('\n').filter(line => line).map(line => [line.trim()]);
+      const parsedData = Papa.parse(snapshotText, {
+        header: false,
+      }).data;
 
-      const snapshotCount = parsedData.reduce((acc, [address]) => {
+      const snapshotCount = parsedData.reduce((acc, address) => {
         acc[address] = (acc[address] || 0) + 1;
         return acc;
       }, {});
@@ -133,6 +135,10 @@ const Home = () => {
             'api-key': process.env.REACT_APP_API_KEY
           }
         });
+
+        if (response.status === 403) {
+          throw new Error("Forbidden: Invalid API key or insufficient permissions.");
+        }
 
         if (response.status === 429) {
           await new Promise(resolve => setTimeout(resolve, 2000));
