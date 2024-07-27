@@ -156,6 +156,9 @@ const Home = () => {
             balance: item.balance
           })));
           page++;
+          if (data.data.length < limit) {
+            hasMoreData = false;
+          }
         } else {
           hasMoreData = false;
         }
