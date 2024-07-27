@@ -6,7 +6,6 @@ import AdBannerCarousel from "../components/AdBannerCarousel";
 import DiscordBotInvite from "../components/discordBotInvite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import Papa from 'papaparse';
 import "../App.css";
 
 const Home = () => {
@@ -163,21 +162,39 @@ const Home = () => {
     setLoading(false);
   };
 
-  const exportToCSV = () => {
-    const csv = Papa.unparse(snapshotData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const exportToTXT = () => {
+    const txt = snapshotData.map(({ address, count }) => `${address}: ${count}`).join('\n');
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${collectionSlug}_snapshot.csv`;
+    link.download = `${collectionSlug}_snapshot.txt`;
     link.click();
   };
 
-  const exportDrc20ToCSV = () => {
-    const csv = Papa.unparse(drc20SnapshotData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const exportDrc20ToTXT = () => {
+    const txt = drc20SnapshotData.map(({ address, balance }) => `${address}: ${balance}`).join('\n');
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${drc20Ticker}_drc20_snapshot.csv`;
+    link.download = `${drc20Ticker}_drc20_snapshot.txt`;
+    link.click();
+  };
+
+  const exportToJSON = () => {
+    const json = JSON.stringify(snapshotData, null, 2);
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${collectionSlug}_snapshot.json`;
+    link.click();
+  };
+
+  const exportDrc20ToJSON = () => {
+    const json = JSON.stringify(drc20SnapshotData, null, 2);
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${drc20Ticker}_drc20_snapshot.json`;
     link.click();
   };
 
@@ -264,13 +281,14 @@ const Home = () => {
             <button onClick={fetchSnapshot}>Snap!t</button>
             {snapshotData.length > 0 && (
               <div className="snapshot-results">
-                <h4>Snapshot Results</h4>
+                <button onClick={exportToTXT}>Export to TXT</button>
+                <button onClick={exportToJSON}>Export to JSON</button>
+                <h4>Snapshot Results (Total Holders: {snapshotData.length})</h4>
                 <ul>
                   {snapshotData.map(({ address, count }) => (
                     <li key={address}>{address}: {count}</li>
                   ))}
                 </ul>
-                <button onClick={exportToCSV}>Export to CSV</button>
               </div>
             )}
           </div>
@@ -287,13 +305,14 @@ const Home = () => {
             </button>
             {drc20SnapshotData.length > 0 && (
               <div className="snapshot-results">
-                <h4>Snapshot Results</h4>
+                <button onClick={exportDrc20ToTXT}>Export to TXT</button>
+                <button onClick={exportDrc20ToJSON}>Export to JSON</button>
+                <h4>Snapshot Results (Total Holders: {drc20SnapshotData.length})</h4>
                 <ul>
                   {drc20SnapshotData.map(({ address, balance }) => (
                     <li key={address}>{address}: {balance}</li>
                   ))}
                 </ul>
-                <button onClick={exportDrc20ToCSV}>Export to CSV</button>
               </div>
             )}
           </div>
