@@ -7,11 +7,11 @@ import DiscordBotInvite from "../components/discordBotInvite"; // Corrected comp
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import Papa from 'papaparse';
-
+import "../App.css";
     
  const Home = () => {
   
-import "../App.css";
+
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
   const [filteredDrops, setFilteredDrops] = useState([]);
