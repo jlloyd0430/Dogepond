@@ -106,11 +106,9 @@ const Home = () => {
     try {
       const response = await fetch(`https://dogeturbo.ordinalswallet.com/collection/${collectionSlug}/snapshot`);
       const snapshotText = await response.text();
-      const parsedData = Papa.parse(snapshotText, {
-        header: false,
-      }).data;
+      const parsedData = snapshotText.split('\n').filter(line => line).map(line => [line.trim()]);
 
-      const snapshotCount = parsedData.reduce((acc, address) => {
+      const snapshotCount = parsedData.reduce((acc, [address]) => {
         acc[address] = (acc[address] || 0) + 1;
         return acc;
       }, {});
@@ -137,7 +135,6 @@ const Home = () => {
         });
 
         if (response.status === 429) {
-          // Rate limit exceeded, wait for a while before retrying
           await new Promise(resolve => setTimeout(resolve, 2000));
           continue;
         }
