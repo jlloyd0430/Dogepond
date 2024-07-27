@@ -140,6 +140,10 @@ const Home = () => {
           continue;
         }
 
+        if (response.status === 403) {
+          throw new Error('Forbidden: Invalid API key or access restricted');
+        }
+
         const data = await response.json();
 
         if (data.data && data.data.length > 0) {
