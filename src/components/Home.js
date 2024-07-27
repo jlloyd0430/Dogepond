@@ -122,30 +122,37 @@ const Home = () => {
   const fetchDrc20Snapshot = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders?limit=10000`, {
-        headers: {
-          'Accept': 'application/json',
-          'api-key': process.env.REACT_APP_API_KEY
+      let allData = [];
+      let page = 0;
+      let hasMoreData = true;
+
+      while (hasMoreData) {
+        const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders?limit=100&page=${page}`, {
+          headers: {
+            'Accept': 'application/json',
+            'api-key': process.env.REACT_APP_API_KEY
+          }
+        });
+
+        if (response.status === 429) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          continue;
         }
-      });
 
-      if (response.status === 429) {
-        // Rate limit exceeded, wait for a while before retrying
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        fetchDrc20Snapshot();
-        return;
+        const data = await response.json();
+
+        if (data.data && data.data.length > 0) {
+          allData = allData.concat(data.data.map(item => ({
+            address: item.address,
+            balance: item.balance
+          })));
+          page++;
+        } else {
+          hasMoreData = false;
+        }
       }
 
-      const data = await response.json();
-
-      if (data.data) {
-        setDrc20SnapshotData(data.data.map(item => ({
-          address: item.address,
-          balance: item.balance
-        })));
-      } else {
-        console.error('No data found');
-      }
+      setDrc20SnapshotData(allData);
     } catch (error) {
       console.error('Failed to fetch DRC-20 snapshot data:', error);
     }
