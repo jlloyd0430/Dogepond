@@ -128,6 +128,7 @@ const Home = () => {
       let hasMoreData = true;
 
       while (hasMoreData) {
+        console.log(`Fetching page ${page} with limit ${limit}`);
         const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders?limit=${limit}&page=${page}`, {
           headers: {
             'Accept': 'application/json',
@@ -136,6 +137,7 @@ const Home = () => {
         });
 
         if (response.status === 429) {
+          console.warn('Rate limit exceeded, waiting before retrying...');
           await new Promise(resolve => setTimeout(resolve, 2000));
           continue;
         }
@@ -145,6 +147,8 @@ const Home = () => {
         }
 
         const data = await response.json();
+
+        console.log(`Received ${data.data.length} items`);
 
         if (data.data && data.data.length > 0) {
           allData = allData.concat(data.data.map(item => ({
@@ -158,6 +162,7 @@ const Home = () => {
       }
 
       setDrc20SnapshotData(allData);
+      console.log('Finished fetching all data');
     } catch (error) {
       console.error('Failed to fetch DRC-20 snapshot data:', error);
     }
