@@ -25,6 +25,8 @@ const Home = () => {
   const [drc20SnapshotData, setDrc20SnapshotData] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const cache = {}; // In-memory cache
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -103,6 +105,11 @@ const Home = () => {
   };
 
   const fetchSnapshot = async () => {
+    if (cache[collectionSlug]) {
+      setSnapshotData(cache[collectionSlug]);
+      return;
+    }
+
     try {
       const response = await fetch(`https://dogeturbo.ordinalswallet.com/collection/${collectionSlug}/snapshot`);
       const snapshotText = await response.text();
@@ -113,13 +120,20 @@ const Home = () => {
         return acc;
       }, {});
 
-      setSnapshotData(Object.entries(snapshotCount).map(([address, count]) => ({ address, count })));
+      const snapshotArray = Object.entries(snapshotCount).map(([address, count]) => ({ address, count }));
+      cache[collectionSlug] = snapshotArray;
+      setSnapshotData(snapshotArray);
     } catch (error) {
       console.error('Failed to fetch snapshot data:', error);
     }
   };
 
   const fetchDrc20Snapshot = async () => {
+    if (cache[drc20Ticker]) {
+      setDrc20SnapshotData(cache[drc20Ticker]);
+      return;
+    }
+
     setLoading(true);
     try {
       let allData = [];
@@ -133,6 +147,10 @@ const Home = () => {
             'api-key': process.env.REACT_APP_API_KEY
           }
         });
+
+        if (response.status === 403) {
+          throw new Error("Forbidden: Invalid API key or insufficient permissions.");
+        }
 
         if (response.status === 429) {
           await new Promise(resolve => setTimeout(resolve, 2000));
@@ -152,9 +170,11 @@ const Home = () => {
         }
       }
 
+      cache[drc20Ticker] = allData;
       setDrc20SnapshotData(allData);
     } catch (error) {
       console.error('Failed to fetch DRC-20 snapshot data:', error);
+      setError('Failed to fetch DRC-20 snapshot data. Please try again later.');
     }
     setLoading(false);
   };
