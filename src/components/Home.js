@@ -122,17 +122,23 @@ const Home = () => {
   const fetchDrc20Snapshot = async () => {
     setLoading(true);
     try {
+      const limit = 1000;  // Higher limit per request
       let allData = [];
       let page = 0;
       let hasMoreData = true;
 
       while (hasMoreData) {
-        const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders?limit=100&page=${page}`, {
+        const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders?limit=${limit}&page=${page}`, {
           headers: {
             'Accept': 'application/json',
             'api-key': process.env.REACT_APP_API_KEY
           }
         });
+
+        if (response.status === 403) {
+          console.error('Access denied: Check your API key or permissions.');
+          break;
+        }
 
         if (response.status === 429) {
           await new Promise(resolve => setTimeout(resolve, 2000));
@@ -146,7 +152,11 @@ const Home = () => {
             address: item.address,
             balance: item.balance
           })));
-          page++;
+          if (data.data.length < limit) {
+            hasMoreData = false;
+          } else {
+            page++;
+          }
         } else {
           hasMoreData = false;
         }
