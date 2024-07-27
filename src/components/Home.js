@@ -9,8 +9,7 @@ import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import Papa from 'papaparse';
 import "../App.css";
     
- const Home = () => {
-  
+
 
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
