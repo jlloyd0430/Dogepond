@@ -123,6 +123,7 @@ const Home = () => {
     setLoading(true);
     try {
       let allData = [];
+      let uniqueAddresses = new Set();
       let page = 0;
       let limit = 1000; // Setting a higher limit to fetch more data in a single call
       let hasMoreData = true;
@@ -151,10 +152,15 @@ const Home = () => {
         console.log(`Received ${data.data.length} items`);
 
         if (data.data && data.data.length > 0) {
-          allData = allData.concat(data.data.map(item => ({
-            address: item.address,
-            balance: item.balance
-          })));
+          data.data.forEach(item => {
+            if (!uniqueAddresses.has(item.address)) {
+              uniqueAddresses.add(item.address);
+              allData.push({
+                address: item.address,
+                balance: item.balance
+              });
+            }
+          });
           page++;
           if (data.data.length < limit) {
             hasMoreData = false;
@@ -333,3 +339,4 @@ const Home = () => {
 };
 
 export default Home;
+
