@@ -21,8 +21,8 @@ const Home = () => {
 
   const [collectionSlug, setCollectionSlug] = useState("");
   const [snapshotData, setSnapshotData] = useState([]);
-  const [drc20Ticker, setDrc20Ticker] = useState("");
-  const [drc20SnapshotData, setDrc20SnapshotData] = useState([]);
+  // const [drc20Ticker, setDrc20Ticker] = useState("");
+  // const [drc20SnapshotData, setDrc20SnapshotData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -119,65 +119,6 @@ const Home = () => {
     }
   };
 
-  const fetchDrc20Snapshot = async () => {
-    setLoading(true);
-    try {
-      let allData = [];
-      let uniqueAddresses = new Set();
-      let page = 0;
-      let limit = 1000; // Setting a higher limit to fetch more data in a single call
-      let hasMoreData = true;
-
-      while (hasMoreData) {
-        console.log(`Fetching page ${page} with limit ${limit}`);
-        const response = await fetch(`https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${drc20Ticker}/holders?limit=${limit}&page=${page}`, {
-          headers: {
-            'Accept': 'application/json',
-            'api-key': process.env.REACT_APP_API_KEY
-          }
-        });
-
-        if (response.status === 429) {
-          console.warn('Rate limit exceeded, waiting before retrying...');
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          continue;
-        }
-
-        if (response.status === 403) {
-          throw new Error('Forbidden: Invalid API key or access restricted');
-        }
-
-        const data = await response.json();
-
-        console.log(`Received ${data.data.length} items`);
-
-        if (data.data && data.data.length > 0) {
-          data.data.forEach(item => {
-            if (!uniqueAddresses.has(item.address)) {
-              uniqueAddresses.add(item.address);
-              allData.push({
-                address: item.address,
-                balance: item.balance
-              });
-            }
-          });
-          page++;
-          if (data.data.length < limit) {
-            hasMoreData = false;
-          }
-        } else {
-          hasMoreData = false;
-        }
-      }
-
-      setDrc20SnapshotData(allData);
-      console.log('Finished fetching all data');
-    } catch (error) {
-      console.error('Failed to fetch DRC-20 snapshot data:', error);
-    }
-    setLoading(false);
-  };
-
   const exportToTXT = () => {
     const txt = snapshotData.map(({ address, count }) => `${address}: ${count}`).join('\n');
     const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
@@ -187,14 +128,14 @@ const Home = () => {
     link.click();
   };
 
-  const exportDrc20ToTXT = () => {
-    const txt = drc20SnapshotData.map(({ address, balance }) => `${address}: ${balance}`).join('\n');
-    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${drc20Ticker}_drc20_snapshot.txt`;
-    link.click();
-  };
+  // const exportDrc20ToTXT = () => {
+  //   const txt = drc20SnapshotData.map(({ address, balance }) => `${address}: ${balance}`).join('\n');
+  //   const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
+  //   const link = document.createElement('a');
+  //   link.href = URL.createObjectURL(blob);
+  //   link.download = `${drc20Ticker}_drc20_snapshot.txt`;
+  //   link.click();
+  // };
 
   const exportToJSON = () => {
     const json = JSON.stringify(snapshotData, null, 2);
@@ -205,14 +146,14 @@ const Home = () => {
     link.click();
   };
 
-  const exportDrc20ToJSON = () => {
-    const json = JSON.stringify(drc20SnapshotData, null, 2);
-    const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${drc20Ticker}_drc20_snapshot.json`;
-    link.click();
-  };
+  // const exportDrc20ToJSON = () => {
+  //   const json = JSON.stringify(drc20SnapshotData, null, 2);
+  //   const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+  //   const link = document.createElement('a');
+  //   link.href = URL.createObjectURL(blob);
+  //   link.download = `${drc20Ticker}_drc20_snapshot.json`;
+  //   link.click();
+  // };
 
   return (
     <div>
@@ -308,7 +249,7 @@ const Home = () => {
               </div>
             )}
           </div>
-          <div className="snapshot-section">
+          {/* <div className="snapshot-section">
             <h3>DRC-20 Snapshot</h3>
             <input
               type="text"
@@ -331,7 +272,7 @@ const Home = () => {
                 </ul>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
@@ -339,4 +280,3 @@ const Home = () => {
 };
 
 export default Home;
-
