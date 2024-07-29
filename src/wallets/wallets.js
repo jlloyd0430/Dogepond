@@ -1,5 +1,5 @@
 import { getDogeLabsWalletAddress, sendDogeFromDogeLabs } from "./dogelabs";
-import { getMyDogeWalletAddress, sendDogeFromMyDoge } from "./mydoge";
+import { getMyDogeWalletAddress, sendDogeFromMyDoge, getWalletDataFromMyDoge } from "./mydoge";
 
 export const DOGELABS_WALLET = 'dogeLabs';
 export const MYDOGE_WALLET = 'myDoge';
@@ -17,7 +17,7 @@ export function defaultLogo(walletProvider) {
     case DOGELABS_WALLET:
       return "https://drc-20.org/logo.svg";
     case MYDOGE_WALLET:
-      return "https://mydoge.com/logo.svg";
+      return "https://example.com/mydoge-logo.svg"; // Replace with MyDoge Wallet logo URL
     default:
       return undefined;
   }
@@ -28,7 +28,7 @@ export async function getWalletAddress(walletProvider, walletType) {
     case DOGELABS_WALLET:
       return await getDogeLabsWalletAddress(walletType);
     case MYDOGE_WALLET:
-      return await getMyDogeWalletAddress();
+      return await getMyDogeWalletAddress(walletType);
     default:
       return '';
   }
@@ -65,10 +65,15 @@ export async function directInscribe(walletProvider, contentType, payloadType, c
   }
 }
 
-export async function getWalletData(address) {
-  const response = await fetch(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
-  const data = await response.json();
-  return data;
+export async function getWalletData(address, walletProvider) {
+  switch (walletProvider) {
+    case DOGELABS_WALLET:
+      return await getWalletDataFromDogeLabs(address);
+    case MYDOGE_WALLET:
+      return await getWalletDataFromMyDoge(address);
+    default:
+      throw new Error(`Fetching wallet data not supported for ${walletProvider}`);
+  }
 }
 
 export async function getWalletBalance(walletProvider) {
