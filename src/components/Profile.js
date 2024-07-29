@@ -3,7 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
 import { getWalletAddress, getWalletData, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
 import apiClient from "../services/apiClient";
-import Papa from 'papaparse';
+import Papa from 'papaparse'; // Import Papa Parse for CSV export
 import "./Profile.css";
 
 const COLLECTION_SLUG = 'doginal-ducks'; // Replace with your collection slug
@@ -14,12 +14,11 @@ const Profile = () => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [walletBalance, setWalletBalance] = useState(null);
   const [walletHoldings, setWalletHoldings] = useState([]);
-  const [view, setView] = useState("nftDrops");
+  const [view, setView] = useState("nftDrops"); // "nftDrops" or "wallet"
   const [error, setError] = useState("");
   const [points, setPoints] = useState(0);
   const [snapshotData, setSnapshotData] = useState([]);
   const [collectionSlug, setCollectionSlug] = useState("");
-  const [walletProvider, setWalletProvider] = useState(null);
 
   useEffect(() => {
     const fetchUserDrops = async () => {
@@ -56,26 +55,26 @@ const Profile = () => {
     }
   }, [auth.token, view, auth.user]);
 
-  const connectWallet = async (provider) => {
-    setWalletProvider(provider);
+  const connectWallet = async (walletProvider) => {
     try {
-      const address = await getWalletAddress(provider, DOGINALS_TYPE);
+      const address = await getWalletAddress(walletProvider, DOGINALS_TYPE);
       setWalletAddress(address);
-      fetchWalletData(address);
+      fetchWalletData(address, walletProvider);
     } catch (error) {
       console.error('Failed to connect wallet:', error);
       alert(`Failed to connect wallet: ${error.message}`);
     }
   };
 
-  const fetchWalletData = async (address) => {
+  const fetchWalletData = async (address, walletProvider) => {
     try {
-      const data = await getWalletData(address);
+      const data = await getWalletData(address, walletProvider);
       setWalletBalance(data.balance);
       const filteredHoldings = data.inscriptions.filter(inscription => inscription.collection && inscription.collection.slug === COLLECTION_SLUG);
       setWalletHoldings(filteredHoldings);
-      setPoints(filteredHoldings.length);
+      setPoints(filteredHoldings.length); // Assuming each Duck equals 1 point
 
+      // Update points in backend
       await apiClient.post('/wallet-users/update-points', { address, points: filteredHoldings.length, nftCount: filteredHoldings.length });
     } catch (error) {
       console.error('Failed to fetch wallet data:', error);
@@ -100,7 +99,7 @@ const Profile = () => {
                 drop={drop}
                 onLike={() => {}}
                 isProfilePage={true}
-                userRole={auth.user?.role}
+                userRole={auth.user?.role} // Pass user role to the NFTCard component
               />
             ))}
           </div>
@@ -108,10 +107,10 @@ const Profile = () => {
       ) : (
         <div className="wallet-view">
           {!walletAddress ? (
-            <div>
+            <>
               <button className="connect-wallet-button" onClick={() => connectWallet(DOGELABS_WALLET)}>Connect DogeLabs Wallet</button>
               <button className="connect-wallet-button" onClick={() => connectWallet(MYDOGE_WALLET)}>Connect MyDoge Wallet</button>
-            </div>
+            </>
           ) : (
             <div>
               <p>Wallet Address: {walletAddress}</p>
