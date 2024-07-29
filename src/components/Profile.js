@@ -101,15 +101,7 @@ const Profile = () => {
             <button className="connect-wallet-button" onClick={connectWallet}>Connect Wallet</button>
           ) : (
 
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -122,8 +121,6 @@ const Profile = () => {
+ const Profile = () => {
   
             <div>
               <p>Wallet Address: {walletAddress}</p>
