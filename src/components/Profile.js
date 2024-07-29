@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
-import { getWalletAddress, getWalletData, DOGELABS_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
+import { getWalletAddress, getWalletData, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
 import apiClient from "../services/apiClient";
-import Papa from 'papaparse'; // Import Papa Parse for CSV export
+import Papa from 'papaparse';
 import "./Profile.css";
 
 const COLLECTION_SLUG = 'doginal-ducks'; // Replace with your collection slug
@@ -14,11 +14,12 @@ const Profile = () => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [walletBalance, setWalletBalance] = useState(null);
   const [walletHoldings, setWalletHoldings] = useState([]);
-  const [view, setView] = useState("nftDrops"); // "nftDrops" or "wallet"
+  const [view, setView] = useState("nftDrops");
   const [error, setError] = useState("");
   const [points, setPoints] = useState(0);
   const [snapshotData, setSnapshotData] = useState([]);
   const [collectionSlug, setCollectionSlug] = useState("");
+  const [walletProvider, setWalletProvider] = useState(null);
 
   useEffect(() => {
     const fetchUserDrops = async () => {
@@ -55,9 +56,10 @@ const Profile = () => {
     }
   }, [auth.token, view, auth.user]);
 
-  const connectWallet = async () => {
+  const connectWallet = async (provider) => {
+    setWalletProvider(provider);
     try {
-      const address = await getWalletAddress(DOGELABS_WALLET, DOGINALS_TYPE);
+      const address = await getWalletAddress(provider, DOGINALS_TYPE);
       setWalletAddress(address);
       fetchWalletData(address);
     } catch (error) {
@@ -72,9 +74,8 @@ const Profile = () => {
       setWalletBalance(data.balance);
       const filteredHoldings = data.inscriptions.filter(inscription => inscription.collection && inscription.collection.slug === COLLECTION_SLUG);
       setWalletHoldings(filteredHoldings);
-      setPoints(filteredHoldings.length); // Assuming each Duck equals 1 point
+      setPoints(filteredHoldings.length);
 
-      // Update points in backend
       await apiClient.post('/wallet-users/update-points', { address, points: filteredHoldings.length, nftCount: filteredHoldings.length });
     } catch (error) {
       console.error('Failed to fetch wallet data:', error);
@@ -99,7 +100,7 @@ const Profile = () => {
                 drop={drop}
                 onLike={() => {}}
                 isProfilePage={true}
-                userRole={auth.user?.role} // Pass user role to the NFTCard component
+                userRole={auth.user?.role}
               />
             ))}
           </div>
@@ -107,7 +108,10 @@ const Profile = () => {
       ) : (
         <div className="wallet-view">
           {!walletAddress ? (
-            <button className="connect-wallet-button" onClick={connectWallet}>Connect Wallet</button>
+            <div>
+              <button className="connect-wallet-button" onClick={() => connectWallet(DOGELABS_WALLET)}>Connect DogeLabs Wallet</button>
+              <button className="connect-wallet-button" onClick={() => connectWallet(MYDOGE_WALLET)}>Connect MyDoge Wallet</button>
+            </div>
           ) : (
             <div>
               <p>Wallet Address: {walletAddress}</p>
