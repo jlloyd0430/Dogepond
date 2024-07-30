@@ -1,3 +1,4 @@
+// wallets.js
 import { getDogeLabsWalletAddress, sendDogeFromDogeLabs } from "./dogelabs";
 import { getMyDogeWalletAddress, sendDogeFromMyDoge, getWalletDataFromMyDoge } from "./mydoge";
 
@@ -68,7 +69,6 @@ export async function directInscribe(walletProvider, contentType, payloadType, c
 export async function getWalletData(address, walletProvider) {
   switch (walletProvider) {
     case DOGELABS_WALLET:
-      // Assuming similar data fetching logic is available for DogeLabs
       const response = await fetch(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
       const data = await response.json();
       return data;
