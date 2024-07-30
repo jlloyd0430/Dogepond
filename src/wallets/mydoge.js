@@ -6,11 +6,11 @@ export async function getMyDogeWalletAddress() {
     throw new Error('MyDoge Wallet is not installed');
   }
   try {
-    const accounts = await window.myDoge.connect();
-    if (accounts.length !== 1) {
-      throw new Error(`Invalid number of accounts detected (${accounts.length})`);
+    const account = await window.myDoge.connect();
+    if (!account || !account.address) {
+      throw new Error('Failed to retrieve account address');
     }
-    return accounts[0].address;
+    return account.address;
   } catch (err) {
     throw new Error('User did not grant access to MyDoge Wallet');
   }
