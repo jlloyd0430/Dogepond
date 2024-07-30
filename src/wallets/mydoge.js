@@ -22,7 +22,10 @@ export async function sendDogeFromMyDoge(amount, address) {
     throw new Error('MyDoge Wallet is not installed');
   }
   try {
-    const txid = await window.myDoge.requestTransaction({ recipientAddress: address, dogeAmount: amount });
+    const txid = await window.myDoge.requestTransaction({
+      recipientAddress: address,
+      dogeAmount: amount,
+    });
     return txid;
   } catch (err) {
     throw new Error(`Failed to send DOGE: ${err.message}`);
@@ -62,9 +65,73 @@ export async function requestDrc20Transaction(ticker, amount, address) {
     throw new Error('MyDoge Wallet is not installed');
   }
   try {
-    const txid = await window.myDoge.requestAvailableDRC20Transaction({ ticker, amount, recipientAddress: address });
+    const txid = await window.myDoge.requestAvailableDRC20Transaction({
+      ticker,
+      amount,
+      recipientAddress: address,
+    });
     return txid;
   } catch (err) {
     throw new Error(`Failed to request DRC-20 transaction: ${err.message}`);
+  }
+}
+
+// Function to request an inscription transaction from MyDoge wallet
+export async function requestInscriptionTransaction(recipientAddress, output) {
+  if (typeof window.myDoge === 'undefined') {
+    throw new Error('MyDoge Wallet is not installed');
+  }
+  try {
+    const txid = await window.myDoge.requestInscriptionTransaction({
+      recipientAddress,
+      output,
+    });
+    return txid;
+  } catch (err) {
+    throw new Error(`Failed to request inscription transaction: ${err.message}`);
+  }
+}
+
+// Function to sign a PSBT using MyDoge wallet
+export async function requestPsbt(rawTx, indexes) {
+  if (typeof window.myDoge === 'undefined') {
+    throw new Error('MyDoge Wallet is not installed');
+  }
+  try {
+    const txid = await window.myDoge.requestPsbt({
+      rawTx,
+      indexes,
+    });
+    return txid;
+  } catch (err) {
+    throw new Error(`Failed to sign PSBT: ${err.message}`);
+  }
+}
+
+// Function to sign a message using MyDoge wallet
+export async function requestSignedMessage(message) {
+  if (typeof window.myDoge === 'undefined') {
+    throw new Error('MyDoge Wallet is not installed');
+  }
+  try {
+    const signedMessage = await window.myDoge.requestSignedMessage({
+      message,
+    });
+    return signedMessage;
+  } catch (err) {
+    throw new Error(`Failed to sign message: ${err.message}`);
+  }
+}
+
+// Function to get the transaction status using MyDoge wallet
+export async function getTransactionStatus(txId) {
+  if (typeof window.myDoge === 'undefined') {
+    throw new Error('MyDoge Wallet is not installed');
+  }
+  try {
+    const txStatus = await window.myDoge.getTransactionStatus({ txId });
+    return txStatus;
+  } catch (err) {
+    throw new Error(`Failed to get transaction status: ${err.message}`);
   }
 }
