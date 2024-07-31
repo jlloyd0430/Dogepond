@@ -22,7 +22,10 @@
   align-items: center;
 }
 
-
+.ttitle {
+  display: flex;
+  align-items: center;
+}
 
 .search-container, .balance-container {
   margin-bottom: 20px;
