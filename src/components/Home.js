@@ -154,7 +154,7 @@ const Home = () => {
             className={activeTab === "upcoming" ? "active" : ""}
             onClick={() => setActiveTab("upcoming")}
           >
-            Upcoming Drops
+            Drops
           </button>
           <button
             className={activeTab === "dunes" ? "active" : ""}
