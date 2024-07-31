@@ -1,28 +1,39 @@
 // mydoge.js
 
+// Initialize MyDoge API if available
+let myDogeMask = null;
+
+function initializeMyDoge() {
+  const { doge } = window;
+  myDogeMask = doge;
+  console.log('MyDoge API initialized and set to window object', myDogeMask);
+}
+
+window.addEventListener('doge#initialized', initializeMyDoge, { once: true });
+
 // Function to get the MyDoge wallet address
 export async function getMyDogeWalletAddress() {
-  if (typeof window.myDoge === 'undefined') {
+  if (!myDogeMask || typeof myDogeMask === 'undefined') {
     throw new Error('MyDoge Wallet is not installed');
   }
   try {
-    const account = await window.myDoge.connect();
-    if (!account || !account.address) {
-      throw new Error('Failed to retrieve account address');
+    const connectRes = await myDogeMask.connect();
+    if (!connectRes.approved || !connectRes.address) {
+      throw new Error('Failed to connect to MyDoge Wallet');
     }
-    return account.address;
+    return connectRes.address;
   } catch (err) {
-    throw new Error('User did not grant access to MyDoge Wallet');
+    throw new Error(`User did not grant access to MyDoge Wallet: ${err.message}`);
   }
 }
 
 // Function to send DOGE from MyDoge wallet
 export async function sendDogeFromMyDoge(amount, address) {
-  if (typeof window.myDoge === 'undefined') {
+  if (!myDogeMask || typeof myDogeMask === 'undefined') {
     throw new Error('MyDoge Wallet is not installed');
   }
   try {
-    const txid = await window.myDoge.requestTransaction({
+    const txid = await myDogeMask.requestTransaction({
       recipientAddress: address,
       dogeAmount: amount,
     });
@@ -48,11 +59,11 @@ export async function getWalletDataFromMyDoge(address) {
 
 // Function to get the balance from MyDoge wallet
 export async function getBalanceFromMyDoge() {
-  if (typeof window.myDoge === 'undefined') {
+  if (!myDogeMask || typeof myDogeMask === 'undefined') {
     throw new Error('MyDoge Wallet is not installed');
   }
   try {
-    const balance = await window.myDoge.getBalance();
+    const balance = await myDogeMask.getBalance();
     return balance;
   } catch (err) {
     throw new Error(`Failed to get balance: ${err.message}`);
@@ -61,11 +72,11 @@ export async function getBalanceFromMyDoge() {
 
 // Function to request a DRC-20 transaction from MyDoge wallet
 export async function requestDrc20Transaction(ticker, amount, address) {
-  if (typeof window.myDoge === 'undefined') {
+  if (!myDogeMask || typeof myDogeMask === 'undefined') {
     throw new Error('MyDoge Wallet is not installed');
   }
   try {
-    const txid = await window.myDoge.requestAvailableDRC20Transaction({
+    const txid = await myDogeMask.requestAvailableDRC20Transaction({
       ticker,
       amount,
       recipientAddress: address,
@@ -78,11 +89,11 @@ export async function requestDrc20Transaction(ticker, amount, address) {
 
 // Function to request an inscription transaction from MyDoge wallet
 export async function requestInscriptionTransaction(recipientAddress, output) {
-  if (typeof window.myDoge === 'undefined') {
+  if (!myDogeMask || typeof myDogeMask === 'undefined') {
     throw new Error('MyDoge Wallet is not installed');
   }
   try {
-    const txid = await window.myDoge.requestInscriptionTransaction({
+    const txid = await myDogeMask.requestInscriptionTransaction({
       recipientAddress,
       output,
     });
@@ -94,11 +105,11 @@ export async function requestInscriptionTransaction(recipientAddress, output) {
 
 // Function to sign a PSBT using MyDoge wallet
 export async function requestPsbt(rawTx, indexes) {
-  if (typeof window.myDoge === 'undefined') {
+  if (!myDogeMask || typeof myDogeMask === 'undefined') {
     throw new Error('MyDoge Wallet is not installed');
   }
   try {
-    const txid = await window.myDoge.requestPsbt({
+    const txid = await myDogeMask.requestPsbt({
       rawTx,
       indexes,
     });
@@ -110,11 +121,11 @@ export async function requestPsbt(rawTx, indexes) {
 
 // Function to sign a message using MyDoge wallet
 export async function requestSignedMessage(message) {
-  if (typeof window.myDoge === 'undefined') {
+  if (!myDogeMask || typeof myDogeMask === 'undefined') {
     throw new Error('MyDoge Wallet is not installed');
   }
   try {
-    const signedMessage = await window.myDoge.requestSignedMessage({
+    const signedMessage = await myDogeMask.requestSignedMessage({
       message,
     });
     return signedMessage;
@@ -125,11 +136,11 @@ export async function requestSignedMessage(message) {
 
 // Function to get the transaction status using MyDoge wallet
 export async function getTransactionStatus(txId) {
-  if (typeof window.myDoge === 'undefined') {
+  if (!myDogeMask || typeof myDogeMask === 'undefined') {
     throw new Error('MyDoge Wallet is not installed');
   }
   try {
-    const txStatus = await window.myDoge.getTransactionStatus({ txId });
+    const txStatus = await myDogeMask.getTransactionStatus({ txId });
     return txStatus;
   } catch (err) {
     throw new Error(`Failed to get transaction status: ${err.message}`);
