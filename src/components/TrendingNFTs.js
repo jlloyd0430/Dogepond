@@ -21,7 +21,7 @@ const TrendingNFTs = () => {
 
   return (
     <div className="trending-container">
-      <h1>Trending NFTs</h1>
+      <h1 className="ttitle">Trending NFTs</h1>
       {error && <p className="error">{error}</p>}
       <div className="nft-list">
         {nfts.map((nft, index) => (
