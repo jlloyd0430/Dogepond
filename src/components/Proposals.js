@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../services/apiClient';
-import { getWalletAddress, getWalletData, DOGELABS_WALLET, DOGINALS_TYPE } from '../wallets/wallets';
+import { getWalletAddress, getWalletData, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from '../wallets/wallets';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import './Proposals.css';
@@ -28,6 +28,7 @@ const Proposals = () => {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [viewingProposalId, setViewingProposalId] = useState(null);
   const [error, setError] = useState('');
+  const [showWalletDropdown, setShowWalletDropdown] = useState(false); // State for wallet dropdown visibility
 
   useEffect(() => {
     const fetchProposals = async () => {
@@ -47,9 +48,9 @@ const Proposals = () => {
     filterProposals();
   }, [searchTerm, filterType, proposals]);
 
-  const handleConnectWallet = async () => {
+  const connectWallet = async (walletProvider) => {
     try {
-      const address = await getWalletAddress(DOGELABS_WALLET, DOGINALS_TYPE);
+      const address = await getWalletAddress(walletProvider, DOGINALS_TYPE);
       setWalletAddress(address);
       const data = await getWalletData(address);
       setWalletHoldings(data.inscriptions);
@@ -227,12 +228,24 @@ const Proposals = () => {
     setFilteredProposals(filtered);
   };
 
+  const handleWalletButtonClick = () => {
+    setShowWalletDropdown(prev => !prev); // Toggle dropdown visibility
+  };
+
   return (
     <div className="proposals-container">
       <div className="header-buttons">
-        <button className="button" onClick={handleConnectWallet}>
-          {walletAddress ? `Connected: ${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : 'Connect Wallet'}
-        </button>
+        <div className="wallet-dropdown">
+          <button className="button" onClick={handleWalletButtonClick}>
+            {walletAddress ? `Connected: ${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : 'Connect Wallet'}
+          </button>
+          {showWalletDropdown && (
+            <div className="dropdown-content">
+              <button className="connect-wallet-button" onClick={() => connectWallet(DOGELABS_WALLET)}>Connect DogeLabs Wallet</button>
+              <button className="connect-wallet-button" onClick={() => connectWallet(MYDOGE_WALLET)}>Connect MyDoge Wallet</button>
+            </div>
+          )}
+        </div>
         <button className="button" onClick={() => setShowCreateProposal(true)}>Create Proposal</button>
       </div>
 
