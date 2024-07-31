@@ -21,7 +21,7 @@ const TrendingTokens = () => {
 
 return (
     <div className="trending-container">
-      <h1>Trending Tokens</h1>
+      <h1 className="ttitle">Trending Tokens</h1>
       {error && <p className="error">{error}</p>}
       <div className="drc20-list">
         {tokens.map((token, index) => (
