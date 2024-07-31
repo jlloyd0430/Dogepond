@@ -1,4 +1,3 @@
-// Profile.js
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
@@ -20,6 +19,7 @@ const Profile = () => {
   const [points, setPoints] = useState(0);
   const [snapshotData, setSnapshotData] = useState([]);
   const [collectionSlug, setCollectionSlug] = useState("");
+  const [showWalletDropdown, setShowWalletDropdown] = useState(false); // State for dropdown visibility
 
   useEffect(() => {
     const fetchUserDrops = async () => {
@@ -82,12 +82,24 @@ const Profile = () => {
     }
   };
 
+  const handleWalletButtonClick = () => {
+    setShowWalletDropdown(prev => !prev); // Toggle dropdown visibility
+  };
+
   return (
     <div className="profile-container">
       <h1>Profile</h1>
       <div className="profile-buttons">
         <button onClick={() => setView("nftDrops")}>My NFT Drops</button>
-        <button onClick={() => setView("wallet")}>My Wallet</button>
+        <div className="wallet-dropdown">
+          <button onClick={handleWalletButtonClick}>My Wallet</button>
+          {showWalletDropdown && (
+            <div className="dropdown-content">
+              <button className="connect-wallet-button" onClick={() => connectWallet(DOGELABS_WALLET)}>Connect DogeLabs Wallet</button>
+              <button className="connect-wallet-button" onClick={() => connectWallet(MYDOGE_WALLET)}>Connect MyDoge Wallet</button>
+            </div>
+          )}
+        </div>
       </div>
       {view === "nftDrops" ? (
         <div>
@@ -108,10 +120,9 @@ const Profile = () => {
       ) : (
         <div className="wallet-view">
           {!walletAddress ? (
-            <>
-              <button className="connect-wallet-button" onClick={() => connectWallet(DOGELABS_WALLET)}>Connect DogeLabs Wallet</button>
-              <button className="connect-wallet-button" onClick={() => connectWallet(MYDOGE_WALLET)}>Connect MyDoge Wallet</button>
-            </>
+            <div>
+              <p>Please connect a wallet to view your holdings.</p>
+            </div>
           ) : (
             <div>
               <p>Wallet Address: {walletAddress}</p>
