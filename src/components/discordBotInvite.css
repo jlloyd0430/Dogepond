@@ -32,6 +32,8 @@
     height: auto;
     border-radius: 10px;
     transition: transform 0.3s;
+    padding: 16px;
+    border-radius: 25px;
 }
 
 .bot-image:hover {
