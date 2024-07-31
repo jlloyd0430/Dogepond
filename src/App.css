@@ -344,4 +344,5 @@ body.dark-mode .footer {
 .tabs-container button:hover,
 .tabs-container button.active {
   color: var(--hover-color);
+  background-color: transparent;
 }
