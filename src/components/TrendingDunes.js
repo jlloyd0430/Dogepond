@@ -102,7 +102,7 @@ const TrendingDunes = () => {
 
   return (
     <div className="trending-container">
-      <h1>All Dunes</h1>
+      <h1 className="ttitle">All Dunes</h1>
       {error && <p className="error">{error}</p>}
 
       <div className="balance-container">
