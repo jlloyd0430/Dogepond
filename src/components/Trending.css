@@ -24,7 +24,7 @@
 
 .ttitle {
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
 
 .search-container, .balance-container {
@@ -82,7 +82,7 @@
   justify-content: center;
   gap: 20px;
   max-width: 700px;
-  margin: 100px;
+  margin-right: 100px;
 }
 
 .dune-card, .drc20-card, .nftCard {
