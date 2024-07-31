@@ -288,6 +288,17 @@ body.dark-mode .footer {
     flex-wrap: wrap;
     justify-content: center;
   }
+
+  
+.tabs-container button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: "Orbitron", sans-serif;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
 }
 
 @media (max-width: 1200px) {
