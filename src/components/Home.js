@@ -7,6 +7,9 @@ import DiscordBotInvite from "../components/discordBotInvite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import "../App.css";
+import TrendingDunes from "../components/TrendingDunes";
+import TrendingTokens from "../components/TrendingTokens";
+import TrendingNFTs from "../components/TrendingNFTs";
 
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
@@ -15,14 +18,16 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("mostLiked");
   const [dropType, setDropType] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [showDropTypeDropdown, setShowDropTypeDropdown] = useState(false);
   const { auth } = useContext(AuthContext);
 
+  // State for managing active tab and dropdown visibility
+  const [activeTab, setActiveTab] = useState("upcoming");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showDropTypeDropdown, setShowDropTypeDropdown] = useState(false);
+
+  // State for snapshot functionality
   const [collectionSlug, setCollectionSlug] = useState("");
   const [snapshotData, setSnapshotData] = useState([]);
-  // const [drc20Ticker, setDrc20Ticker] = useState("");
-  // const [drc20SnapshotData, setDrc20SnapshotData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -46,8 +51,10 @@ const Home = () => {
   }, [auth.token]);
 
   useEffect(() => {
-    applyFilter();
-  }, [searchQuery, approvedDrops, filter, dropType]);
+    if (activeTab === "upcoming") {
+      applyFilter();
+    }
+  }, [searchQuery, approvedDrops, filter, dropType, activeTab]);
 
   const applyFilter = () => {
     const currentDate = new Date();
@@ -94,14 +101,15 @@ const Home = () => {
 
   const handleFilterChange = (filterValue) => {
     setFilter(filterValue);
-    setShowDropdown(false);
+    setShowDropdown(false); // Close dropdown after selection
   };
 
   const handleDropTypeChange = (type) => {
     setDropType(type);
-    setShowDropTypeDropdown(false);
+    setShowDropTypeDropdown(false); // Close dropdown after selection
   };
 
+  // Snapshot functions
   const fetchSnapshot = async () => {
     try {
       const response = await fetch(`https://dogeturbo.ordinalswallet.com/collection/${collectionSlug}/snapshot`);
@@ -128,15 +136,6 @@ const Home = () => {
     link.click();
   };
 
-  // const exportDrc20ToTXT = () => {
-  //   const txt = drc20SnapshotData.map(({ address, balance }) => `${address}: ${balance}`).join('\n');
-  //   const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
-  //   const link = document.createElement('a');
-  //   link.href = URL.createObjectURL(blob);
-  //   link.download = `${drc20Ticker}_drc20_snapshot.txt`;
-  //   link.click();
-  // };
-
   const exportToJSON = () => {
     const json = JSON.stringify(snapshotData, null, 2);
     const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
@@ -146,85 +145,111 @@ const Home = () => {
     link.click();
   };
 
-  // const exportDrc20ToJSON = () => {
-  //   const json = JSON.stringify(drc20SnapshotData, null, 2);
-  //   const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
-  //   const link = document.createElement('a');
-  //   link.href = URL.createObjectURL(blob);
-  //   link.download = `${drc20Ticker}_drc20_snapshot.json`;
-  //   link.click();
-  // };
-
   return (
     <div>
       <div className="ads">
         <AdBannerCarousel />
-        <h1>Upcoming Drops</h1>
-      </div>
-      <div className="search-filter-container">
-        <div className="filter-dropdown">
-          <FontAwesomeIcon
-            className="search"
-            icon={faFilter}
-            onClick={() => setShowDropTypeDropdown(!showDropTypeDropdown)}
-          />
-          {showDropTypeDropdown && (
-            <div className="dropdown-menu-1">
-              <div onClick={() => handleDropTypeChange("")}>All Types</div>
-              <div onClick={() => handleDropTypeChange("new mint")}>
-                New Mint
-              </div>
-              <div onClick={() => handleDropTypeChange("airdrop")}>Airdrop</div>
-              <div onClick={() => handleDropTypeChange("auction")}>Auction</div>
-            </div>
-          )}
-        </div>
-        <input
-          type="text"
-          placeholder="Search by project name..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-        <div className="filter-dropdown">
-          <FontAwesomeIcon
-            className="search"
-            icon={faFilter}
-            onClick={() => setShowDropdown(!showDropdown)}
-          />
-          {showDropdown && (
-            <div className="dropdown-menu">
-              <div onClick={() => handleFilterChange("upcoming")}>
-                Upcoming Drops
-              </div>
-              <div onClick={() => handleFilterChange("past")}>Past Drops</div>
-              <div onClick={() => handleFilterChange("mostRecent")}>
-                Most Recent
-              </div>
-              <div onClick={() => handleFilterChange("mostLiked")}>
-                Top Voted
-              </div>
-            </div>
-          )}
+        <div className="tabs-container">
+          <button
+            className={activeTab === "upcoming" ? "active" : ""}
+            onClick={() => setActiveTab("upcoming")}
+          >
+            Upcoming Drops
+          </button>
+          <button
+            className={activeTab === "dunes" ? "active" : ""}
+            onClick={() => setActiveTab("dunes")}
+          >
+            Dunes
+          </button>
+          <button
+            className={activeTab === "drc20" ? "active" : ""}
+            onClick={() => setActiveTab("drc20")}
+          >
+            DRC-20
+          </button>
+          <button
+            className={activeTab === "nfts" ? "active" : ""}
+            onClick={() => setActiveTab("nfts")}
+          >
+            NFTs
+          </button>
         </div>
       </div>
+      {activeTab === "upcoming" && (
+        <div className="search-filter-container">
+          <div className="filter-dropdown">
+            <FontAwesomeIcon
+              className="search"
+              icon={faFilter}
+              onClick={() => setShowDropTypeDropdown(!showDropTypeDropdown)}
+            />
+            {showDropTypeDropdown && (
+              <div className="dropdown-menu-1">
+                <div onClick={() => handleDropTypeChange("")}>All Types</div>
+                <div onClick={() => handleDropTypeChange("new mint")}>
+                  New Mint
+                </div>
+                <div onClick={() => handleDropTypeChange("airdrop")}>Airdrop</div>
+                <div onClick={() => handleDropTypeChange("auction")}>Auction</div>
+              </div>
+            )}
+          </div>
+          <input
+            type="text"
+            placeholder="Search by project name..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          <div className="filter-dropdown">
+            <FontAwesomeIcon
+              className="search"
+              icon={faFilter}
+              onClick={() => setShowDropdown(!showDropdown)}
+            />
+            {showDropdown && (
+              <div className="dropdown-menu">
+                <div onClick={() => handleFilterChange("upcoming")}>
+                  Upcoming Drops
+                </div>
+                <div onClick={() => handleFilterChange("past")}>Past Drops</div>
+                <div onClick={() => handleFilterChange("mostRecent")}>
+                  Most Recent
+                </div>
+                <div onClick={() => handleFilterChange("mostLiked")}>
+                  Top Voted
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <div className="main-content">
-        <div className="card">
-          {error && <p>{error}</p>}
-          {filteredDrops.length > 0 ? (
-            filteredDrops.map((drop) => (
-              <NFTCard
-                key={drop._id}
-                drop={drop}
-                onLike={() => handleLike(drop._id)}
-                onApprove={null}
-                userId={auth.user?.id}
-                isProfilePage={false}
-              />
-            ))
-          ) : (
-            <p>No approved NFT drops found.</p>
-          )}
-        </div>
+        {activeTab === "upcoming" ? (
+          <div className="card">
+            {error && <p>{error}</p>}
+            {filteredDrops.length > 0 ? (
+              filteredDrops.map((drop) => (
+                <NFTCard
+                  key={drop._id}
+                  drop={drop}
+                  onLike={() => handleLike(drop._id)}
+                  onApprove={null}
+                  userId={auth.user?.id}
+                  isProfilePage={false}
+                />
+              ))
+            ) : (
+              <p>No approved NFT drops found.</p>
+            )}
+          </div>
+        ) : activeTab === "dunes" ? (
+          <TrendingDunes />
+        ) : activeTab === "drc20" ? (
+          <TrendingTokens />
+        ) : activeTab === "nfts" ? (
+          <TrendingNFTs />
+        ) : null}
         <div className="sides">
           <DiscordBotInvite />
           <div className="snapshot-section">
@@ -249,30 +274,7 @@ const Home = () => {
               </div>
             )}
           </div>
-          {/* <div className="snapshot-section">
-            <h3>DRC-20 Snapshot</h3>
-            <input
-              type="text"
-              placeholder="Enter DRC-20 ticker CAPS"
-              value={drc20Ticker}
-              onChange={(e) => setDrc20Ticker(e.target.value)}
-            />
-            <button onClick={fetchDrc20Snapshot} disabled={loading}>
-              {loading ? 'Loading...' : 'Snap!t'}
-            </button>
-            {drc20SnapshotData.length > 0 && (
-              <div className="snapshot-results">
-                <button onClick={exportDrc20ToTXT}>Export to TXT</button>
-                <button onClick={exportDrc20ToJSON}>Export to JSON</button>
-                <h4>Snapshot Results (Total Holders: {drc20SnapshotData.length})</h4>
-                <ul>
-                  {drc20SnapshotData.map(({ address, balance }) => (
-                    <li key={address}>{address}: {balance}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div> */}
+          {/* The snapshot and other side content can go here */}
         </div>
       </div>
     </div>
