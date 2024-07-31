@@ -82,7 +82,7 @@
   justify-content: center;
   gap: 20px;
   max-width: 700px;
-  margin-right: 100px;
+  margin-right: 100px; /* Default margin-right for desktop */
 }
 
 .dune-card, .drc20-card, .nftCard {
@@ -116,12 +116,15 @@
 }
 
 @media (max-width: 600px) {
+  .dune-list, .drc20-list, .nft-list {
+    margin-right: 0; /* Remove margin-right on mobile */
+  }
+
   .nftCard {
     flex-direction: column;
     align-items: center;
   }
 }
-
 
 @media (max-width: 1200px) {
   .nftCard {
