@@ -1,100 +1,179 @@
 .profile-container {
-    padding: 20px;
-  }
-  
-  .profile-buttons {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .connect-wallet-button {
-    background-color: goldenrod;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  /* Profile.css */
+  padding: 20px;
+}
+
+.profile-buttons {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+
+.connect-wallet-button,
+button {
+  background-color: goldenrod;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+}
+
+.connect-wallet-button:hover,
+button:hover {
+  background-color: darkgoldenrod;
+}
+
+.nft-drops,
+.wallet-holdings {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.wallet-holding,
+.inscription-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wallet-holding img,
+.inscription-card img {
+  max-width: 100px;
+  border-radius: 4px;
+}
+
+.wallet-holding p,
+.inscription-card p {
+  margin: 4px 0;
+}
+
+
+.snapshot-results {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 25px;
+}
+
+.snapshot-results ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.snapshot-results ul li {
+  margin: 5px 0;
+}
+
+/* Additional styles for the Profile component */
+.profile-container {
+  padding: 20px;
+}
+
+.profile-buttons {
+  display: flex;
+  align-items: center;
+}
 
 .wallet-dropdown {
   position: relative;
   display: inline-block;
 }
 
-.connect-wallet-button {
-  background-color: #f0ad4e;
-  color: white;
+.wallet-dropdown button {
+  border: none;
   padding: 10px;
-  border: none;
+  font-size: 16px;
   cursor: pointer;
-  border-radius: 5px;
+  text-decoration: none;
 }
 
-.wallet-dropdown-menu {
+.dropdown-content {
+  display: none;
   position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: white;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-  overflow: hidden;
+  background-color: var(--background-color-light);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  min-width: 160px;
   z-index: 1;
+  border-radius: 8px;
 }
 
-.wallet-dropdown-menu button {
-  background-color: transparent;
-  border: none;
-  color: black;
+.wallet-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-item {
+  color: var(--text-color-light);
   padding: 12px 16px;
-  text-align: left;
-  width: 100%;
+  text-decoration: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   cursor: pointer;
 }
 
-.wallet-dropdown-menu button:hover {
-  background-color: #f0f0f0;
+.dropdown-item img {
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
 }
 
- 
-  .nft-drops, .wallet-holdings {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  
-  .wallet-holding, .inscription-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
-    margin: 8px 0;
-    display: flex;
+.dropdown-item:hover {
+  background-color: var(--hover-color);
+  color: var(--text-color-dark);
+}
+
+.wallet-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.wallet-view {
+  text-align: center;
+}
+
+.wallet-holdings {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.inscription-card {
+  border: 1px solid var(--text-color-light);
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  text-align: center;
+  width: 150px;
+}
+
+
+@media (max-width: 600px) {
+  .profile-buttons {
     flex-direction: column;
-    align-items: center;
+    gap: 5px;
   }
-  
-  .wallet-holding img, .inscription-card img {
-    max-width: 100px;
-    border-radius: 4px;
+
+  .nft-drops,
+  .wallet-holdings {
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  .wallet-holding p, .inscription-card p {
-    margin: 4px 0;
+
+  .wallet-holdings,
+  .inscription-card,
+  .snapshot-section {
+    width: 95%;
   }
-  
-  @media (max-width: 600px) {
-    .profile-buttons {
-      flex-direction: column;
-      gap: 5px;
-    }
-  
-    .nft-drops, .wallet-holdings {
-      flex-direction: column;
-      gap: 10px;
-    }
-  }
-  
+}
