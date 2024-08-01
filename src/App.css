@@ -95,7 +95,7 @@ body.dark-mode .dropdown-item:hover {
 
 div {
   display: flex;
-  padding: 5px;
+  padding: 2px;
   justify-content: center;
   flex-direction: column;
 }
