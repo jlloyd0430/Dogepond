@@ -322,6 +322,13 @@ body.dark-mode .footer {
   margin-bottom: 20px;
   padding: 10px 0;
   text-transform: uppercase;
+  gap: 20px; /* Default gap for mobile and smaller devices */
+}
+
+@media (min-width: 1200px) {
+  .tabs-container {
+    gap: 200px; /* Gap for desktop */
+  }
 }
 
 .tabs-container button {
@@ -332,13 +339,6 @@ body.dark-mode .footer {
   font-family: "Orbitron", sans-serif;
   font-size: 1rem;
   transition: color 0.3s ease;
-}
-
-@media (min-width: 600px) {
-  .tabs-container button {
-    font-size: 1.2rem;
-    gap: 20px;
-  }
 }
 
 .tabs-container button:hover,
