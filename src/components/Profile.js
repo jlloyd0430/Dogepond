@@ -1,9 +1,10 @@
+// Profile.js
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
 import { getWalletAddress, getWalletData, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
 import apiClient from "../services/apiClient";
-import Papa from 'papaparse'; // Import Papa Parse for CSV export
+// import Papa from 'papaparse'; // Import Papa Parse for CSV export
 import "./Profile.css";
 
 const COLLECTION_SLUG = 'doginal-ducks'; // Replace with your collection slug
@@ -17,9 +18,9 @@ const Profile = () => {
   const [view, setView] = useState("nftDrops"); // "nftDrops" or "wallet"
   const [error, setError] = useState("");
   const [points, setPoints] = useState(0);
-  const [snapshotData, setSnapshotData] = useState([]);
-  const [collectionSlug, setCollectionSlug] = useState("");
-  const [showWalletDropdown, setShowWalletDropdown] = useState(false); // State for dropdown visibility
+  // const [snapshotData, setSnapshotData] = useState([]);
+  // const [collectionSlug, setCollectionSlug] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to handle dropdown
 
   useEffect(() => {
     const fetchUserDrops = async () => {
@@ -61,29 +62,16 @@ const Profile = () => {
       const address = await getWalletAddress(walletProvider, DOGINALS_TYPE);
       setWalletAddress(address);
       fetchWalletData(address, walletProvider);
+      setIsDropdownOpen(false); // Close dropdown after selection
     } catch (error) {
       console.error('Failed to connect wallet:', error);
       alert(`Failed to connect wallet: ${error.message}`);
     }
   };
 
-  const fetchWalletData = async (address, walletProvider) => {
-    try {
-      const data = await getWalletData(address, walletProvider);
-      setWalletBalance(data.balance);
-      const filteredHoldings = data.inscriptions.filter(inscription => inscription.collection && inscription.collection.slug === COLLECTION_SLUG);
-      setWalletHoldings(filteredHoldings);
-      setPoints(filteredHoldings.length); // Assuming each Duck equals 1 point
-
-      // Update points in backend
-      await apiClient.post('/wallet-users/update-points', { address, points: filteredHoldings.length, nftCount: filteredHoldings.length });
-    } catch (error) {
-      console.error('Failed to fetch wallet data:', error);
-    }
-  };
-
-  const handleWalletButtonClick = () => {
-    setShowWalletDropdown(prev => !prev); // Toggle dropdown visibility
+ 
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
@@ -91,15 +79,7 @@ const Profile = () => {
       <h1>Profile</h1>
       <div className="profile-buttons">
         <button onClick={() => setView("nftDrops")}>My NFT Drops</button>
-        <div className="wallet-dropdown">
-          <button onClick={handleWalletButtonClick}>Connect Wallet</button>
-          {showWalletDropdown && (
-            <div className="dropdown-content">
-              <button className="connect-wallet-button" onClick={() => connectWallet(DOGELABS_WALLET)}>DogeLabs Wallet</button>
-              <button className="connect-wallet-button" onClick={() => connectWallet(MYDOGE_WALLET)}>MyDoge Wallet</button>
-            </div>
-          )}
-        </div>
+        <button onClick={() => setView("wallet")}>My Wallet</button>
       </div>
       {view === "nftDrops" ? (
         <div>
@@ -120,8 +100,16 @@ const Profile = () => {
       ) : (
         <div className="wallet-view">
           {!walletAddress ? (
-            <div>
-              <p>Please connect a wallet to view your holdings.</p>
+            <div className="wallet-dropdown">
+              <button className="connect-wallet-button" onClick={toggleDropdown}>
+                Connect Wallet
+              </button>
+              {isDropdownOpen && (
+                <div className="wallet-dropdown-menu">
+                  <button onClick={() => connectWallet(DOGELABS_WALLET)}>DogeLabs Wallet</button>
+                  <button onClick={() => connectWallet(MYDOGE_WALLET)}>MyDoge Wallet</button>
+                </div>
+              )}
             </div>
           ) : (
             <div>
