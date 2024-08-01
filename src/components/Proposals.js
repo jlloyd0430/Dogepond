@@ -241,8 +241,8 @@ const Proposals = () => {
           </button>
           {showWalletDropdown && (
             <div className="dropdown-content">
-              <button className="connect-wallet-button" onClick={() => connectWallet(DOGELABS_WALLET)}>Connect DogeLabs Wallet</button>
-              <button className="connect-wallet-button" onClick={() => connectWallet(MYDOGE_WALLET)}>Connect MyDoge Wallet</button>
+              <button className="connect-wallet-button" onClick={() => connectWallet(DOGELABS_WALLET)}>DogeLabs Wallet</button>
+              <button className="connect-wallet-button" onClick={() => connectWallet(MYDOGE_WALLET)}>MyDoge Wallet</button>
             </div>
           )}
         </div>
