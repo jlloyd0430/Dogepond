@@ -322,7 +322,58 @@ body.dark-mode .footer {
   margin-bottom: 20px;
   padding: 10px 0;
   text-transform: uppercase;
-  gap: 20px; /* Default gap for mobile and smaller devices */
+}
+
+body {
+  font-family: "Orbitron", sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--text-color-light);
+  background-color: var(--background-color-light);
+}
+
+body.dark-mode {
+  background-color: var(--background-color-dark);
+  color: var(--text-color-dark);
+}
+
+h1 {
+  color: var(--text-color-light);
+  font-size: 1.5em;
+  padding: 5px;
+  text-decoration: underline solid goldenrod;
+}
+
+body.dark-mode h1 {
+  color: var(--text-color-dark);
+}
+
+.dropdown-menu {
+  background-color: rgba(24, 23, 23, 0.445);
+  width: fit-content;
+  border-radius: 10px;
+}
+
+body.dark-mode .dropdown-menu {
+  border-color: goldenrod;
+}
+
+.sides {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dropdown-item {
+  color: var(--text-color-light);
+}
+
+body.dark-mode .dropdown-item {
+  color: var(--text-color-dark);
+}
+
+.dropdown-item:hover {
+
 }
 
 @media (min-width: 1200px) {
