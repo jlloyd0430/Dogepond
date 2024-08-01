@@ -1,12 +1,12 @@
-// Profile.js
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
 import { getWalletAddress, getWalletData, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
 import apiClient from "../services/apiClient";
+import Papa from 'papaparse';
 import "./Profile.css";
 
-const COLLECTION_SLUG = 'doginal-ducks'; // Replace with your collection slug
+const COLLECTION_SLUG = 'doginal-ducks';
 
 const Profile = () => {
   const { auth } = useContext(AuthContext);
@@ -14,10 +14,12 @@ const Profile = () => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [walletBalance, setWalletBalance] = useState(null);
   const [walletHoldings, setWalletHoldings] = useState([]);
-  const [view, setView] = useState("nftDrops"); // "nftDrops" or "wallet"
+  const [view, setView] = useState("nftDrops");
   const [error, setError] = useState("");
   const [points, setPoints] = useState(0);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to handle dropdown
+  const [snapshotData, setSnapshotData] = useState([]);
+  const [collectionSlug, setCollectionSlug] = useState("");
+  const [showWalletDropdown, setShowWalletDropdown] = useState(false);
 
   useEffect(() => {
     const fetchUserDrops = async () => {
@@ -59,7 +61,6 @@ const Profile = () => {
       const address = await getWalletAddress(walletProvider, DOGINALS_TYPE);
       setWalletAddress(address);
       fetchWalletData(address, walletProvider);
-      setIsDropdownOpen(false); // Close dropdown after selection
     } catch (error) {
       console.error('Failed to connect wallet:', error);
       alert(`Failed to connect wallet: ${error.message}`);
@@ -72,17 +73,16 @@ const Profile = () => {
       setWalletBalance(data.balance);
       const filteredHoldings = data.inscriptions.filter(inscription => inscription.collection && inscription.collection.slug === COLLECTION_SLUG);
       setWalletHoldings(filteredHoldings);
-      setPoints(filteredHoldings.length); // Assuming each Duck equals 1 point
+      setPoints(filteredHoldings.length);
 
-      // Update points in backend
       await apiClient.post('/wallet-users/update-points', { address, points: filteredHoldings.length, nftCount: filteredHoldings.length });
     } catch (error) {
       console.error('Failed to fetch wallet data:', error);
     }
   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+  const handleWalletButtonClick = () => {
+    setShowWalletDropdown(prev => !prev);
   };
 
   return (
@@ -90,7 +90,22 @@ const Profile = () => {
       <h1>Profile</h1>
       <div className="profile-buttons">
         <button onClick={() => setView("nftDrops")}>My NFT Drops</button>
-        <button onClick={() => setView("wallet")}>My Wallet</button>
+        <div className="wallet-dropdown">
+          <button onClick={handleWalletButtonClick}>Connect Wallet</button>
+          {showWalletDropdown && (
+          <div className="dropdown-content">
+          <div className="dropdown-item" onClick={() => connectWallet(DOGELABS_WALLET)}>
+            <img src="/dogelabs.svg" alt="DogeLabs" className="wallet-icon" />
+            <span>DogeLabs Wallet</span>
+          </div>
+          <div className="dropdown-item" onClick={() => connectWallet(MYDOGE_WALLET)}>
+            <img src="/mydoge-icon.svg" alt="MyDoge" className="wallet-icon" />
+            <span>MyDoge Wallet</span>
+          </div>
+        </div>
+        
+          )}
+        </div>
       </div>
       {view === "nftDrops" ? (
         <div>
@@ -103,7 +118,7 @@ const Profile = () => {
                 drop={drop}
                 onLike={() => {}}
                 isProfilePage={true}
-                userRole={auth.user?.role} // Pass user role to the NFTCard component
+                userRole={auth.user?.role}
               />
             ))}
           </div>
@@ -111,16 +126,8 @@ const Profile = () => {
       ) : (
         <div className="wallet-view">
           {!walletAddress ? (
-            <div className="wallet-dropdown">
-              <button className="connect-wallet-button" onClick={toggleDropdown}>
-                Connect Wallet
-              </button>
-              {isDropdownOpen && (
-                <div className="wallet-dropdown-menu">
-                  <button onClick={() => connectWallet(DOGELABS_WALLET)}>DogeLabs Wallet</button>
-                  <button onClick={() => connectWallet(MYDOGE_WALLET)}>MyDoge Wallet</button>
-                </div>
-              )}
+            <div>
+              <p>Please connect a wallet to view your holdings.</p>
             </div>
           ) : (
             <div>
