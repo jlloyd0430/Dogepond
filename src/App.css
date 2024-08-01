@@ -84,7 +84,16 @@ div {
   flex-direction: column;
 }
 
+    
+          
+            
+    
 
+          
+          Expand Down
+    
+    
+  
 .filter-container {
   justify-content: space-between;
   display: flex;
@@ -109,10 +118,9 @@ body.dark-mode .header {
   justify-content: space-between;
   margin-bottom: 20px;
   gap: 10px;
-  width: 70%;
+  width: 92%;
   padding: 0 20px;
 }
-
 .ads {
   align-items: center;
 }
@@ -243,21 +251,8 @@ body.dark-mode .footer {
   .tabs-container {
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0px;
-  }
-
-  .tabs-container button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    font-family: "Orbitron", sans-serif;
-    font-size: 1rem;
-    transition: color 0.3s ease;
   }
 }
-
-
 @media (max-width: 1200px) {
   .main-content {
     align-items: center;
@@ -278,65 +273,6 @@ body.dark-mode .footer {
   padding: 10px 0;
   text-transform: uppercase;
 }
-
-body {
-  font-family: "Orbitron", sans-serif;
-  margin: 0;
-  padding: 0;
-  color: var(--text-color-light);
-  background-color: var(--background-color-light);
-}
-
-body.dark-mode {
-  background-color: var(--background-color-dark);
-  color: var(--text-color-dark);
-}
-
-h1 {
-  color: var(--text-color-light);
-  font-size: 1.5em;
-  padding: 5px;
-  text-decoration: underline solid goldenrod;
-}
-
-body.dark-mode h1 {
-  color: var(--text-color-dark);
-}
-
-.dropdown-menu {
-  background-color: rgba(24, 23, 23, 0.445);
-  width: fit-content;
-  border-radius: 10px;
-}
-
-body.dark-mode .dropdown-menu {
-  border-color: goldenrod;
-}
-
-.sides {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.dropdown-item {
-  color: var(--text-color-light);
-}
-
-body.dark-mode .dropdown-item {
-  color: var(--text-color-dark);
-}
-
-.dropdown-item:hover {
-
-}
-
-@media (min-width: 1200px) {
-  .tabs-container {
-    gap: 200px; /* Gap for desktop */
-  }
-}
-
 .tabs-container button {
   background: none;
   border: none;
@@ -344,11 +280,10 @@ body.dark-mode .dropdown-item {
   text-decoration: none;
   font-family: "Orbitron", sans-serif;
   font-size: 1rem;
+  color: var(--text-color-light);
   transition: color 0.3s ease;
 }
-
 .tabs-container button:hover,
 .tabs-container button.active {
   color: var(--hover-color);
-  background-color: transparent;
 }
