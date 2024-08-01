@@ -278,3 +278,9 @@ body.dark-mode .footer {
 .tabs-container button.active {
   color: var(--hover-color);
 }
+
+@media (min-width: 1200px) {
+  .tabs-container {
+    gap: 200px; /* Gap for desktop */
+  }
+}
