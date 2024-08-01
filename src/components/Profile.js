@@ -92,11 +92,11 @@ const Profile = () => {
       <div className="profile-buttons">
         <button onClick={() => setView("nftDrops")}>My NFT Drops</button>
         <div className="wallet-dropdown">
-          <button onClick={handleWalletButtonClick}>My Wallet</button>
+          <button onClick={handleWalletButtonClick}>Connect Wallet</button>
           {showWalletDropdown && (
             <div className="dropdown-content">
-              <button className="connect-wallet-button" onClick={() => connectWallet(DOGELABS_WALLET)}>Connect DogeLabs Wallet</button>
-              <button className="connect-wallet-button" onClick={() => connectWallet(MYDOGE_WALLET)}>Connect MyDoge Wallet</button>
+              <button className="connect-wallet-button" onClick={() => connectWallet(DOGELABS_WALLET)}>DogeLabs Wallet</button>
+              <button className="connect-wallet-button" onClick={() => connectWallet(MYDOGE_WALLET)}>MyDoge Wallet</button>
             </div>
           )}
         </div>
