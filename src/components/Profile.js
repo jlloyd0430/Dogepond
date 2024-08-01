@@ -4,7 +4,6 @@ import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
 import { getWalletAddress, getWalletData, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
 import apiClient from "../services/apiClient";
-// import Papa from 'papaparse'; // Import Papa Parse for CSV export
 import "./Profile.css";
 
 const COLLECTION_SLUG = 'doginal-ducks'; // Replace with your collection slug
@@ -18,8 +17,6 @@ const Profile = () => {
   const [view, setView] = useState("nftDrops"); // "nftDrops" or "wallet"
   const [error, setError] = useState("");
   const [points, setPoints] = useState(0);
-  // const [snapshotData, setSnapshotData] = useState([]);
-  // const [collectionSlug, setCollectionSlug] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to handle dropdown
 
   useEffect(() => {
@@ -69,7 +66,21 @@ const Profile = () => {
     }
   };
 
- 
+  const fetchWalletData = async (address, walletProvider) => {
+    try {
+      const data = await getWalletData(address, walletProvider);
+      setWalletBalance(data.balance);
+      const filteredHoldings = data.inscriptions.filter(inscription => inscription.collection && inscription.collection.slug === COLLECTION_SLUG);
+      setWalletHoldings(filteredHoldings);
+      setPoints(filteredHoldings.length); // Assuming each Duck equals 1 point
+
+      // Update points in backend
+      await apiClient.post('/wallet-users/update-points', { address, points: filteredHoldings.length, nftCount: filteredHoldings.length });
+    } catch (error) {
+      console.error('Failed to fetch wallet data:', error);
+    }
+  };
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
