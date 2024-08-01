@@ -190,6 +190,12 @@ body.dark-mode .nav-button:hover {
   width: 100%;
   bottom: 0;
 }
+
+body.dark-mode .tabs-container button {
+  background: var(--button-bg-dark); /* Background for dark mode */
+  color: var(--button-text-color-dark); /* Text color for dark mode */
+}
+
 body.dark-mode .footer {
   color: var(--footer-text-color-dark);
 }
