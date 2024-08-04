@@ -153,29 +153,40 @@ const Home = () => {
   };
 
   // DRC-20 Snapshot functions
-  const fetchDrc20Snapshot = async () => {
+ const fetchDrc20Snapshot = async () => {
+  try {
     setDrc20Loading(true);
-    try {
-      const response = await axios.get(
-        `https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${ticker}/holders`,
+    let allHolders = [];
+    let cursor = null;
+
+    do {
+      const response = await fetch(
+        `https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${ticker}/holders${
+          cursor ? `?cursor=${cursor}` : ""
+        }`,
         {
+          method: "GET",
           headers: {
-            'Accept': 'application/json',
-            'api-key': process.env.REACT_APP_API_KEY, // Use your API key from .env
+            "Accept": "application/json",
+            "api-key": process.env.REACT_APP_API_KEY,
           },
-          params: drc20Cursor ? { cursor: drc20Cursor } : {},
         }
       );
-      const { data, next_cursor } = response.data;
 
-      setDrc20Holders((prevHolders) => [...prevHolders, ...data]);
-      setDrc20Cursor(next_cursor || null);
-      setDrc20Loading(false);
-    } catch (error) {
-      console.error("Failed to fetch DRC-20 snapshot:", error);
-      setDrc20Loading(false);
-    }
-  };
+      const data = await response.json();
+      allHolders = [...allHolders, ...data.data];
+
+      cursor = data.next_cursor;
+    } while (cursor);
+
+    setDrc20Holders(allHolders);
+    setDrc20Loading(false);
+  } catch (error) {
+    console.error("Failed to fetch DRC-20 holders:", error);
+    setDrc20Loading(false);
+  }
+};
+
 
   const exportDrc20ToTXT = () => {
     const txt = drc20Holders.map(({ address, balance }) => `${address}: ${balance}`).join('\n');
