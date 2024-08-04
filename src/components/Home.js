@@ -10,6 +10,7 @@ import "../App.css";
 import TrendingDunes from "../components/TrendingDunes";
 import TrendingTokens from "../components/TrendingTokens";
 import TrendingNFTs from "../components/TrendingNFTs";
+import axios from "axios"; // Import axios
 
 const Home = () => {
   const [approvedDrops, setApprovedDrops] = useState([]);
@@ -29,6 +30,12 @@ const Home = () => {
   const [collectionSlug, setCollectionSlug] = useState("");
   const [snapshotData, setSnapshotData] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // State for DRC-20 snapshot
+  const [ticker, setTicker] = useState("");
+  const [drc20Holders, setDrc20Holders] = useState([]);
+  const [drc20Cursor, setDrc20Cursor] = useState(null);
+  const [drc20Loading, setDrc20Loading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -142,6 +149,40 @@ const Home = () => {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${collectionSlug}_snapshot.json`;
+    link.click();
+  };
+
+  // DRC-20 Snapshot functions
+  const fetchDrc20Snapshot = async () => {
+    setDrc20Loading(true);
+    try {
+      const response = await axios.get(
+        `https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${ticker}/holders`,
+        {
+          headers: {
+            'Accept': 'application/json',
+            'api-key': process.env.REACT_APP_API_KEY, // Use your API key from .env
+          },
+          params: drc20Cursor ? { cursor: drc20Cursor } : {},
+        }
+      );
+      const { data, next_cursor } = response.data;
+
+      setDrc20Holders((prevHolders) => [...prevHolders, ...data]);
+      setDrc20Cursor(next_cursor || null);
+      setDrc20Loading(false);
+    } catch (error) {
+      console.error("Failed to fetch DRC-20 snapshot:", error);
+      setDrc20Loading(false);
+    }
+  };
+
+  const exportDrc20ToTXT = () => {
+    const txt = drc20Holders.map(({ address, balance }) => `${address}: ${balance}`).join('\n');
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${ticker}_drc20_snapshot.txt`;
     link.click();
   };
 
@@ -269,6 +310,29 @@ const Home = () => {
                 <ul>
                   {snapshotData.map(({ address, count }) => (
                     <li key={address}>{address}: {count}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          <div className="snapshot-section">
+            <h3>DRC-20 Snapshot</h3>
+            <input
+              type="text"
+              placeholder="Enter DRC-20 Ticker"
+              value={ticker}
+              onChange={(e) => setTicker(e.target.value)}
+            />
+            <button onClick={fetchDrc20Snapshot} disabled={drc20Loading}>
+              {drc20Loading ? "Loading..." : "Fetch Snapshot"}
+            </button>
+            {drc20Holders.length > 0 && (
+              <div className="snapshot-results">
+                <button onClick={exportDrc20ToTXT}>Export to TXT</button>
+                <h4>Snapshot Results (Total Holders: {drc20Holders.length})</h4>
+                <ul>
+                  {drc20Holders.map(({ address, balance }) => (
+                    <li key={address}>{address}: {balance}</li>
                   ))}
                 </ul>
               </div>
