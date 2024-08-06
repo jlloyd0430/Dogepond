@@ -10,6 +10,7 @@ const TrendingDunes = () => {
   const [walletAddress, setWalletAddress] = useState("");
   const [walletDunes, setWalletDunes] = useState([]);
   const [balanceError, setBalanceError] = useState("");
+  const [sortOrder, setSortOrder] = useState("mostRecent");
 
   useEffect(() => {
     const fetchTrendingDunes = async () => {
@@ -27,6 +28,7 @@ const TrendingDunes = () => {
           duneList.push({
             name: duneName,
             link: `https://ord.dunesprotocol.com${duneLink}`,
+            index, // Store the index to use for sorting
           });
         });
 
@@ -100,6 +102,17 @@ const TrendingDunes = () => {
     return { title, details, duneUrl };
   };
 
+  const handleSortOrderChange = (e) => {
+    setSortOrder(e.target.value);
+  };
+
+  const sortedDunes = [...dunes].sort((a, b) => {
+    if (sortOrder === "mostRecent") {
+      return b.index - a.index; // Sort by most recent
+    }
+    return a.index - b.index; // Sort by oldest
+  });
+
   return (
     <div className="trending-container">
       <h1 className="ttitle">All Dunes</h1>
@@ -124,8 +137,16 @@ const TrendingDunes = () => {
         ))}
       </div>
 
+      <div className="sort-container">
+        <label htmlFor="sortOrder">Sort by:</label>
+        <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
+          <option value="mostRecent">Most Recent</option>
+          <option value="oldest">Oldest</option>
+        </select>
+      </div>
+
       <div className="dune-list">
-        {dunes.map((dune, index) => (
+        {sortedDunes.map((dune, index) => (
           <div key={index} className="dune-card">
             <a href={dune.link} target="_blank" rel="noopener noreferrer">
               <h2>{dune.name}</h2>
