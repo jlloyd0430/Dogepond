@@ -7,6 +7,7 @@ const apiClient = axios.create({
   }
 });
 
+
 export const submitOrder = async (orderData) => {
   try {
     const response = await apiClient.post('/order', orderData); // Correct endpoint
