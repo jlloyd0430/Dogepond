@@ -1,45 +1,33 @@
-.main-container {
+.trending-container {
   padding: 20px;
   text-align: center;
 }
 
-.button-container {
-  margin-bottom: 20px;
+.header-container {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.button-container button {
-  margin: 0 10px;
-  padding: 10px 20px;
-  font-size: 16px;
+.header-container .ttitle {
   cursor: pointer;
 }
 
-.content-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.ttitle {
-  display: flex;
-  justify-content: center;
-}
-
-.search-container, .balance-container {
+.balance-container {
   margin-bottom: 20px;
   display: flex;
   justify-content: center;
   gap: 10px;
 }
 
-.search-container input, .balance-container input {
+.balance-container input {
   padding: 10px;
   font-size: 16px;
 }
 
-.search-container button, .balance-container button {
+.balance-container button {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
@@ -52,19 +40,25 @@
   gap: 20px;
 }
 
-.dune-card, .wallet-dune-card {
+.wallet-dune-card {
   border: 2px solid green;
   padding: 20px;
   border-radius: 11px;
   text-align: center;
 }
+.dune-card {
+border: 2px solid goldenrod;
+padding: 20px;
+border-radius: 11px;
+text-align: center;
+}
 
-.dune-card a, .wallet-dune-card a {
+.dune-card a {
   text-decoration: none;
   color: inherit;
 }
 
-.dune-card h2, .wallet-dune-card h2 {
+.dune-card h2 {
   font-size: 18px;
 }
 
@@ -76,59 +70,70 @@
   color: red;
 }
 
-.dune-list, .drc20-list, .nft-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  max-width: 700px;
-  margin-right: 100px; /* Default margin-right for desktop */
+.form-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.dune-card, .drc20-card, .nftCard {
-  border: 2px solid goldenrod;
+.form-container label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.form-container input[type="text"],
+.form-container input[type="number"],
+.form-container select {
+  width: 100%;
   padding: 10px;
-  border-radius: 25px;
-  text-align: center;
-  flex-direction: row;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
 }
 
-.dune-card img, .drc20-card img, .nftCard img {
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 4px;
+.form-container input[type="checkbox"] {
+  margin-right: 10px;
 }
 
-.dune-card a, .drc20-card a, .nftCard a {
-  text-decoration: none;
-  color: inherit;
+.form-container button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: goldenrod;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.dune-card h2, .drc20-card h2, .nftCard h2 {
-  font-size: 16px;
-  margin: 10px 0;
+.form-container button[type="submit"]:hover {
+  background-color: gold;
 }
 
-.drci {
+.form-container .radio-group {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
-@media (max-width: 600px) {
-  .dune-list, .drc20-list, .nft-list {
-    margin-right: 0; /* Remove margin-right on mobile */
-  }
-
-  .nftCard {
-    flex-direction: column;
-    align-items: center;
-  }
+.form-container .radio-group label {
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
 }
 
-@media (max-width: 1200px) {
-  .nftCard {
-    flex-direction: column;
-    align-items: center;
-  }
+.form-container .radio-group input {
+  margin-right: 5px;
+}
+
+.payment-popup {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
