@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://dd2e-2001-19f0-0-4782-5400-5ff-fe0b-4549.ngrok-free.app/', // Replace with the current ngrok URL
+  baseURL: 'https://d86f-2001-19f0-0-4782-5400-5ff-fe0b-4549.ngrok-free.app/', // Replace with the current ngrok URL
   headers: {
     'Content-Type': 'application/json'
   }
