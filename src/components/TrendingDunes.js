@@ -120,15 +120,15 @@ const TrendingDunes = () => {
 
   return (
     <div className="trending-container">
-      <div className="header-container">
-        <h1 className="ttitle" onClick={() => setView("dunes")}>All Dunes</h1>
-        <h1 className="ttitle" onClick={() => setView("etcher")}>Etcher</h1>
+      <div className="trending-header-container">
+        <h1 className="trending-ttitle" onClick={() => setView("dunes")}>All Dunes</h1>
+        <h1 className="trending-ttitle" onClick={() => setView("etcher")}>Etcher</h1>
       </div>
 
       {view === "dunes" && (
         <>
-          {error && <p className="error">{error}</p>}
-          <div className="balance-container">
+          {error && <p className="trending-error">{error}</p>}
+          <div className="trending-balance-container">
             <input
               type="text"
               placeholder="Enter wallet address..."
@@ -138,16 +138,16 @@ const TrendingDunes = () => {
             <button onClick={handleFetchBalance}>Check Balance</button>
           </div>
 
-          {balanceError && <p className="error">{balanceError}</p>}
-          <div className="wallet-dunes-list">
+          {balanceError && <p className="trending-error">{balanceError}</p>}
+          <div className="trending-wallet-dunes-list">
             {walletDunes.map((dune, index) => (
-              <div key={index} className="wallet-dune-card">
+              <div key={index} className="trending-wallet-dune-card">
                 <p>{dune.dune} ({dune.symbol}): {dune.total_balance / (10 ** dune.divisibility)} {dune.symbol}</p>
               </div>
             ))}
           </div>
 
-          <div className="sort-container">
+          <div className="trending-sort-container">
             <label htmlFor="sortOrder">Sort by:</label>
             <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
               <option value="mostRecent">Most Recent</option>
@@ -155,9 +155,9 @@ const TrendingDunes = () => {
             </select>
           </div>
 
-          <div className="dune-list">
+          <div className="trending-dune-list">
             {sortedDunes.map((dune, index) => (
-              <div key={index} className="dune-card">
+              <div key={index} className="trending-dune-card">
                 <a href={dune.link} target="_blank" rel="noopener noreferrer">
                   <h2>{dune.name}</h2>
                 </a>
@@ -168,10 +168,10 @@ const TrendingDunes = () => {
       )}
 
       {view === "etcher" && (
-        <div className="form-container">
+        <div className="trending-form-container">
           <DuneForm onSubmit={handleSubmit} />
           {paymentInfo && (
-            <div className="payment-popup">
+            <div className="trending-payment-popup">
               <p>Please send {paymentInfo.dogeAmount} DOGE to the following address:</p>
               <p>{paymentInfo.address}</p>
               <button onClick={() => navigator.clipboard.writeText(paymentInfo.address)}>Copy Address</button>
