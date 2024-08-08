@@ -21,7 +21,7 @@ import "./components/NFTCard.css";
 import "./components/Footer.css";
 import Proposals from "./components/Proposals";
 import Info from "./components/Info";
-import UnderConstruction from "./components/UnderConstruction";
+import UnderConstruction from "./components/underConstruction";
 
 const App = () => {
   return (
