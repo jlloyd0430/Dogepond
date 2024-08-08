@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://a11a-2001-19f0-0-4782-5400-5ff-fe0b-4549.ngrok-free.app', // Replace with the current ngrok URL
+  baseURL: 'https://wet-games-joke.loca.lt/order
+', // Replace with the current ngrok URL
   headers: {
     'Content-Type': 'application/json'
   }
