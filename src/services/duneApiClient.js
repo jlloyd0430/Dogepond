@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://your-vps-ip:8080', // Point to the proxy server on your VPS
+  baseURL: 'http://140.82.15.223:8080', // Point to the proxy server on your VPS
   headers: {
     'Content-Type': 'application/json'
   }
