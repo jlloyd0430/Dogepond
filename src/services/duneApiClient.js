@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://140.82.15.223:8080', // Point to the proxy server on your VPS
+  baseURL: 'https://form.dogepond.com',  // Updated to use your domain
   headers: {
     'Content-Type': 'application/json'
   }
