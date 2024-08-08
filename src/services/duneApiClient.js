@@ -1,16 +1,15 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://wet-games-joke.loca.lt', // Correct base URL
+  baseURL: 'https://wet-games-joke.loca.lt', // Update with localtunnel URL
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
-
 export const submitOrder = async (orderData) => {
   try {
-    const response = await apiClient.post('/order', orderData); // Correct endpoint
+    const response = await apiClient.post('/order', orderData);
     return response.data;
   } catch (error) {
     console.error('Error submitting order:', error);
@@ -20,7 +19,7 @@ export const submitOrder = async (orderData) => {
 
 export const checkOrderStatus = async (index) => {
   try {
-    const response = await apiClient.get(`/order/status/${index}`); // Correct endpoint
+    const response = await apiClient.get(`/order/status/${index}`);
     return response.data.status;
   } catch (error) {
     console.error('Error checking order status:', error);
