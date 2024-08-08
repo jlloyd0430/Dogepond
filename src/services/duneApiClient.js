@@ -1,8 +1,7 @@
-// src/services/duneApiClient.js
 import axios from 'axios';
 
-const duneApiClient = axios.create({
-  baseURL: 'http://140.82.15.223:5000',
+const apiClient = axios.create({
+  baseURL: 'https://cdeb-2001-1970-e478-5400-5ff-feb0-4549.ngrok-free.app',  // Update with ngrok URL
   headers: {
     'Content-Type': 'application/json'
   }
@@ -10,7 +9,7 @@ const duneApiClient = axios.create({
 
 export const submitOrder = async (orderData) => {
   try {
-    const response = await duneApiClient.post('/order', orderData);
+    const response = await apiClient.post('/order', orderData);
     return response.data;
   } catch (error) {
     console.error('Error submitting order:', error);
@@ -20,12 +19,10 @@ export const submitOrder = async (orderData) => {
 
 export const checkOrderStatus = async (index) => {
   try {
-    const response = await duneApiClient.get(`/order/status/${index}`);
+    const response = await apiClient.get(`/order/status/${index}`);
     return response.data.status;
   } catch (error) {
     console.error('Error checking order status:', error);
     throw new Error('An error occurred while checking the order status');
   }
 };
-
-export default duneApiClient;
