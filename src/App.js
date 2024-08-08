@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import Login from "./components/Login";
@@ -19,8 +19,9 @@ import { ThemeProvider, ThemeContext } from "./context/ThemeContext";
 import "./App.css";
 import "./components/NFTCard.css";
 import "./components/Footer.css";
-import Proposals from "./components/Proposals"; // Import the Proposals component
-import Info from "./components/info"; // Import the Info component
+import Proposals from "./components/Proposals";
+import Info from "./components/Info";
+import UnderConstruction from "./components/UnderConstruction";
 
 const App = () => {
   return (
@@ -36,9 +37,10 @@ const App = () => {
 
 const AppContent = () => {
   const { isDarkMode } = useContext(ThemeContext);
-  const { handleDiscordLogin, auth } = useContext(AuthContext);
+  const { handleDiscordLogin } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
+  const [passcodeEntered, setPasscodeEntered] = useState(false);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -50,13 +52,17 @@ const AppContent = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const token = params.get('token');
+    const token = params.get("token");
     if (token) {
       handleDiscordLogin(token).then(() => {
-        navigate('/'); // Redirect to home after storing token
+        navigate("/"); // Redirect to home after storing token
       });
     }
   }, [location, handleDiscordLogin, navigate]);
+
+  if (!passcodeEntered) {
+    return <UnderConstruction setPasscodeEntered={setPasscodeEntered} />;
+  }
 
   return (
     <div className="app">
@@ -85,7 +91,7 @@ const AppContent = () => {
           <Route path="/proposals" element={<PrivateRoute />}>
             <Route index element={<Proposals />} />
           </Route>
-          <Route path="/info" element={<PrivateRoute />}> {/* Add the new Info route */}
+          <Route path="/info" element={<PrivateRoute />}>
             <Route index element={<Info />} />
           </Route>
         </Routes>
