@@ -46,12 +46,21 @@
 
 .trending-wallet-dune-card,
 .trending-dune-card,
-.trending-drc20-card,
 .trending-nftCard {
   border: 2px solid goldenrod;
   padding: 20px;
   border-radius: 11px;
   text-align: center;
+}
+
+
+.trending-drc20-card,{
+   border: 2px solid goldenrod;
+  padding: 20px;
+  border-radius: 11px;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
 }
 
 .trending-drc20-card img,
