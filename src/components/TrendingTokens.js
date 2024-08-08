@@ -19,21 +19,21 @@ const TrendingTokens = () => {
     fetchTrendingTokens();
   }, []);
 
-return (
+  return (
     <div className="trending-container">
-      <h1 className="ttitle">Trending Tokens</h1>
-      {error && <p className="error">{error}</p>}
-      <div className="drc20-list">
+      <h1 className="trending-ttitle">Trending Tokens</h1>
+      {error && <p className="trending-error">{error}</p>}
+      <div className="trending-drc20-list">
         {tokens.map((token, index) => (
           <div key={index}>
              <h2>{token.tick}</h2>
-             <div className="drc20-card">
-            <img src={token.pic} alt={token.tick} />
-            <div className="drci">
-            <p>24h Volume: {token.volume24h}</p>
-            <p>24h Trades: {token.trades24h}</p>
-            </div>
-            </div>
+             <div className="trending-drc20-card">
+               <img src={token.pic} alt={token.tick} />
+               <div className="trending-drci">
+                 <p>24h Volume: {token.volume24h}</p>
+                 <p>24h Trades: {token.trades24h}</p>
+               </div>
+             </div>
           </div>
         ))}
       </div>
