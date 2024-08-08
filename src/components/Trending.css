@@ -3,7 +3,7 @@
   text-align: center;
 }
 
-.header-container {
+.trending-header-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -11,66 +11,67 @@
   margin-bottom: 20px;
 }
 
-.header-container .ttitle {
+.trending-header-container .trending-ttitle {
   cursor: pointer;
 }
 
-.balance-container {
+.trending-balance-container {
   margin-bottom: 20px;
   display: flex;
   justify-content: center;
   gap: 10px;
 }
 
-.balance-container input {
+.trending-balance-container input {
   padding: 10px;
   font-size: 16px;
 }
 
-.balance-container button {
+.trending-balance-container button {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
 }
 
-.dune-list, .wallet-dunes-list {
+.trending-dune-list, .trending-wallet-dunes-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
 }
 
-.wallet-dune-card {
+.trending-wallet-dune-card {
   border: 2px solid green;
   padding: 20px;
   border-radius: 11px;
   text-align: center;
 }
-.dune-card {
-border: 2px solid goldenrod;
-padding: 20px;
-border-radius: 11px;
-text-align: center;
+
+.trending-dune-card {
+  border: 2px solid goldenrod;
+  padding: 20px;
+  border-radius: 11px;
+  text-align: center;
 }
 
-.dune-card a {
+.trending-dune-card a {
   text-decoration: none;
   color: inherit;
 }
 
-.dune-card h2 {
+.trending-dune-card h2 {
   font-size: 18px;
 }
 
-.wallet-dune-card p {
+.trending-wallet-dune-card p {
   font-size: 16px;
 }
 
-.error {
+.trending-error {
   color: red;
 }
 
-.form-container {
+.trending-form-container {
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
@@ -79,15 +80,15 @@ text-align: center;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.form-container label {
+.trending-form-container label {
   display: block;
   margin-bottom: 10px;
   font-weight: bold;
 }
 
-.form-container input[type="text"],
-.form-container input[type="number"],
-.form-container select {
+.trending-form-container input[type="text"],
+.trending-form-container input[type="number"],
+.trending-form-container select {
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;
@@ -96,11 +97,11 @@ text-align: center;
   box-sizing: border-box;
 }
 
-.form-container input[type="checkbox"] {
+.trending-form-container input[type="checkbox"] {
   margin-right: 10px;
 }
 
-.form-container button[type="submit"] {
+.trending-form-container button[type="submit"] {
   width: 100%;
   padding: 10px;
   background-color: goldenrod;
@@ -110,27 +111,27 @@ text-align: center;
   cursor: pointer;
 }
 
-.form-container button[type="submit"]:hover {
+.trending-form-container button[type="submit"]:hover {
   background-color: gold;
 }
 
-.form-container .radio-group {
+.trending-form-container .trending-radio-group {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
 }
 
-.form-container .radio-group label {
+.trending-form-container .trending-radio-group label {
   margin-right: 10px;
   display: flex;
   align-items: center;
 }
 
-.form-container .radio-group input {
+.trending-form-container .trending-radio-group input {
   margin-right: 5px;
 }
 
-.payment-popup {
+.trending-payment-popup {
   background-color: #f9f9f9;
   padding: 20px;
   border-radius: 10px;
