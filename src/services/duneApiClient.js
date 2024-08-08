@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://wet-games-joke.loca.lt', // Update with localtunnel URL
+  baseURL: 'http://your-vps-ip:8080', // Point to the proxy server on your VPS
   headers: {
     'Content-Type': 'application/json'
   }
