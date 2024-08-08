@@ -119,7 +119,7 @@
 }
 
 /* Mobile-specific styles */
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .trending-nftCard {
     display: flex;
     flex-direction: row;
