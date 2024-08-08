@@ -21,11 +21,11 @@ const TrendingNFTs = () => {
 
   return (
     <div className="trending-container">
-      <h1 className="ttitle">Trending NFTs</h1>
-      {error && <p className="error">{error}</p>}
-      <div className="nft-list">
+      <h1 className="trending-ttitle">Trending NFTs</h1>
+      {error && <p className="trending-error">{error}</p>}
+      <div className="trending-nft-list">
         {nfts.map((nft, index) => (
-          <div key={index} className="nftCard">
+          <div key={index} className="trending-nftCard">
             <img src={nft.collection.image} alt={nft.collection.name} style={{ width: '150px', height: '150px' }} />
             <h2>{nft.collection.name}</h2>
             <p>{nft.collection.description}</p>
