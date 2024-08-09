@@ -74,20 +74,22 @@ const TrendingDunes = () => {
     setDunes(filteredDunes);
   };
 
-  const handleFetchBalance = async () => {
-    if (!walletAddress) {
-      setBalanceError("Please enter a wallet address.");
-      return;
-    }
-    try {
-      const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
-      setWalletDunes(response.data.dunes);
-      setBalanceError("");
-    } catch (error) {
-      console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
-      setBalanceError("Failed to fetch dunes balance. Please try again later.");
-    }
-  };
+const handleFetchBalance = async () => {
+  if (!walletAddress) {
+    setBalanceError("Please enter a wallet address.");
+    return;
+  }
+  try {
+    const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
+    console.log("Fetched Dunes Balance:", response.data); // Log the response
+    setWalletDunes(response.data.dunes);
+    setBalanceError("");
+  } catch (error) {
+    console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
+    setBalanceError("Failed to fetch dunes balance. Please try again later.");
+  }
+};
+
 
   const handleSortOrderChange = (e) => {
     setSortOrder(e.target.value);
