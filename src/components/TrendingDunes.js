@@ -4,6 +4,7 @@ import cheerio from "cheerio";
 import "./Trending.css"; // Add appropriate styles
 import DuneForm from "./Duneform"; // Import the form component
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the Dune API functions
+
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
   const [error, setError] = useState("");
@@ -15,6 +16,7 @@ const TrendingDunes = () => {
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState("");
   const [view, setView] = useState("dunes"); // State to control which view is active
+
   useEffect(() => {
     const fetchTrendingDunes = async () => {
       try {
@@ -22,6 +24,7 @@ const TrendingDunes = () => {
         const htmlData = response.data;
         const $ = cheerio.load(htmlData);
         const duneList = [];
+
         $("ul > li > a").each((index, element) => {
           const duneName = $(element).text();
           const duneLink = $(element).attr("href");
@@ -39,9 +42,11 @@ const TrendingDunes = () => {
     };
     fetchTrendingDunes();
   }, []);
+
   const handleWalletAddressChange = (e) => {
     setWalletAddress(e.target.value);
   };
+
   const encodeDuneName = (duneName) => {
     return duneName.split(' ').join('%E2%80%A2');
   };
@@ -60,11 +65,6 @@ const TrendingDunes = () => {
   const handleFetchBalance = async () => {
     if (!walletAddress) {
       setBalanceError("Please enter a wallet address.");
-
-    
-        
- const TrendingDunes = () => {
-  
       return;
     }
     try {
@@ -76,6 +76,7 @@ const TrendingDunes = () => {
       setBalanceError("Failed to fetch dunes balance. Please try again later.");
     }
   };
+
   const handleSortOrderChange = (e) => {
     setSortOrder(e.target.value);
   };
@@ -84,11 +85,9 @@ const TrendingDunes = () => {
     if (sortOrder === "mostRecent") {
       return b.index - a.index; // Sort by most recent
     }
-
- const TrendingDunes = () => {
-  
     return a.index - b.index; // Sort by oldest
   });
+
   const handleSubmit = async (formData) => {
     try {
       const result = await submitOrder(formData);
@@ -110,12 +109,14 @@ const TrendingDunes = () => {
       alert('An error occurred. Please try again.');
     }
   };
+
   return (
     <div className="trending-container">
       <div className="trending-header-container">
         <h1 className="trending-ttitle" onClick={() => setView("dunes")}>All Dunes</h1>
         <h1 className="trending-ttitle" onClick={() => setView("etcher")}>Etcher</h1>
       </div>
+
       {view === "dunes" && (
         <>
           {error && <p className="trending-error">{error}</p>}
@@ -147,23 +148,26 @@ const TrendingDunes = () => {
               className="trending-search-input"
             />
             <button className="trending-search-button" onClick={handleSearch}>
-              search
+              Search
             </button>
           </div>
 
           <div className="trending-dune-list">
-
-              
-              {sortedDunes.map((dune, index) => (
+            {sortedDunes.map((dune, index) => (
               <div key={index} className="trending-dune-card">
-                <a href={dune.link} target="_blank" rel="noopener noreferrer">
-                  <h2>{dune.name}</h2>
-                </a>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <a href={dune.link} target="_blank" rel="noopener noreferrer">
+                    <h2>{dune.name}</h2>
+                  </a>
+                  {/* Copy ID Button */}
+                  <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
+                </div>
               </div>
             ))}
           </div>
         </>
       )}
+
       {view === "etcher" && (
         <div className="trending-form-container">
           <DuneForm onSubmit={handleSubmit} />
@@ -180,4 +184,5 @@ const TrendingDunes = () => {
     </div>
   );
 };
+
 export default TrendingDunes;
