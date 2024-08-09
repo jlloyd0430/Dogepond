@@ -1,160 +1,187 @@
-.trending-container {
-  padding: 20px;
-  text-align: center;
-}
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import cheerio from "cheerio";
+import "./Trending.css"; // Add appropriate styles
+import DuneForm from "./Duneform"; // Import the form component
+import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the Dune API functions
 
-.trending-header-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
+const TrendingDunes = () => {
+  const [dunes, setDunes] = useState([]);
+  const [error, setError] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
+  const [walletDunes, setWalletDunes] = useState([]);
+  const [balanceError, setBalanceError] = useState("");
+  const [sortOrder, setSortOrder] = useState("mostRecent");
+  const [paymentInfo, setPaymentInfo] = useState(null);
+  const [orderStatus, setOrderStatus] = useState("");
+  const [view, setView] = useState("dunes"); // State to control which view is active
 
-.trending-ttitle {
-  cursor: pointer;
-}
+  useEffect(() => {
+    const fetchTrendingDunes = async () => {
+      try {
+        const response = await axios.get("https://ord.dunesprotocol.com/dunes");
+        const htmlData = response.data;
 
-.trending-balance-container,
-.trending-sort-container {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+        const $ = cheerio.load(htmlData);
+        const duneList = [];
 
-.trending-balance-container input {
-  padding: 10px;
-  font-size: 16px;
-  width: 100%;
-  max-width: 300px;
-  box-sizing: border-box;
-}
+        $("ul > li > a").each((index, element) => {
+          const duneName = $(element).text();
+          const duneLink = $(element).attr("href");
 
-.trending-balance-container button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  width: 100%;
-  max-width: 150px;
-  box-sizing: border-box;
-}
+          duneList.push({
+            name: duneName,
+            link: `https://ord.dunesprotocol.com${duneLink}`,
+            index, // Store the index to use for sorting
+          });
+        });
 
-.trending-dune-list,
-.trending-wallet-dunes-list,
-.trending-drc20-list,
-.trending-nft-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
+        setDunes(duneList);
+      } catch (error) {
+        console.error("Error fetching trending dunes:", error);
+        setError("Failed to fetch trending dunes. Please try again later.");
+      }
+    };
+    fetchTrendingDunes();
+  }, []);
 
-.trending-wallet-dune-card,
-.trending-dune-card,
-.trending-nftCard {
-  border: 2px solid goldenrod;
-  padding: 20px;
-  border-radius: 11px;
-  text-align: center;
-  width: 100%;
-  max-width: 300px;
-  box-sizing: border-box;
-}
+  const handleWalletAddressChange = (e) => {
+    setWalletAddress(e.target.value);
+  };
 
-.trending-dune-card a {
-  text-decoration: none;
-  color: inherit;
-  word-wrap: break-word; /* Prevent long text from overflowing */
-}
+  const encodeDuneName = (duneName) => {
+    return duneName.split(' ').join('%E2%80%A2');
+  };
 
-.trending-dune-card h2 {
-  font-size: 18px;
-  color: goldenrod; /* Use a color similar to your theme */
-}
+  const handleFetchBalance = async () => {
+    if (!walletAddress) {
+      setBalanceError("Please enter a wallet address.");
+      return;
+    }
 
-.trending-error {
-  color: red;
-}
+    try {
+      const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
+      setWalletDunes(response.data.dunes);
+      setBalanceError("");
+    } catch (error) {
+      console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
+      setBalanceError("Failed to fetch dunes balance. Please try again later.");
+    }
+  };
 
-.trending-form-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
+  const fetchDuneDetails = async (duneName) => {
+    const duneUrl = `https://ord.dunesprotocol.com/dune/${duneName}`;
+    const response = await axios.get(duneUrl);
+    const $ = cheerio.load(response.data);
 
-.trending-form-container label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
+    const title = $('h1').text().trim();
+    const details = {};
+    $('dl dt').each((i, el) => {
+      const key = $(el).text().trim();
+      const value = $(el).next('dd').text().trim();
+      details[key] = value;
+    });
 
-.trending-form-container input[type="text"],
-.trending-form-container input[type="number"],
-.trending-form-container select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  box-sizing: border-box;
-}
+    return { title, details, duneUrl };
+  };
 
-.trending-form-container input[type="checkbox"] {
-  margin-right: 10px;
-}
+  const handleSortOrderChange = (e) => {
+    setSortOrder(e.target.value);
+  };
 
-.trending-form-container button[type="submit"] {
-  width: 100%;
-  padding: 10px;
-  background-color: goldenrod;
-  border: none;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
+  const sortedDunes = [...dunes].sort((a, b) => {
+    if (sortOrder === "mostRecent") {
+      return b.index - a.index; // Sort by most recent
+    }
+    return a.index - b.index; // Sort by oldest
+  });
 
-.trending-form-container button[type="submit"]:hover {
-  background-color: gold;
-}
+  const handleSubmit = async (formData) => {
+    try {
+      const result = await submitOrder(formData);
+      setPaymentInfo({ dogeAmount: result.dogeAmount, address: result.address, index: result.index });
+      // Periodically check the order status
+      const intervalId = setInterval(async () => {
+        try {
+          const status = await checkOrderStatus(result.index);
+          setOrderStatus(status);
+          if (status === 'complete') {
+            clearInterval(intervalId);
+          }
+        } catch (error) {
+          console.error('Error checking order status:', error);
+        }
+      }, 30000); // Check every 30 seconds
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
 
-.trending-payment-popup {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-}
+  return (
+    <div className="trending-container">
+      <div className="trending-header-container">
+        <h1 className="trending-ttitle" onClick={() => setView("dunes")}>All Dunes</h1>
+        <h1 className="trending-ttitle" onClick={() => setView("etcher")}>Etcher</h1>
+      </div>
 
-/* Mobile-specific styles */
-@media (max-width: 768px) {
-  .trending-dune-list,
-  .trending-wallet-dunes-list,
-  .trending-nft-list {
-    flex-direction: column;
-    align-items: center;
-  }
+      {view === "dunes" && (
+        <>
+          {error && <p className="trending-error">{error}</p>}
+          <div className="trending-balance-container">
+            <input
+              type="text"
+              placeholder="Enter wallet address..."
+              value={walletAddress}
+              onChange={handleWalletAddressChange}
+            />
+            <button onClick={handleFetchBalance}>Check Balance</button>
+          </div>
 
-  .trending-dune-card,
-  .trending-wallet-dune-card,
-  .trending-nftCard {
-    width: 100%;
-    max-width: 100%;
-    text-align: left; /* Align text to the left */
-  }
+          {balanceError && <p className="trending-error">{balanceError}</p>}
+          <div className="trending-wallet-dunes-list">
+            {walletDunes.map((dune, index) => (
+              <div key={index} className="trending-wallet-dune-card">
+                <p>{dune.dune} ({dune.symbol}): {dune.total_balance / (10 ** dune.divisibility)} {dune.symbol}</p>
+              </div>
+            ))}
+          </div>
 
-  .trending-dune-card h2 {
-    font-size: 16px;
-    word-wrap: break-word; /* Prevent long text from overflowing */
-  }
+          <div className="trending-sort-container">
+            <label htmlFor="sortOrder">Sort by:</label>
+            <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
+              <option value="mostRecent">Most Recent</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </div>
 
-  .trending-nftCard img {
-    margin: 0 auto 10px; /* Center the image and add some margin below */
-    max-width: 100%;
-    height: auto;
-  }
-}
+          <div className="trending-dune-list">
+            {sortedDunes.map((dune, index) => (
+              <div key={index} className="trending-dune-card">
+                <a href={dune.link} target="_blank" rel="noopener noreferrer">
+                  <h2>{dune.name}</h2>
+                </a>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {view === "etcher" && (
+        <div className="trending-form-container">
+          <DuneForm onSubmit={handleSubmit} />
+          {paymentInfo && (
+            <div className="trending-payment-popup">
+              <p>Please send {paymentInfo.dogeAmount} DOGE to the following address:</p>
+              <p>{paymentInfo.address}</p>
+              <button onClick={() => navigator.clipboard.writeText(paymentInfo.address)}>Copy Address</button>
+              {orderStatus && <p>Order Status: {orderStatus}</p>}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default TrendingDunes;
