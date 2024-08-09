@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import cheerio from "cheerio";
 import "./Trending.css"; // Add appropriate styles
-import DuneForm from "./Duneform"; // Import the form component
+import DuneForm from "../components/Duneform"; // Import the form component
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the Dune API functions
 
 const TrendingDunes = () => {
