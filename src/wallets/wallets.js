@@ -13,6 +13,16 @@ export const PAYLOAD_TYPES = {
   base64: 'BASE_64'
 };
 
+export async function getConnectedWalletAddress() {
+  if (window.dogeLabs?.isConnected()) {
+    return await getDogeLabsWalletAddress();
+  } else if (window.myDoge?.isConnected()) {
+    return await getMyDogeWalletAddress();
+  } else {
+    return null; // No wallet is connected
+  }
+}
+
 export function defaultLogo(walletProvider) {
   switch (walletProvider) {
     case DOGELABS_WALLET:
