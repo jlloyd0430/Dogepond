@@ -8,7 +8,6 @@ const DuneForm = ({ onSubmit }) => {
     symbol: '',
     limitPerMint: '',
     maxNrOfMints: '',
-    mintingAllowed: false,
     mintId: '',
     mintAmount: '',
     mintToAddress: '',
@@ -19,17 +18,13 @@ const DuneForm = ({ onSubmit }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleCheckboxChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.checked });
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.operationType === 'deploy' && !formData.maxNrOfMints) {
       alert('Max Number of Mints is required');
       return;
     }
-    onSubmit(formData);
+    onSubmit({ ...formData, mintingAllowed: true }); // Force mintingAllowed to true
   };
 
   return (
@@ -89,15 +84,6 @@ const DuneForm = ({ onSubmit }) => {
                 value={formData.maxNrOfMints}
                 onChange={handleChange}
                 required
-              />
-            </label>
-            <label>
-              Minting Allowed:
-              <input
-                type="checkbox"
-                name="mintingAllowed"
-                checked={formData.mintingAllowed}
-                onChange={handleCheckboxChange}
               />
             </label>
           </>
