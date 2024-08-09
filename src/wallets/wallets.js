@@ -12,6 +12,18 @@ export const PAYLOAD_TYPES = {
   base64: 'BASE_64'
 };
 
+// Function to connect to the wallet
+export async function connectWallet(walletProvider) {
+  switch (walletProvider) {
+    case DOGELABS_WALLET:
+      return await getDogeLabsWalletAddress();
+    case MYDOGE_WALLET:
+      return await getMyDogeWalletAddress();
+    default:
+      throw new Error(`Unknown wallet provider: ${walletProvider}`);
+  }
+}
+
 // Function to get the address of the connected wallet
 export async function getConnectedWalletAddress() {
   if (window.dogeLabs && typeof window.dogeLabs.isConnected === 'function' && window.dogeLabs.isConnected()) {
