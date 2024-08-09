@@ -14,9 +14,9 @@ export const PAYLOAD_TYPES = {
 
 // Function to get the address of the connected wallet
 export async function getConnectedWalletAddress() {
-  if (window.dogeLabs?.isConnected()) {
+  if (window.dogeLabs && typeof window.dogeLabs.isConnected === 'function' && window.dogeLabs.isConnected()) {
     return await getDogeLabsWalletAddress();
-  } else if (window.myDoge?.isConnected()) {
+  } else if (window.myDoge && typeof window.myDoge.isConnected === 'function' && window.myDoge.isConnected()) {
     return await getMyDogeWalletAddress();
   } else {
     return null; // No wallet is connected
@@ -80,18 +80,6 @@ export async function directInscribe(walletProvider, contentType, payloadType, c
       throw new Error(`Direct inscriptions not supported for ${walletProvider}`);
   }
 }
-
-// Function to get the address of the connected wallet
-export async function getConnectedWalletAddress() {
-  if (window.dogeLabs && typeof window.dogeLabs.isConnected === 'function' && window.dogeLabs.isConnected()) {
-    return await getDogeLabsWalletAddress();
-  } else if (window.myDoge && typeof window.myDoge.isConnected === 'function' && window.myDoge.isConnected()) {
-    return await getMyDogeWalletAddress();
-  } else {
-    return null; // No wallet is connected
-  }
-}
-
 
 // Function to get the balance of the connected wallet
 export async function getWalletBalance(walletProvider) {
