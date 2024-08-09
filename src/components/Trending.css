@@ -160,6 +160,12 @@
     align-items: center;
   }
 
+  trending-container {
+    width: 400px;
+    padding: 20px;
+    text-align: center;
+}
+
   .trending-dune-card,
   .trending-wallet-dune-card,
   .trending-nftCard,
