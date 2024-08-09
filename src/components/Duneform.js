@@ -94,16 +94,6 @@ const DuneForm = ({ onSubmit }) => {
           </>
         )}
 
-
-    
-          
-            
-    
-
-          
-          Expand Down
-    
-    
   
         {formData.operationType === 'mint' && (
           <>
