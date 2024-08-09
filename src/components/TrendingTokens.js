@@ -19,6 +19,15 @@ const TrendingTokens = () => {
     fetchTrendingTokens();
   }, []);
 
+  const formatVolume = (volume) => {
+    return (volume / 1e8).toFixed(2); // Convert satoshis to DOGE and format to 2 decimals
+  };
+
+  const renderChange = (change) => {
+    const className = change >= 0 ? "positive-change" : "negative-change";
+    return <span className={className}>{change.toFixed(2)}%</span>;
+  };
+
   return (
     <div className="trending-container">
       <h1 className="trending-ttitle">Trending Tokens</h1>
@@ -30,8 +39,9 @@ const TrendingTokens = () => {
              <div className="trending-drc20-card">
                <img src={token.pic} alt={token.tick} />
                <div className="trending-drci">
-                 <p>24h Volume: {token.volume24h}</p>
+                 <p>24h Volume: {formatVolume(token.volume24h)} DOGE</p>
                  <p>24h Trades: {token.trades24h}</p>
+                 <p>24h Change: {renderChange(token.change24h)}</p>
                </div>
              </div>
           </div>
