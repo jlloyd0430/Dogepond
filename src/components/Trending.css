@@ -19,12 +19,33 @@
   flex-wrap: wrap;
 }
 
-.trending-search-container input {
+.trending-search-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.trending-search-input {
   padding: 10px;
   font-size: 16px;
   width: 100%;
-  border-radius: 10px;
+  border-radius: 10px 0 0 10px;
+  border: 2px solid #ddd;
   box-sizing: border-box;
+}
+
+.trending-search-button {
+  padding: 10px;
+  background-color: goldenrod;
+  border: none;
+  border-radius: 0 10px 10px 0;
+  cursor: pointer;
+}
+
+.trending-search-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
 }
 
 .trending-sort-container,
@@ -49,7 +70,6 @@
   margin: 0;
   line-height: 1.4;
 }
-
 
 .trending-ttitle {
   cursor: pointer;
@@ -188,8 +208,6 @@
   color: red;
 }
 
-
-
 /* Mobile-specific styles */
 @media (max-width: 768px) {
   .trending-dune-list,
@@ -200,11 +218,11 @@
     align-items: center;
   }
 
-  trending-container {
+  .trending-container {
     width: 400px;
     padding: 20px;
     text-align: center;
-}
+  }
 
   .trending-dune-card,
   .trending-wallet-dune-card,
