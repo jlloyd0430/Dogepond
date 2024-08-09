@@ -5,7 +5,7 @@ import "./Trending.css";
 import DuneForm from "./Duneform";
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter } from "@fortawesome/free-solid-svg-icons"; // Import the FontAwesome filter icon
+import { faFilter, faSort } from "@fortawesome/free-solid-svg-icons"; // Import the FontAwesome icons
 
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
@@ -16,6 +16,7 @@ const TrendingDunes = () => {
   const [sortOrder, setSortOrder] = useState("mostRecent");
   const [searchQuery, setSearchQuery] = useState(""); // Add search query state
   const [view, setView] = useState("dunes");
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
 
   useEffect(() => {
     const fetchTrendingDunes = async () => {
@@ -50,12 +51,13 @@ const TrendingDunes = () => {
     setSearchQuery(e.target.value);
   };
 
-  const filteredDunes = dunes.filter(dune =>
+  const filteredDunes = dunes.filter((dune) =>
     dune.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSortOrderChange = (e) => {
-    setSortOrder(e.target.value);
+  const handleSortOrderChange = (order) => {
+    setSortOrder(order);
+    setShowSortDropdown(false);
   };
 
   const sortedDunes = [...filteredDunes].sort((a, b) => {
@@ -64,6 +66,48 @@ const TrendingDunes = () => {
     }
     return a.index - b.index;
   });
+
+  const handleWalletAddressChange = (e) => {
+    setWalletAddress(e.target.value);
+  };
+
+  const handleFetchBalance = async () => {
+    if (!walletAddress) {
+      setBalanceError("Please enter a wallet address.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
+      setWalletDunes(response.data.dunes);
+      setBalanceError("");
+    } catch (error) {
+      console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
+      setBalanceError("Failed to fetch dunes balance. Please try again later.");
+    }
+  };
+
+  const handleSubmit = async (formData) => {
+    try {
+      const result = await submitOrder(formData);
+      setPaymentInfo({ dogeAmount: result.dogeAmount, address: result.address, index: result.index });
+
+      const intervalId = setInterval(async () => {
+        try {
+          const status = await checkOrderStatus(result.index);
+          setOrderStatus(status);
+          if (status === 'complete') {
+            clearInterval(intervalId);
+          }
+        } catch (error) {
+          console.error('Error checking order status:', error);
+        }
+      }, 30000);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
 
   return (
     <div className="trending-container">
@@ -80,7 +124,7 @@ const TrendingDunes = () => {
               type="text"
               placeholder="Enter wallet address..."
               value={walletAddress}
-              onChange={(e) => setWalletAddress(e.target.value)}
+              onChange={handleWalletAddressChange}
             />
             <button onClick={handleFetchBalance}>Check Balance</button>
           </div>
@@ -96,11 +140,21 @@ const TrendingDunes = () => {
 
           <div className="trending-sort-search-container">
             <div className="trending-sort-container">
-              <label htmlFor="sortOrder">Sort by:</label>
-              <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
-                <option value="mostRecent">Most Recent</option>
-                <option value="oldest">Oldest</option>
-              </select>
+              <FontAwesomeIcon
+                icon={faSort}
+                className="trending-sort-icon"
+                onClick={() => setShowSortDropdown(!showSortDropdown)}
+              />
+              {showSortDropdown && (
+                <div className="trending-sort-dropdown">
+                  <div onClick={() => handleSortOrderChange("mostRecent")}>
+                    Most Recent
+                  </div>
+                  <div onClick={() => handleSortOrderChange("oldest")}>
+                    Oldest
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="trending-search-container">
@@ -111,7 +165,7 @@ const TrendingDunes = () => {
                 onChange={handleSearchChange}
                 className="trending-search-input"
               />
-              <FontAwesomeIcon icon={faFilter} className="trending-search-icon" />
+              <button className="trending-search-button">Search</button>
             </div>
           </div>
 
