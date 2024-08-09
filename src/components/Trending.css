@@ -33,6 +33,13 @@
   flex: 1;
 }
 
+.wonkyi {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 25px;
+}
+
 .info-note {
   display: flex;
   align-items: center;
