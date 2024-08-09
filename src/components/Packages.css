@@ -29,6 +29,7 @@ h1, h2, h3, p {
 }
 
 .packages-title {
+  padding: 10px;
   text-align: center;
   margin-bottom: 20px;
   position: relative;
