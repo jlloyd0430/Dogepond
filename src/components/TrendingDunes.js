@@ -65,7 +65,7 @@ const TrendingDunes = () => {
       return new Date(a.timestamp) - new Date(b.timestamp);
     });
     setDunes(sortedDunes);
-  }, [sortOrder, dunes]);
+  }, [sortOrder]);
 
   const handleSearchChange = (e) => {
     const formattedSearchTerm = e.target.value.toUpperCase().replace(/ /g, '•');
