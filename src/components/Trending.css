@@ -2,7 +2,6 @@
   padding: 20px;
   text-align: center;
 }
-
 .trending-header-container {
   display: flex;
   flex-direction: row;
@@ -10,7 +9,6 @@
   align-items: center;
   margin-bottom: 20px;
 }
-
 .trending-sort-search-container {
   display: flex;
   justify-content: space-between;
@@ -18,42 +16,29 @@
   gap: 10px;
   flex-wrap: wrap;
 }
-
-.trending-search-container {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.trending-search-input {
+.trending-search-container input {
   padding: 10px;
   font-size: 16px;
   width: 100%;
-  border-radius: 10px 0 0 10px;
-  border: 2px solid #ddd;
+  border-radius: 10px;
   box-sizing: border-box;
 }
 
-.trending-search-button {
-  padding: 10px;
-  background-color: goldenrod;
-  border: none;
-  border-radius: 0 10px 10px 0;
-  cursor: pointer;
-}
 
-.trending-search-icon {
-  font-size: 16px;
-  margin-left: 5px;
-  color: goldenrod;
-  cursor: pointer;
-}
+    
+          
+            
+    
 
+          
+          Expand Down
+    
+    
+  
 .trending-sort-container,
 .trending-search-container {
   flex: 1;
 }
-
 .info-note {
   display: flex;
   align-items: center;
@@ -61,21 +46,17 @@
   font-size: 12px;
   color: #555;
 }
-
 .info-icon {
   font-size: 16px;
   margin-right: 5px;
 }
-
 .info-text {
   margin: 0;
   line-height: 1.4;
 }
-
 .trending-ttitle {
   cursor: pointer;
 }
-
 .trending-balance-container,
 .trending-sort-container {
   margin-bottom: 20px;
@@ -84,14 +65,12 @@
   gap: 10px;
   flex-wrap: wrap;
 }
-
 .trending-balance-container input {
   padding: 10px;
   font-size: 16px;
   width: 100%;
   box-sizing: border-box;
 }
-
 .trending-balance-container button {
   padding: 10px 20px;
   font-size: 16px;
@@ -100,7 +79,6 @@
   max-width: 150px;
   box-sizing: border-box;
 }
-
 .trending-dune-list,
 .trending-wallet-dunes-list,
 .trending-drc20-list,
@@ -110,7 +88,6 @@
   justify-content: center;
   gap: 20px;
 }
-
 .trending-wallet-dune-card,
 .trending-dune-card,
 .trending-nftCard,
@@ -123,7 +100,6 @@
   width: 100%;
   box-sizing: border-box;
 }
-
 .trending-drc20-card img,
 .trending-nftCard img {
   max-width: 120px;
@@ -132,23 +108,19 @@
   margin: 0 auto;
   display: block;
 }
-
 .trending-dune-card a {
   text-decoration: none;
   color: inherit;
   word-wrap: break-word;
 }
-
 .trending-dune-card h2,
 .trending-drc20-card h2 {
   font-size: 18px;
   color: goldenrod;
 }
-
 .trending-error {
   color: red;
 }
-
 .trending-form-container {
   max-width: 400px;
   margin: 0 auto;
@@ -157,13 +129,11 @@
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
-
 .trending-form-container label {
   display: block;
   margin-bottom: 10px;
   font-weight: bold;
 }
-
 .trending-form-container input[type="text"],
 .trending-form-container input[type="number"],
 .trending-form-container select {
@@ -174,11 +144,9 @@
   border: 1px solid #ddd;
   box-sizing: border-box;
 }
-
 .trending-form-container input[type="checkbox"] {
   margin-right: 10px;
 }
-
 .trending-form-container button[type="submit"] {
   width: 100%;
   padding: 10px;
@@ -188,11 +156,9 @@
   border-radius: 5px;
   cursor: pointer;
 }
-
 .trending-form-container button[type="submit"]:hover {
   background-color: gold;
 }
-
 .trending-payment-popup {
   background-color: #f9f9f9;
   padding: 20px;
@@ -200,15 +166,12 @@
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
 }
-
 .positive-change {
   color: green;
 }
-
 .negative-change {
   color: red;
 }
-
 /* Mobile-specific styles */
 @media (max-width: 768px) {
   .trending-dune-list,
@@ -218,13 +181,11 @@
     flex-direction: column;
     align-items: center;
   }
-
-  .trending-container {
+  trending-container {
     width: 400px;
     padding: 20px;
     text-align: center;
-  }
-
+}
   .trending-dune-card,
   .trending-wallet-dune-card,
   .trending-nftCard,
@@ -234,13 +195,11 @@
     max-width: 100%;
     text-align: left;
   }
-
   .trending-dune-card h2,
   .trending-drc20-card h2 {
     font-size: 16px;
     word-wrap: break-word;
   }
-
   .trending-nftCard img,
   .trending-drc20-card img {
     margin: 0 auto 10px;
