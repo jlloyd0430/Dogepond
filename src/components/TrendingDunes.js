@@ -8,12 +8,8 @@ import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Im
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
   const [error, setError] = useState("");
-  const [walletAddress, setWalletAddress] = useState("");
-  const [walletDunes, setWalletDunes] = useState([]);
-  const [balanceError, setBalanceError] = useState("");
   const [sortOrder, setSortOrder] = useState("mostRecent");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredDunes, setFilteredDunes] = useState([]);
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState("");
   const [view, setView] = useState("dunes");
@@ -34,7 +30,7 @@ const TrendingDunes = () => {
           const timestamp = dunePage('dt:contains("timestamp") + dd').text().trim();
           const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
 
-          return { name: duneName, link: duneUrl, index: duneList.length, duneID, timestamp, mintable };
+          return { name: duneName, link: duneUrl, duneID, timestamp, mintable };
         };
 
         const dunePromises = $("ul > li > a").map(async (index, element) => {
@@ -44,8 +40,16 @@ const TrendingDunes = () => {
         }).get();
 
         const fetchedDunes = await Promise.all(dunePromises);
-        setDunes(fetchedDunes);
-        setFilteredDunes(fetchedDunes); // Initialize filtered dunes
+
+        // Sort dunes by timestamp
+        const sortedDunes = fetchedDunes.sort((a, b) => {
+          if (sortOrder === "mostRecent") {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+          }
+          return new Date(a.timestamp) - new Date(b.timestamp);
+        });
+
+        setDunes(sortedDunes);
       } catch (error) {
         console.error("Error fetching trending dunes:", error);
         setError("Failed to fetch trending dunes. Please try again later.");
@@ -53,41 +57,20 @@ const TrendingDunes = () => {
     };
 
     fetchTrendingDunes();
-  }, []);
-
-  const handleWalletAddressChange = (e) => {
-    setWalletAddress(e.target.value);
-  };
+  }, [sortOrder]);
 
   const handleSearchChange = (e) => {
     const formattedSearchTerm = e.target.value.toUpperCase().replace(/ /g, '•');
     setSearchTerm(formattedSearchTerm);
   };
 
-  const handleSearch = () => {
-    const filtered = dunes.filter(dune =>
-      dune.name.includes(searchTerm)
-    );
-    setFilteredDunes(filtered);
-  };
-
   const handleSortOrderChange = (e) => {
     setSortOrder(e.target.value);
   };
 
-  useEffect(() => {
-    const sortDunes = () => {
-      const sorted = [...filteredDunes].sort((a, b) => {
-        if (sortOrder === "mostRecent") {
-          return new Date(b.timestamp) - new Date(a.timestamp);
-        }
-        return new Date(a.timestamp) - new Date(b.timestamp);
-      });
-      setFilteredDunes(sorted);
-    };
-
-    sortDunes();
-  }, [sortOrder, filteredDunes]);
+  const filteredDunes = dunes.filter(dune =>
+    dune.name.includes(searchTerm)
+  );
 
   const handleSubmit = async (formData) => {
     try {
@@ -135,24 +118,25 @@ const TrendingDunes = () => {
               onChange={handleSearchChange}
               className="trending-search-input"
             />
-            <button className="trending-search-button" onClick={handleSearch}>
-              Search
-            </button>
           </div>
           <div className="trending-dune-list">
-            {filteredDunes.map((dune, index) => (
-              <div key={index} className="trending-dune-card">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <a href={dune.link} target="_blank" rel="noopener noreferrer">
-                    <h2>{dune.name}</h2>
-                  </a>
-                  <div className="wonkyi" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
-                    <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
+            {filteredDunes.length > 0 ? (
+              filteredDunes.map((dune, index) => (
+                <div key={index} className="trending-dune-card">
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <a href={dune.link} target="_blank" rel="noopener noreferrer">
+                      <h2>{dune.name}</h2>
+                    </a>
+                    <div className="wonkyi" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
+                      <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p>No dunes found.</p>
+            )}
           </div>
         </>
       )}
