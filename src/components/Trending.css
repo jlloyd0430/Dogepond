@@ -148,15 +148,7 @@
   color: red;
 }
 
-@media (max-width: 768px) {
-  .trending-dune-list,
-  .trending-wallet-dunes-list,
-  .trending-nft-list,
-  .trending-drc20-list {
-    flex-direction: column; /* Display cards in a column */
-    align-items: center;
-  }
-}
+
 
 /* Mobile-specific styles */
 @media (min-width: 768px) {
