@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Trending.css';
-import { connectWallet, getConnectedWalletAddress, DOGELABS_WALLET, MYDOGE_WALLET } from '../wallets/wallets'; // Import wallet utilities
+import { getWalletAddress, getConnectedWalletAddress, DOGELABS_WALLET, MYDOGE_WALLET } from '../wallets/wallets'; // Import wallet utilities
 
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -47,7 +47,7 @@ const DuneForm = ({ onSubmit }) => {
   };
 
   const handleWalletConnect = async (walletProvider) => {
-    const address = await connectWallet(walletProvider);
+    const address = await getWalletAddress(walletProvider);
     setWalletAddress(address);
   };
 
