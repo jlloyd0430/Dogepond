@@ -120,28 +120,6 @@ const TrendingDunes = () => {
       {view === "dunes" && (
         <>
           {error && <p className="trending-error">{error}</p>}
-          <div className="trending-balance-container">
-            <input
-              type="text"
-              placeholder="Enter wallet address..."
-              value={walletAddress}
-              onChange={handleWalletAddressChange}
-            />
-            <button onClick={handleFetchBalance}>Check Balance</button>
-          </div>
-          {balanceError && <p className="trending-error">{balanceError}</p>}
-          {walletDunes.length > 0 && (
-            <div className="trending-wallet-dunes-list">
-              {walletDunes.map((dune, index) => (
-                <div key={index} className="trending-wallet-dune-card">
-                  <p>{dune.dune} ({dune.symbol}): {dune.total_balance / (10 ** dune.divisibility)} {dune.symbol}</p>
-                </div>
-              ))}
-            </div>
-          )}
-          {walletDunes.length === 0 && !balanceError && (
-            <p>No dunes found for this wallet.</p>
-          )}
           <div className="trending-sort-container">
             <label htmlFor="sortOrder">Sort by:</label>
             <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
