@@ -25,15 +25,16 @@ const TrendingDunes = () => {
         const $ = cheerio.load(htmlData);
         const duneList = [];
 
-        // Fetch each dune's page to get its ID and other details
+        // Fetch each dune's page to get its ID, timestamp, and mintable status
         const fetchDuneDetails = async (duneName, duneLink) => {
           const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
           const duneResponse = await axios.get(duneUrl);
           const dunePage = cheerio.load(duneResponse.data);
           const duneID = dunePage('dt:contains("id") + dd').text().trim(); // Extracting the Dune ID
           const timestamp = dunePage('dt:contains("timestamp") + dd').text().trim(); // Extracting the timestamp
+          const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true'; // Extracting the mintable status
           
-          return { name: duneName, link: duneUrl, index: duneList.length, duneID, timestamp };
+          return { name: duneName, link: duneUrl, index: duneList.length, duneID, timestamp, mintable };
         };
 
         const dunePromises = $("ul > li > a").map(async (index, element) => {
@@ -186,8 +187,12 @@ const TrendingDunes = () => {
                   <a href={dune.link} target="_blank" rel="noopener noreferrer">
                     <h2>{dune.name}</h2>
                   </a>
-                  {/* Copy ID Button */}
-                  <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    {/* Mintable Status */}
+                    {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
+                    {/* Copy ID Button */}
+                    <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
+                  </div>
                 </div>
               </div>
             ))}
