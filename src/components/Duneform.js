@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Trending.css';
+import { connectWallet, getConnectedWalletAddress, DOGELABS_WALLET, MYDOGE_WALLET } from '../wallets/wallets';
 
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -12,19 +13,49 @@ const DuneForm = ({ onSubmit }) => {
     mintAmount: '',
     mintToAddress: '',
   });
+  
+  const [walletAddress, setWalletAddress] = useState(null);
+  const [showWalletDropdown, setShowWalletDropdown] = useState(false);
+  const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+  const [paymentInfo, setPaymentInfo] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.operationType === 'deploy' && !formData.maxNrOfMints) {
       alert('Max Number of Mints is required');
       return;
     }
-    onSubmit({ ...formData, mintingAllowed: true }); // Force mintingAllowed to true
+
+    // Check if a wallet is connected
+    const connectedWalletAddress = await getConnectedWalletAddress();
+    if (connectedWalletAddress) {
+      // Wallet is connected, proceed with transaction via the wallet
+      setWalletAddress(connectedWalletAddress);
+      onSubmit({ ...formData, mintingAllowed: true, walletAddress: connectedWalletAddress });
+    } else {
+      // No wallet connected, show payment instructions
+      setShowPaymentPopup(true);
+      setPaymentInfo({
+        duneName: formData.duneName,
+        dogeAmount: formData.operationType === 'deploy' ? '5' : '2', // Set DOGE amount based on operation
+        address: 'Your payment address', // This should be dynamically set from backend
+      });
+    }
+  };
+
+  const handleWalletConnect = async (walletProvider) => {
+    const address = await connectWallet(walletProvider);
+    setWalletAddress(address);
+  };
+
+  const handleWalletButtonClick = () => {
+    setShowWalletDropdown((prev) => !prev); // Toggle dropdown visibility
   };
 
   return (
@@ -35,6 +66,25 @@ const DuneForm = ({ onSubmit }) => {
           Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
         </p>
       </div>
+
+      <div className="wallet-connect-container">
+        <button className="button" onClick={handleWalletButtonClick}>
+          {walletAddress ? `Connected: ${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : 'Connect Wallet'}
+        </button>
+        {showWalletDropdown && (
+          <div className="dropdown-content">
+            <div className="dropdown-item" onClick={() => handleWalletConnect(DOGELABS_WALLET)}>
+              <img src="/dogelabs.svg" alt="DogeLabs" className="wallet-icon" />
+              <span>DogeLabs Wallet</span>
+            </div>
+            <div className="dropdown-item" onClick={() => handleWalletConnect(MYDOGE_WALLET)}>
+              <img src="/mydoge-icon.svg" alt="MyDoge" className="wallet-icon" />
+              <span>MyDoge Wallet</span>
+            </div>
+          </div>
+        )}
+      </div>
+
       <form className="dune-form" onSubmit={handleSubmit}>
         <label>
           Operation Type:
@@ -43,6 +93,7 @@ const DuneForm = ({ onSubmit }) => {
             <option value="mint">Mint</option>
           </select>
         </label>
+
         {formData.operationType === 'deploy' && (
           <>
             <label>
@@ -87,6 +138,7 @@ const DuneForm = ({ onSubmit }) => {
             </label>
           </>
         )}
+
         {formData.operationType === 'mint' && (
           <>
             <label>
@@ -121,8 +173,18 @@ const DuneForm = ({ onSubmit }) => {
             </label>
           </>
         )}
+
         <button type="submit">Submit</button>
       </form>
+
+      {showPaymentPopup && paymentInfo && (
+        <div className="payment-popup">
+          <p>Please send {paymentInfo.dogeAmount} DOGE to the following address:</p>
+          <p>{paymentInfo.address}</p>
+          <button onClick={() => navigator.clipboard.writeText(paymentInfo.address)}>Copy Address</button>
+          <p>After sending the payment, please wait for confirmation.</p>
+        </div>
+      )}
     </div>
   );
 };
