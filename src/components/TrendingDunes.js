@@ -12,6 +12,7 @@ const TrendingDunes = () => {
   const [walletDunes, setWalletDunes] = useState([]);
   const [balanceError, setBalanceError] = useState("");
   const [sortOrder, setSortOrder] = useState("mostRecent");
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState("");
   const [view, setView] = useState("dunes"); // State to control which view is active
@@ -69,27 +70,19 @@ const TrendingDunes = () => {
     }
   };
 
-  const fetchDuneDetails = async (duneName) => {
-    const duneUrl = `https://ord.dunesprotocol.com/dune/${duneName}`;
-    const response = await axios.get(duneUrl);
-    const $ = cheerio.load(response.data);
-
-    const title = $('h1').text().trim();
-    const details = {};
-    $('dl dt').each((i, el) => {
-      const key = $(el).text().trim();
-      const value = $(el).next('dd').text().trim();
-      details[key] = value;
-    });
-
-    return { title, details, duneUrl };
-  };
-
   const handleSortOrderChange = (e) => {
     setSortOrder(e.target.value);
   };
 
-  const sortedDunes = [...dunes].sort((a, b) => {
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value.toUpperCase().replace(/ /g, '•')); // Convert to uppercase and replace spaces with bullet points
+  };
+
+  const filteredDunes = dunes.filter((dune) =>
+    dune.name.includes(searchTerm)
+  );
+
+  const sortedDunes = [...filteredDunes].sort((a, b) => {
     if (sortOrder === "mostRecent") {
       return b.index - a.index; // Sort by most recent
     }
@@ -139,20 +132,22 @@ const TrendingDunes = () => {
           </div>
 
           {balanceError && <p className="trending-error">{balanceError}</p>}
-          <div className="trending-wallet-dunes-list">
-            {walletDunes.map((dune, index) => (
-              <div key={index} className="trending-wallet-dune-card">
-                <p>{dune.dune} ({dune.symbol}): {dune.total_balance / (10 ** dune.divisibility)} {dune.symbol}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="trending-sort-container">
-            <label htmlFor="sortOrder">Sort by:</label>
-            <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
-              <option value="mostRecent">Most Recent</option>
-              <option value="oldest">Oldest</option>
-            </select>
+          <div className="trending-sort-search-container">
+            <div className="trending-sort-container">
+              <label htmlFor="sortOrder">Sort by:</label>
+              <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
+                <option value="mostRecent">Most Recent</option>
+                <option value="oldest">Oldest</option>
+              </select>
+            </div>
+            <div className="trending-search-container">
+              <input
+                type="text"
+                placeholder="Search Dunes..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
           </div>
 
           <div className="trending-dune-list">
