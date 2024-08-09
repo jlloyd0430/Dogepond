@@ -54,6 +54,17 @@ const Packages = () => {
         </div>
       </div>
             <div className="package">
+        <h2 className="package-title">Art Services</h2>
+        <div className="package-description">
+          <h3>Art Studio</h3>
+          <p>
+           we offer high quality art as a service, starting out with an idea for a collection but dont know where to start?  We got you! 2d and pixelated art services available now.
+          </p>
+          {/* And yet another URL */}
+          <button onClick={() => handleButtonClick('https://discord.gg/jPeSRqkUpe')} className="enquire-button">Enquire</button>
+        </div>
+      </div>
+            <div className="package">
         <h2 className="package-title">Dogepond Bot Services</h2>
         <div className="package-description">
           <h3>   Offering </h3>
@@ -72,7 +83,7 @@ const Packages = () => {
             Building bots to make a better doginal experience
           </p>
           {/* And yet another URL */}
-          <button onClick={() => handleButtonClick('https://discord.gg/jPeSRqkUpe')} className="enquire-button">Enquire</button>
+          <button onClick={() => handleButtonClick('')} className="enquire-button">Enquire</button>
         </div>
       </div>
       <h1>HOLDER DISCOUNTS </h1>
