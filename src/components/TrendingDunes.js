@@ -44,14 +44,8 @@ const TrendingDunes = () => {
 
         const fetchedDunes = await Promise.all(dunePromises);
 
-        // Sort dunes by timestamp
-        const sortedDunes = fetchedDunes.sort((a, b) => {
-          if (sortOrder === "mostRecent") {
-            return new Date(b.timestamp) - new Date(a.timestamp);
-          }
-          return new Date(a.timestamp) - new Date(b.timestamp);
-        });
-
+        // Sort dunes by timestamp immediately after fetching
+        const sortedDunes = fetchedDunes.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         setDunes(sortedDunes);
       } catch (error) {
         console.error("Error fetching trending dunes:", error);
@@ -60,7 +54,18 @@ const TrendingDunes = () => {
     };
 
     fetchTrendingDunes();
-  }, [sortOrder]);
+  }, []);
+
+  // This effect will handle sorting whenever the sortOrder changes
+  useEffect(() => {
+    const sortedDunes = [...dunes].sort((a, b) => {
+      if (sortOrder === "mostRecent") {
+        return new Date(b.timestamp) - new Date(a.timestamp);
+      }
+      return new Date(a.timestamp) - new Date(b.timestamp);
+    });
+    setDunes(sortedDunes);
+  }, [sortOrder, dunes]);
 
   const handleSearchChange = (e) => {
     const formattedSearchTerm = e.target.value.toUpperCase().replace(/ /g, '•');
