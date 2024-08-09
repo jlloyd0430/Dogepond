@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Trending.css';
+
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
     operationType: 'deploy',
@@ -10,11 +11,8 @@ const DuneForm = ({ onSubmit }) => {
     mintId: '',
     mintAmount: '',
     mintToAddress: '',
-
-    
-const DuneForm = ({ onSubmit }) => {
-  
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -30,10 +28,6 @@ const DuneForm = ({ onSubmit }) => {
   };
 
   return (
-
-    
- const DuneForm = ({ onSubmit }) => {
-  
     <div className="dune-form-container">
       <div className="info-note">
         <span className="info-icon">ℹ️</span>
@@ -57,7 +51,14 @@ const DuneForm = ({ onSubmit }) => {
                 type="text"
                 name="duneName"
                 value={formData.duneName}
-                onChange={(e) => handleChange({ target: { name: 'duneName', value: e.target.value.toUpperCase().replace(/ /g, '•') } })}
+                onChange={(e) =>
+                  handleChange({
+                    target: {
+                      name: 'duneName',
+                      value: e.target.value.toUpperCase().replace(/ /g, '•'),
+                    },
+                  })
+                }
                 required
               />
             </label>
@@ -93,8 +94,6 @@ const DuneForm = ({ onSubmit }) => {
             </label>
           </>
         )}
-
-  
         {formData.operationType === 'mint' && (
           <>
             <label>
@@ -134,4 +133,5 @@ const DuneForm = ({ onSubmit }) => {
     </div>
   );
 };
+
 export default DuneForm;
