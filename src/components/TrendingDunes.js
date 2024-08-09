@@ -54,6 +54,17 @@ const TrendingDunes = () => {
     return duneName.split(' ').join('%E2%80%A2');
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearch = () => {
+    const filteredDunes = dunes.filter(dune =>
+      dune.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setDunes(filteredDunes);
+  };
+
   const handleFetchBalance = async () => {
     if (!walletAddress) {
       setBalanceError("Please enter a wallet address.");
@@ -74,15 +85,7 @@ const TrendingDunes = () => {
     setSortOrder(e.target.value);
   };
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value.toUpperCase().replace(/ /g, '•')); // Convert to uppercase and replace spaces with bullet points
-  };
-
-  const filteredDunes = dunes.filter((dune) =>
-    dune.name.includes(searchTerm)
-  );
-
-  const sortedDunes = [...filteredDunes].sort((a, b) => {
+  const sortedDunes = [...dunes].sort((a, b) => {
     if (sortOrder === "mostRecent") {
       return b.index - a.index; // Sort by most recent
     }
@@ -132,22 +135,25 @@ const TrendingDunes = () => {
           </div>
 
           {balanceError && <p className="trending-error">{balanceError}</p>}
-          <div className="trending-sort-search-container">
-            <div className="trending-sort-container">
-              <label htmlFor="sortOrder">Sort by:</label>
-              <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
-                <option value="mostRecent">Most Recent</option>
-                <option value="oldest">Oldest</option>
-              </select>
-            </div>
-            <div className="trending-search-container">
-              <input
-                type="text"
-                placeholder="Search Dunes..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
-            </div>
+          <div className="trending-sort-container">
+            <label htmlFor="sortOrder">Sort by:</label>
+            <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
+              <option value="mostRecent">Most Recent</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </div>
+
+          <div className="trending-search-container">
+            <input
+              type="text"
+              placeholder="Search Dunes..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="trending-search-input"
+            />
+            <button className="trending-search-button" onClick={handleSearch}>
+              <img src="/path/to/your/search-icon.png" alt="Search" className="trending-search-icon" />
+            </button>
           </div>
 
           <div className="trending-dune-list">
