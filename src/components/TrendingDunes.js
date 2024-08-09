@@ -31,8 +31,9 @@ const TrendingDunes = () => {
           const duneResponse = await axios.get(duneUrl);
           const dunePage = cheerio.load(duneResponse.data);
           const duneID = dunePage('dt:contains("id") + dd').text().trim(); // Extracting the Dune ID
+          const timestamp = dunePage('dt:contains("timestamp") + dd').text().trim(); // Extracting the timestamp
           
-          return { name: duneName, link: duneUrl, index: duneList.length, duneID };
+          return { name: duneName, link: duneUrl, index: duneList.length, duneID, timestamp };
         };
 
         const dunePromises = $("ul > li > a").map(async (index, element) => {
@@ -94,9 +95,9 @@ const TrendingDunes = () => {
 
   const sortedDunes = [...dunes].sort((a, b) => {
     if (sortOrder === "mostRecent") {
-      return b.index - a.index; // Sort by most recent
+      return new Date(b.timestamp) - new Date(a.timestamp); // Sort by most recent based on timestamp
     }
-    return a.index - b.index; // Sort by oldest
+    return new Date(a.timestamp) - new Date(b.timestamp); // Sort by oldest based on timestamp
   });
 
   const handleSubmit = async (formData) => {
