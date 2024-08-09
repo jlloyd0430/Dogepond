@@ -140,7 +140,7 @@
 }
 
 /* Mobile-specific styles */
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .trending-dune-list,
   .trending-wallet-dunes-list,
   .trending-nft-list,
