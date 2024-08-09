@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import Login from "./components/Login";
@@ -21,7 +21,6 @@ import "./components/NFTCard.css";
 import "./components/Footer.css";
 import Proposals from "./components/Proposals";
 import Info from "./components/info";
-import UnderConstruction from "./components/underConstruction";
 
 const App = () => {
   return (
@@ -40,7 +39,6 @@ const AppContent = () => {
   const { handleDiscordLogin } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
-  const [passcodeEntered, setPasscodeEntered] = useState(false);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -59,10 +57,6 @@ const AppContent = () => {
       });
     }
   }, [location, handleDiscordLogin, navigate]);
-
-  if (!passcodeEntered) {
-    return <UnderConstruction setPasscodeEntered={setPasscodeEntered} />;
-  }
 
   return (
     <div className="app">
