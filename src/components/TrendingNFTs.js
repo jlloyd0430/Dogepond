@@ -19,6 +19,15 @@ const TrendingNFTs = () => {
     fetchTrendingNFTs();
   }, []);
 
+  const formatVolume = (volume) => {
+    return (volume / 1e8).toFixed(2); // Convert satoshis to DOGE and format to 2 decimals
+  };
+
+  const renderChange = (change) => {
+    const className = change >= 0 ? "positive-change" : "negative-change";
+    return <span className={className}>{change.toFixed(2)}%</span>;
+  };
+
   return (
     <div className="trending-container">
       <h1 className="trending-ttitle">Trending NFTs</h1>
@@ -29,8 +38,9 @@ const TrendingNFTs = () => {
             <img src={nft.collection.image} alt={nft.collection.name} style={{ width: '150px', height: '150px' }} />
             <h2>{nft.collection.name}</h2>
             <p>{nft.collection.description}</p>
-            <p>24h Volume: {nft.volume24h}</p>
+            <p>24h Volume: {formatVolume(nft.volume24h)} DOGE</p>
             <p>24h Trades: {nft.trades24h}</p>
+            <p>24h Change: {renderChange(nft.change24h)}</p>
           </div>
         ))}
       </div>
