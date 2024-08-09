@@ -25,20 +25,12 @@
 }
 
 
-    
-          
-            
-    
 
-          
-          Expand Down
-    
-    
-  
 .trending-sort-container,
 .trending-search-container {
   flex: 1;
 }
+
 .info-note {
   display: flex;
   align-items: center;
