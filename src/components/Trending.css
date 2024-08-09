@@ -97,7 +97,6 @@
   max-width: 120px;
   border-radius: 20px;
   max-height: 120px;
-  margin: 0 auto;
   display: block;
 }
 .trending-dune-card a {
@@ -110,6 +109,14 @@
   font-size: 18px;
   color: goldenrod;
 }
+
+.trending-drci {
+    flex-direction: row;
+    align-items: center;
+}
+}
+
+
 .trending-error {
   color: red;
 }
