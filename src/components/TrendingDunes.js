@@ -74,22 +74,21 @@ const TrendingDunes = () => {
     setDunes(filteredDunes);
   };
 
-const handleFetchBalance = async () => {
-  if (!walletAddress) {
-    setBalanceError("Please enter a wallet address.");
-    return;
-  }
-  try {
-    const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
-    console.log("Fetched Dunes Balance:", response.data); // Log the response
-    setWalletDunes(response.data.dunes);
-    setBalanceError("");
-  } catch (error) {
-    console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
-    setBalanceError("Failed to fetch dunes balance. Please try again later.");
-  }
-};
-
+  const handleFetchBalance = async () => {
+    if (!walletAddress) {
+      setBalanceError("Please enter a wallet address.");
+      return;
+    }
+    try {
+      const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
+      console.log("Fetched Dunes Balance:", response.data); // Log the response
+      setWalletDunes(response.data.dunes);
+      setBalanceError("");
+    } catch (error) {
+      console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
+      setBalanceError("Failed to fetch dunes balance. Please try again later.");
+    }
+  };
 
   const handleSortOrderChange = (e) => {
     setSortOrder(e.target.value);
@@ -145,6 +144,20 @@ const handleFetchBalance = async () => {
           </div>
 
           {balanceError && <p className="trending-error">{balanceError}</p>}
+          {walletDunes.length > 0 && (
+            <div className="trending-wallet-dunes-list">
+              {walletDunes.map((dune, index) => (
+                <div key={index} className="trending-wallet-dune-card">
+                  <p>{dune.dune} ({dune.symbol}): {dune.total_balance / (10 ** dune.divisibility)} {dune.symbol}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {walletDunes.length === 0 && !balanceError && (
+            <p>No dunes found for this wallet.</p>
+          )}
+
           <div className="trending-sort-container">
             <label htmlFor="sortOrder">Sort by:</label>
             <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
