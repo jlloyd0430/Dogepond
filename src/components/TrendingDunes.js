@@ -170,18 +170,7 @@ const TrendingDunes = () => {
                      {/* Mintable Status */}
                      {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
                      {/* Copy ID Button */}
-
-    
-          
-            
-    
-
-          
-          Expand Down
-    
-    
-  
-                    <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
+   <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
                   </div>
                 </div>
               </div>
