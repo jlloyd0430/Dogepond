@@ -1,4 +1,3 @@
-// wallets.js
 import { getDogeLabsWalletAddress, sendDogeFromDogeLabs } from "./dogelabs";
 import { getMyDogeWalletAddress, sendDogeFromMyDoge, getWalletDataFromMyDoge } from "./mydoge";
 
@@ -13,6 +12,7 @@ export const PAYLOAD_TYPES = {
   base64: 'BASE_64'
 };
 
+// Function to get the address of the connected wallet
 export async function getConnectedWalletAddress() {
   if (window.dogeLabs?.isConnected()) {
     return await getDogeLabsWalletAddress();
@@ -23,6 +23,7 @@ export async function getConnectedWalletAddress() {
   }
 }
 
+// Function to get the default logo for a wallet provider
 export function defaultLogo(walletProvider) {
   switch (walletProvider) {
     case DOGELABS_WALLET:
@@ -34,6 +35,7 @@ export function defaultLogo(walletProvider) {
   }
 }
 
+// Function to get the wallet address based on the provider and wallet type
 export async function getWalletAddress(walletProvider, walletType) {
   switch (walletProvider) {
     case DOGELABS_WALLET:
@@ -45,6 +47,7 @@ export async function getWalletAddress(walletProvider, walletType) {
   }
 }
 
+// Function to sign a PSBT (Partially Signed Bitcoin Transaction)
 export async function signPsbt(walletProvider, psbtHex) {
   switch (walletProvider) {
     case DOGELABS_WALLET:
@@ -56,6 +59,7 @@ export async function signPsbt(walletProvider, psbtHex) {
   }
 }
 
+// Function to send DOGE using the connected wallet
 export async function sendDoge(walletProvider, address, dogeAmount, originator) {
   switch (walletProvider) {
     case DOGELABS_WALLET:
@@ -67,6 +71,7 @@ export async function sendDoge(walletProvider, address, dogeAmount, originator) 
   }
 }
 
+// Function to directly inscribe content on the blockchain
 export async function directInscribe(walletProvider, contentType, payloadType, content, additionalFee, feeRate) {
   switch (walletProvider) {
     case DOGELABS_WALLET:
@@ -76,6 +81,7 @@ export async function directInscribe(walletProvider, contentType, payloadType, c
   }
 }
 
+// Function to fetch wallet data from the connected wallet provider
 export async function getWalletData(address, walletProvider) {
   switch (walletProvider) {
     case DOGELABS_WALLET:
@@ -89,6 +95,7 @@ export async function getWalletData(address, walletProvider) {
   }
 }
 
+// Function to get the balance of the connected wallet
 export async function getWalletBalance(walletProvider) {
   switch (walletProvider) {
     case DOGELABS_WALLET:
