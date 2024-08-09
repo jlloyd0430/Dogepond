@@ -147,7 +147,7 @@ const TrendingDunes = () => {
               className="trending-search-input"
             />
             <button className="trending-search-button" onClick={handleSearch}>
-              <img src="/path/to/your/search-icon.png" alt="Search" className="trending-search-icon" />
+              search
             </button>
           </div>
 
