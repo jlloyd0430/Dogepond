@@ -21,17 +21,24 @@
   display: flex;
   justify-content: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .trending-balance-container input {
   padding: 10px;
   font-size: 16px;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
 }
 
 .trending-balance-container button {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+  width: 100%;
+  max-width: 150px;
+  box-sizing: border-box;
 }
 
 .trending-dune-list,
@@ -51,24 +58,20 @@
   padding: 20px;
   border-radius: 11px;
   text-align: center;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
 }
 
-
-.trending-drc20-card,{
-   border: 2px solid goldenrod;
-  padding: 20px;
-  border-radius: 11px;
-  text-align: center;
-  display: flex;
-  flex-direction: row;
+.trending-dune-card a {
+  text-decoration: none;
+  color: inherit;
+  word-wrap: break-word; /* Prevent long text from overflowing */
 }
 
-.trending-drc20-card img,
-.trending-nftCard img {
-  max-width: 150px;
-  max-height: 150px;
-  margin: 0 auto;
-  display: block;
+.trending-dune-card h2 {
+  font-size: 18px;
+  color: goldenrod; /* Use a color similar to your theme */
 }
 
 .trending-error {
@@ -128,26 +131,30 @@
 }
 
 /* Mobile-specific styles */
-@media (min-width: 768px) {
-  .trending-nftCard {
-    display: flex;
-    flex-direction: row;
+@media (max-width: 768px) {
+  .trending-dune-list,
+  .trending-wallet-dunes-list,
+  .trending-nft-list {
+    flex-direction: column;
     align-items: center;
+  }
+
+  .trending-dune-card,
+  .trending-wallet-dune-card,
+  .trending-nftCard {
+    width: 100%;
+    max-width: 100%;
     text-align: left; /* Align text to the left */
   }
 
+  .trending-dune-card h2 {
+    font-size: 16px;
+    word-wrap: break-word; /* Prevent long text from overflowing */
+  }
+
   .trending-nftCard img {
-    margin-right: 10px; /* Add space between image and text */
-  }
-
-  .trending-nft-list {
-    flex-direction: column; /* Stack the cards vertically */
-  }
-
-  .trending-wallet-dune-card,
-  .trending-dune-card,
-  .trending-drc20-card,
-  .trending-nftCard {
-    max-width: 100%; /* Allow cards to take full width on mobile */
+    margin: 0 auto 10px; /* Center the image and add some margin below */
+    max-width: 100%;
+    height: auto;
   }
 }
