@@ -25,21 +25,30 @@ const TrendingDunes = () => {
         const $ = cheerio.load(htmlData);
         const duneList = [];
 
-        $("ul > li > a").each((index, element) => {
+        // Fetch each dune's page to get its ID and other details
+        const fetchDuneDetails = async (duneName, duneLink) => {
+          const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
+          const duneResponse = await axios.get(duneUrl);
+          const dunePage = cheerio.load(duneResponse.data);
+          const duneID = dunePage('dt:contains("id") + dd').text().trim(); // Extracting the Dune ID
+          
+          return { name: duneName, link: duneUrl, index: duneList.length, duneID };
+        };
+
+        const dunePromises = $("ul > li > a").map(async (index, element) => {
           const duneName = $(element).text();
           const duneLink = $(element).attr("href");
-          duneList.push({
-            name: duneName,
-            link: `https://ord.dunesprotocol.com${duneLink}`,
-            index, // Store the index to use for sorting
-          });
-        });
-        setDunes(duneList);
+          return fetchDuneDetails(duneName, duneLink);
+        }).get();
+
+        const fetchedDunes = await Promise.all(dunePromises);
+        setDunes(fetchedDunes);
       } catch (error) {
         console.error("Error fetching trending dunes:", error);
         setError("Failed to fetch trending dunes. Please try again later.");
       }
     };
+
     fetchTrendingDunes();
   }, []);
 
@@ -48,11 +57,13 @@ const TrendingDunes = () => {
   };
 
   const encodeDuneName = (duneName) => {
-    return duneName.split(' ').join('%E2%80%A2');
+    return duneName.split(' ').join('•').toUpperCase();
   };
 
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
+    // Convert to uppercase and replace spaces with bullet points
+    const formattedSearchTerm = e.target.value.toUpperCase().replace(/ /g, '•');
+    setSearchTerm(formattedSearchTerm);
   };
 
   const handleSearch = () => {
