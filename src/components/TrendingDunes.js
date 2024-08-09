@@ -187,7 +187,7 @@ const TrendingDunes = () => {
                   <a href={dune.link} target="_blank" rel="noopener noreferrer">
                     <h2>{dune.name}</h2>
                   </a>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div className="wonkyi" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                     {/* Mintable Status */}
                     {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
                     {/* Copy ID Button */}
