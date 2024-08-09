@@ -12,10 +12,11 @@ const TrendingDunes = () => {
   const [walletDunes, setWalletDunes] = useState([]);
   const [balanceError, setBalanceError] = useState("");
   const [sortOrder, setSortOrder] = useState("mostRecent");
-  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredDunes, setFilteredDunes] = useState([]);
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState("");
-  const [view, setView] = useState("dunes"); // State to control which view is active
+  const [view, setView] = useState("dunes");
 
   useEffect(() => {
     const fetchTrendingDunes = async () => {
@@ -44,6 +45,7 @@ const TrendingDunes = () => {
 
         const fetchedDunes = await Promise.all(dunePromises);
         setDunes(fetchedDunes);
+        setFilteredDunes(fetchedDunes); // Initialize filtered dunes
       } catch (error) {
         console.error("Error fetching trending dunes:", error);
         setError("Failed to fetch trending dunes. Please try again later.");
@@ -57,36 +59,16 @@ const TrendingDunes = () => {
     setWalletAddress(e.target.value);
   };
 
-  const encodeDuneName = (duneName) => {
-    return duneName.split(' ').join('•').toUpperCase();
-  };
-
   const handleSearchChange = (e) => {
     const formattedSearchTerm = e.target.value.toUpperCase().replace(/ /g, '•');
     setSearchTerm(formattedSearchTerm);
   };
 
   const handleSearch = () => {
-    const filteredDunes = dunes.filter(dune =>
-      dune.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = dunes.filter(dune =>
+      dune.name.includes(searchTerm)
     );
-    setDunes(filteredDunes);
-  };
-
-  const handleFetchBalance = async () => {
-    if (!walletAddress) {
-      setBalanceError("Please enter a wallet address.");
-      return;
-    }
-    try {
-      const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
-      console.log("Fetched Dunes Balance:", response.data); // Log the response
-      setWalletDunes(response.data.dunes);
-      setBalanceError("");
-    } catch (error) {
-      console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
-      setBalanceError("Failed to fetch dunes balance. Please try again later.");
-    }
+    setFilteredDunes(filtered);
   };
 
   const handleSortOrderChange = (e) => {
@@ -95,18 +77,17 @@ const TrendingDunes = () => {
 
   useEffect(() => {
     const sortDunes = () => {
-      setDunes((prevDunes) => [...prevDunes].sort((a, b) => {
+      const sorted = [...filteredDunes].sort((a, b) => {
         if (sortOrder === "mostRecent") {
           return new Date(b.timestamp) - new Date(a.timestamp);
         }
         return new Date(a.timestamp) - new Date(b.timestamp);
-      }));
+      });
+      setFilteredDunes(sorted);
     };
 
     sortDunes();
-    setTimeout(sortDunes, 0); // Force a re-sort after the initial render to ensure it applies on mobile
-
-  }, [sortOrder, dunes]);
+  }, [sortOrder, filteredDunes]);
 
   const handleSubmit = async (formData) => {
     try {
@@ -123,7 +104,7 @@ const TrendingDunes = () => {
         } catch (error) {
           console.error('Error checking order status:', error);
         }
-      }, 30000); // Check every 30 seconds
+      }, 30000);
     } catch (error) {
       console.error('Error:', error);
       alert('An error occurred. Please try again.');
@@ -181,7 +162,7 @@ const TrendingDunes = () => {
             </button>
           </div>
           <div className="trending-dune-list">
-            {dunes.map((dune, index) => (
+            {filteredDunes.map((dune, index) => (
               <div key={index} className="trending-dune-card">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <a href={dune.link} target="_blank" rel="noopener noreferrer">
