@@ -20,12 +20,12 @@ const TrendingTokens = () => {
   }, []);
 
   const formatVolume = (volume) => {
-    return (volume / 1e8).toFixed(2); // Convert satoshis to DOGE and format to 2 decimals
+    return volume ? (volume / 1e8).toFixed(2) : "0.00"; // Convert satoshis to DOGE and format to 2 decimals
   };
 
   const renderChange = (change) => {
     const className = change >= 0 ? "positive-change" : "negative-change";
-    return <span className={className}>{change.toFixed(2)}%</span>;
+    return change !== undefined ? <span className={className}>{change.toFixed(2)}%</span> : <span>-</span>;
   };
 
   return (
