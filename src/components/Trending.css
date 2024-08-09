@@ -113,6 +113,14 @@
   color: inherit;
   word-wrap: break-word;
 }
+
+.dune-form-container label,
+.dune-form-container input,
+.dune-form-container select {
+  color: black !important;
+}
+
+
 .trending-dune-card h2,
 .trending-drc20-card h2 {
   font-size: 18px;
