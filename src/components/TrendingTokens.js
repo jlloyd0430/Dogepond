@@ -1,174 +1,44 @@
-.trending-container {
-  padding: 20px;
-  text-align: center;
-}
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./Trending.css"; // Add appropriate styles
 
-.trending-header-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
+const TrendingTokens = () => {
+  const [tokens, setTokens] = useState([]);
+  const [error, setError] = useState("");
 
-.trending-ttitle {
-  cursor: pointer;
-}
+  useEffect(() => {
+    const fetchTrendingTokens = async () => {
+      try {
+        const response = await axios.get('/api/trendingTokens');
+        setTokens(response.data.data);
+      } catch (error) {
+        console.error("Error fetching trending tokens:", error);
+        setError("Failed to fetch trending tokens. Please try again later.");
+      }
+    };
+    fetchTrendingTokens();
+  }, []);
 
-.trending-balance-container,
-.trending-sort-container {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+  return (
+    <div className="trending-container">
+      <h1 className="trending-ttitle">Trending Tokens</h1>
+      {error && <p className="trending-error">{error}</p>}
+      <div className="trending-drc20-list">
+        {tokens.map((token, index) => (
+          <div key={index}>
+             <h2>{token.tick}</h2>
+             <div className="trending-drc20-card">
+               <img src={token.pic} alt={token.tick} />
+               <div className="trending-drci">
+                 <p>24h Volume: {token.volume24h}</p>
+                 <p>24h Trades: {token.trades24h}</p>
+               </div>
+             </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
-.trending-balance-container input {
-  padding: 10px;
-  font-size: 16px;
-  width: 100%;
-  max-width: 300px;
-  box-sizing: border-box;
-}
-
-.trending-balance-container button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  width: 100%;
-  max-width: 150px;
-  box-sizing: border-box;
-}
-
-.trending-dune-list,
-.trending-wallet-dunes-list,
-.trending-drc20-list,
-.trending-nft-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-.trending-wallet-dune-card,
-.trending-dune-card,
-.trending-nftCard,
-.trending-drc20-card {
-  border: 2px solid goldenrod;
-  padding: 20px;
-  border-radius: 11px;
-  text-align: center;
-  width: 100%;
-  max-width: 300px;
-  box-sizing: border-box;
-}
-
-.trending-drc20-card img,
-.trending-nftCard img {
-  max-width: 150px;
-  max-height: 150px;
-  margin: 0 auto;
-  display: block;
-}
-
-.trending-dune-card a {
-  text-decoration: none;
-  color: inherit;
-  word-wrap: break-word; /* Prevent long text from overflowing */
-}
-
-.trending-dune-card h2,
-.trending-drc20-card h2 {
-  font-size: 18px;
-  color: goldenrod; /* Use a color similar to your theme */
-}
-
-.trending-error {
-  color: red;
-}
-
-.trending-form-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-.trending-form-container label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
-
-.trending-form-container input[type="text"],
-.trending-form-container input[type="number"],
-.trending-form-container select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  box-sizing: border-box;
-}
-
-.trending-form-container input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-.trending-form-container button[type="submit"] {
-  width: 100%;
-  padding: 10px;
-  background-color: goldenrod;
-  border: none;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.trending-form-container button[type="submit"]:hover {
-  background-color: gold;
-}
-
-.trending-payment-popup {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-}
-
-/* Mobile-specific styles */
-@media (max-width: 768px) {
-  .trending-dune-list,
-  .trending-wallet-dunes-list,
-  .trending-nft-list,
-  .trending-drc20-list {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .trending-dune-card,
-  .trending-wallet-dune-card,
-  .trending-nftCard,
-  .trending-drc20-card {
-    width: 100%;
-    max-width: 100%;
-    text-align: left; /* Align text to the left */
-  }
-
-  .trending-dune-card h2,
-  .trending-drc20-card h2 {
-    font-size: 16px;
-    word-wrap: break-word; /* Prevent long text from overflowing */
-  }
-
-  .trending-nftCard img,
-  .trending-drc20-card img {
-    margin: 0 auto 10px; /* Center the image and add some margin below */
-    max-width: 100%;
-    height: auto;
-  }
-}
+export default TrendingTokens;
