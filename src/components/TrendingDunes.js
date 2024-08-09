@@ -4,6 +4,7 @@ import cheerio from "cheerio";
 import "./Trending.css"; // Add appropriate styles
 import DuneForm from "./Duneform"; // Import the form component
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the Dune API functions
+
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
   const [error, setError] = useState("");
@@ -15,6 +16,7 @@ const TrendingDunes = () => {
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState("");
   const [view, setView] = useState("dunes"); // State to control which view is active
+
   useEffect(() => {
     const fetchTrendingDunes = async () => {
       try {
@@ -22,22 +24,24 @@ const TrendingDunes = () => {
         const htmlData = response.data;
         const $ = cheerio.load(htmlData);
         const duneList = [];
-        // Fetch each dune's page to get its ID, timestamp, and mintable status
+
         const fetchDuneDetails = async (duneName, duneLink) => {
           const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
           const duneResponse = await axios.get(duneUrl);
           const dunePage = cheerio.load(duneResponse.data);
-          const duneID = dunePage('dt:contains("id") + dd').text().trim(); // Extracting the Dune ID
-          const timestamp = dunePage('dt:contains("timestamp") + dd').text().trim(); // Extracting the timestamp
-          const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true'; // Extracting the mintable status
-          
+          const duneID = dunePage('dt:contains("id") + dd').text().trim();
+          const timestamp = dunePage('dt:contains("timestamp") + dd').text().trim();
+          const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
+
           return { name: duneName, link: duneUrl, index: duneList.length, duneID, timestamp, mintable };
         };
+
         const dunePromises = $("ul > li > a").map(async (index, element) => {
           const duneName = $(element).text();
           const duneLink = $(element).attr("href");
           return fetchDuneDetails(duneName, duneLink);
         }).get();
+
         const fetchedDunes = await Promise.all(dunePromises);
         setDunes(fetchedDunes);
       } catch (error) {
@@ -45,25 +49,30 @@ const TrendingDunes = () => {
         setError("Failed to fetch trending dunes. Please try again later.");
       }
     };
+
     fetchTrendingDunes();
   }, []);
+
   const handleWalletAddressChange = (e) => {
     setWalletAddress(e.target.value);
   };
+
   const encodeDuneName = (duneName) => {
     return duneName.split(' ').join('•').toUpperCase();
   };
+
   const handleSearchChange = (e) => {
-    // Convert to uppercase and replace spaces with bullet points
     const formattedSearchTerm = e.target.value.toUpperCase().replace(/ /g, '•');
     setSearchTerm(formattedSearchTerm);
   };
+
   const handleSearch = () => {
     const filteredDunes = dunes.filter(dune =>
       dune.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setDunes(filteredDunes);
   };
+
   const handleFetchBalance = async () => {
     if (!walletAddress) {
       setBalanceError("Please enter a wallet address.");
@@ -79,20 +88,31 @@ const TrendingDunes = () => {
       setBalanceError("Failed to fetch dunes balance. Please try again later.");
     }
   };
+
   const handleSortOrderChange = (e) => {
     setSortOrder(e.target.value);
   };
-  const sortedDunes = [...dunes].sort((a, b) => {
-    if (sortOrder === "mostRecent") {
-      return new Date(b.timestamp) - new Date(a.timestamp); // Sort by most recent based on timestamp
-    }
-    return new Date(a.timestamp) - new Date(b.timestamp); // Sort by oldest based on timestamp
-  });
+
+  useEffect(() => {
+    const sortDunes = () => {
+      setDunes((prevDunes) => [...prevDunes].sort((a, b) => {
+        if (sortOrder === "mostRecent") {
+          return new Date(b.timestamp) - new Date(a.timestamp);
+        }
+        return new Date(a.timestamp) - new Date(b.timestamp);
+      }));
+    };
+
+    sortDunes();
+    setTimeout(sortDunes, 0); // Force a re-sort after the initial render to ensure it applies on mobile
+
+  }, [sortOrder, dunes]);
+
   const handleSubmit = async (formData) => {
     try {
       const result = await submitOrder(formData);
       setPaymentInfo({ dogeAmount: result.dogeAmount, address: result.address, index: result.index });
-      // Periodically check the order status
+
       const intervalId = setInterval(async () => {
         try {
           const status = await checkOrderStatus(result.index);
@@ -109,6 +129,7 @@ const TrendingDunes = () => {
       alert('An error occurred. Please try again.');
     }
   };
+
   return (
     <div className="trending-container">
       <div className="trending-header-container">
@@ -160,17 +181,15 @@ const TrendingDunes = () => {
             </button>
           </div>
           <div className="trending-dune-list">
-            {sortedDunes.map((dune, index) => (
+            {dunes.map((dune, index) => (
               <div key={index} className="trending-dune-card">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                   <a href={dune.link} target="_blank" rel="noopener noreferrer">
-                     <h2>{dune.name}</h2>
-                   </a>
-                   <div className="wonkyi" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                     {/* Mintable Status */}
-                     {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
-                     {/* Copy ID Button */}
-   <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
+                  <a href={dune.link} target="_blank" rel="noopener noreferrer">
+                    <h2>{dune.name}</h2>
+                  </a>
+                  <div className="wonkyi" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
+                    <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
                   </div>
                 </div>
               </div>
@@ -194,4 +213,5 @@ const TrendingDunes = () => {
     </div>
   );
 };
+
 export default TrendingDunes;
