@@ -162,6 +162,7 @@
   .trending-wallet-dune-card,
   .trending-nftCard,
   .trending-drc20-card {
+    flex-direction: row;
     width: 100%;
     max-width: 100%;
     text-align: left;
