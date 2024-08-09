@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Trending.css';
-import { getWalletAddress, getConnectedWalletAddress, DOGELABS_WALLET, MYDOGE_WALLET } from '../wallets/wallets'; // Import wallet utilities
+import { connectWallet, getConnectedWalletAddress, sendDoge, DOGELABS_WALLET, MYDOGE_WALLET } from '../wallets/wallets'; // Import sendDoge function
 
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -32,22 +32,35 @@ const DuneForm = ({ onSubmit }) => {
     // Check if a wallet is connected
     const connectedWalletAddress = await getConnectedWalletAddress();
     if (connectedWalletAddress) {
-      // Wallet is connected, proceed with transaction via the wallet
+      // Wallet is connected, send payment via the wallet
       setWalletAddress(connectedWalletAddress);
-      onSubmit({ ...formData, mintingAllowed: true, walletAddress: connectedWalletAddress });
+
+      // Define the amount of DOGE required for minting or deploying
+      const dogeAmount = formData.operationType === 'deploy' ? 5 : 2;
+
+      try {
+        // Send DOGE from the connected wallet
+        const txid = await sendDoge(DOGELABS_WALLET, 'YourPaymentAddress', dogeAmount, 'TransactionDescription');
+
+        // If the transaction is successful, proceed with form submission
+        onSubmit({ ...formData, mintingAllowed: true, walletAddress: connectedWalletAddress });
+        alert(`Transaction successful! TXID: ${txid}`);
+      } catch (error) {
+        alert(`Transaction failed: ${error.message}`);
+      }
     } else {
       // No wallet connected, show payment instructions
       setShowPaymentPopup(true);
       setPaymentInfo({
         duneName: formData.duneName,
-        dogeAmount: 'Amount to be paid', // You need to calculate or fetch this amount
-        address: 'Your payment address', // This should be dynamically set
+        dogeAmount: formData.operationType === 'deploy' ? '5 DOGE' : '2 DOGE', // 5 DOGE for deploy, 2 DOGE for mint
+        address: 'YourPaymentAddress', // This should be dynamically set
       });
     }
   };
 
   const handleWalletConnect = async (walletProvider) => {
-    const address = await getWalletAddress(walletProvider);
+    const address = await connectWallet(walletProvider);
     setWalletAddress(address);
   };
 
