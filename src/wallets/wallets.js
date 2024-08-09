@@ -81,19 +81,17 @@ export async function directInscribe(walletProvider, contentType, payloadType, c
   }
 }
 
-// Function to fetch wallet data from the connected wallet provider
-export async function getWalletData(address, walletProvider) {
-  switch (walletProvider) {
-    case DOGELABS_WALLET:
-      const response = await fetch(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
-      const data = await response.json();
-      return data;
-    case MYDOGE_WALLET:
-      return await getWalletDataFromMyDoge(address);
-    default:
-      throw new Error(`Fetching wallet data not supported for ${walletProvider}`);
+// Function to get the address of the connected wallet
+export async function getConnectedWalletAddress() {
+  if (window.dogeLabs && typeof window.dogeLabs.isConnected === 'function' && window.dogeLabs.isConnected()) {
+    return await getDogeLabsWalletAddress();
+  } else if (window.myDoge && typeof window.myDoge.isConnected === 'function' && window.myDoge.isConnected()) {
+    return await getMyDogeWalletAddress();
+  } else {
+    return null; // No wallet is connected
   }
 }
+
 
 // Function to get the balance of the connected wallet
 export async function getWalletBalance(walletProvider) {
