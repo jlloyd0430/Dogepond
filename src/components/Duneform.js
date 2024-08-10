@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Trending.css';
 
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
     operationType: 'deploy',
-    const DuneForm = ({ onSubmit }) => {
     duneName: '',
     symbol: '',
     limitPerMint: '',
@@ -14,29 +13,65 @@ const DuneForm = ({ onSubmit }) => {
     mintToAddress: '',
   });
 
+  const [orderStatus, setOrderStatus] = useState('');
+  const [pendingOrders, setPendingOrders] = useState([]); // To store pending orders from backend
+
+  // Fetch pending orders from backend on component mount
+  useEffect(() => {
+    const fetchPendingOrders = async () => {
+      try {
+        const response = await fetch('/api/pendingOrders'); // Ensure this route exists on your backend
+        if (response.ok) {
+          const orders = await response.json();
+          setPendingOrders(orders);
+        } else {
+          console.error('Error fetching pending orders:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching pending orders:', error);
+      }
+    };
+
+    fetchPendingOrders();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-
- const DuneForm = ({ onSubmit }) => {
-  
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.operationType === 'deploy' && !formData.maxNrOfMints) {
       alert('Max Number of Mints is required');
       return;
     }
-    onSubmit({ ...formData, mintingAllowed: true }); // Force mintingAllowed to true
+
+    try {
+      const response = await fetch('/api/createOrder', { // Ensure this route exists on your backend
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...formData, mintingAllowed: true }),
+      });
+
+      if (response.ok) {
+        const order = await response.json();
+        setOrderStatus(order.status);
+        setPendingOrders([...pendingOrders, order]); // Add the new order to the pending orders list
+      } else {
+        console.error('Error creating order:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+    }
   };
 
   return (
     <div className="dune-form-container">
       <div className="info-note">
         <span className="info-icon">ℹ️</span>
-
-     const DuneForm = ({ onSubmit }) => {
-  
         <p className="info-text">
           Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
         </p>
@@ -68,10 +103,6 @@ const DuneForm = ({ onSubmit }) => {
                 required
               />
             </label>
-
-    
-const DuneForm = ({ onSubmit }) => {
-  
             <label>
               Symbol:
               <input
@@ -107,9 +138,6 @@ const DuneForm = ({ onSubmit }) => {
         {formData.operationType === 'mint' && (
           <>
             <label>
-
- const DuneForm = ({ onSubmit }) => {
-  
               Mint ID:
               <input
                 type="text"
@@ -143,6 +171,18 @@ const DuneForm = ({ onSubmit }) => {
         )}
         <button type="submit">Submit</button>
       </form>
+      {pendingOrders.length > 0 && (
+        <div className="pending-orders">
+          {pendingOrders.map((order, index) => (
+            <div key={index} className="order">
+              <p>Please send {order.dogeAmount} DOGE to the following address:</p>
+              <p>{order.paymentAddress}</p>
+              <button onClick={() => navigator.clipboard.writeText(order.paymentAddress)}>Copy Address</button>
+              <p>Order Status: {order.status}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
