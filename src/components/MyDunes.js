@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./MyDunes.css"; // Add appropriate styles
+import "./Trending.css"; // Add appropriate styles
 
 const MyDunes = () => {
   const [walletAddress, setWalletAddress] = useState("");
