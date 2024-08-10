@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Trending.css';
 
 const DuneForm = ({ onSubmit }) => {
@@ -17,8 +17,23 @@ const DuneForm = ({ onSubmit }) => {
   const [password, setPassword] = useState('');
   const correctPassword = 'doginalsaredead'; // Replace with your actual password
 
-  const [paymentInfo, setPaymentInfo] = useState(null); 
   const [orderStatus, setOrderStatus] = useState('');
+  const [pendingOrders, setPendingOrders] = useState([]); // To store pending orders from backend
+
+  useEffect(() => {
+    // Fetch pending orders from backend on mount
+    const fetchPendingOrders = async () => {
+      try {
+        const response = await fetch('/api/pendingOrders'); // Update with your actual API endpoint
+        const orders = await response.json();
+        setPendingOrders(orders);
+      } catch (error) {
+        console.error('Error fetching pending orders:', error);
+      }
+    };
+
+    fetchPendingOrders();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,19 +53,26 @@ const DuneForm = ({ onSubmit }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.operationType === 'deploy' && !formData.maxNrOfMints) {
       alert('Max Number of Mints is required');
       return;
     }
-    onSubmit({ ...formData, mintingAllowed: true });
-
-    setPaymentInfo({
-      dogeAmount: 100, // Example value, replace with actual data
-      address: 'D123456789ABCDEFGHJKLMNPQRSTUVWXYZ', // Example value, replace with actual data
-    });
-    setOrderStatus('Pending'); // Example status, replace with actual data
+    try {
+      const response = await fetch('/api/createOrder', { // Update with your actual API endpoint
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...formData, mintingAllowed: true }),
+      });
+      const order = await response.json();
+      setOrderStatus(order.status);
+      setPendingOrders([...pendingOrders, order]); // Add the new order to the pending orders list
+    } catch (error) {
+      console.error('Error creating order:', error);
+    }
   };
 
   return (
@@ -168,12 +190,16 @@ const DuneForm = ({ onSubmit }) => {
             )}
             <button type="submit">Submit</button>
           </form>
-          {paymentInfo && (
-            <div className="trending-payment-popup">
-              <p>Please send {paymentInfo.dogeAmount} DOGE to the following address:</p>
-              <p>{paymentInfo.address}</p>
-              <button onClick={() => navigator.clipboard.writeText(paymentInfo.address)}>Copy Address</button>
-              {orderStatus && <p>Order Status: {orderStatus}</p>}
+          {pendingOrders.length > 0 && (
+            <div className="pending-orders">
+              {pendingOrders.map((order, index) => (
+                <div key={index} className="order">
+                  <p>Please send {order.dogeAmount} DOGE to the following address:</p>
+                  <p>{order.paymentAddress}</p>
+                  <button onClick={() => navigator.clipboard.writeText(order.paymentAddress)}>Copy Address</button>
+                  <p>Order Status: {order.status}</p>
+                </div>
+              ))}
             </div>
           )}
         </>
