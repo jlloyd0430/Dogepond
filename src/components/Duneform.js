@@ -13,6 +13,9 @@ const DuneForm = ({ onSubmit }) => {
     mintToAddress: '',
   });
 
+  const [paymentInfo, setPaymentInfo] = useState(null); // Add state for paymentInfo
+  const [orderStatus, setOrderStatus] = useState(''); // Add state for orderStatus
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -24,7 +27,13 @@ const DuneForm = ({ onSubmit }) => {
       alert('Max Number of Mints is required');
       return;
     }
-    onSubmit({ ...formData, mintingAllowed: true }); // Force mintingAllowed to true
+    onSubmit({ ...formData, mintingAllowed: true });
+    // Assuming paymentInfo and orderStatus would be set here after form submission
+    setPaymentInfo({
+      dogeAmount: 100, // Example value, replace with actual data
+      address: 'D123456789ABCDEFGHJKLMNPQRSTUVWXYZ', // Example value, replace with actual data
+    });
+    setOrderStatus('Pending'); // Example status, replace with actual data
   };
 
   return (
@@ -52,7 +61,14 @@ const DuneForm = ({ onSubmit }) => {
                 type="text"
                 name="duneName"
                 value={formData.duneName}
-                onChange={(e) => handleChange({ target: { name: 'duneName', value: e.target.value.toUpperCase().replace(/ /g, '•') } })}
+                onChange={(e) =>
+                  handleChange({
+                    target: {
+                      name: 'duneName',
+                      value: e.target.value.toUpperCase().replace(/ /g, '•'),
+                    },
+                  })
+                }
                 required
               />
             </label>
