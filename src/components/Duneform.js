@@ -123,17 +123,6 @@ const DuneForm = ({ onSubmit }) => {
         </>
       )}
 
-      {/* Add the payment address field if applicable */}
-      <label>
-        Payment Address:
-        <input
-          type="text"
-          name="paymentAddress"
-          value={formData.paymentAddress}
-          onChange={handleChange}
-          required
-        />
-      </label>
 
       <button type="submit">Submit</button>
     </form>
