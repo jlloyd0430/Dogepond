@@ -18,17 +18,6 @@ const DuneForm = ({ onSubmit }) => {
 
   const [paymentInfo, setPaymentInfo] = useState(null); 
   const [orderStatus, setOrderStatus] = useState('');
-
-    
-          
-            
-    
-
-          
-          Expand Down
-    
-    
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
