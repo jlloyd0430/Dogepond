@@ -26,6 +26,16 @@
   box-sizing: border-box;
 }
 
+.under-maintenance-message {
+  color: black;
+  /* Add any additional styling you need */
+}
+
+.trending-payment-popup {
+  color: black;
+  /* Add any additional styling you need */
+}
+
 
 
 .trending-sort-container,
