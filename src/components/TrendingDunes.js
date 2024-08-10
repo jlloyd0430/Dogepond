@@ -104,7 +104,7 @@ const TrendingDunes = () => {
     <div className="trending-container">
       <div className="trending-header-container">
         <h1 className="trending-ttitle" onClick={() => setView("dunes")}>All Dunes</h1>
-        <h1 className="trending-ttitle" onClick={() => setView("etcher")}>Etcher</h1>
+        <h1 className="trending-ttitle" onClick={() => setView("etcher")}>Etch Dunes</h1>
         <h1 className="trending-ttitle" onClick={() => setView("myDunes")}>My Dunes</h1> {/* New tab */}
       </div>
 
