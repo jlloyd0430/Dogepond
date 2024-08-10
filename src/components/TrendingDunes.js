@@ -3,6 +3,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import "./Trending.css"; // Add appropriate styles
 import DuneForm from "./Duneform"; // Import the form component
+import MyDunes from "./MyDunes"; // Import the MyDunes component
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the Dune API functions
 
 const TrendingDunes = () => {
@@ -13,9 +14,6 @@ const TrendingDunes = () => {
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState("");
   const [view, setView] = useState("dunes");
-  const [walletAddress, setWalletAddress] = useState("");
-  const [walletDunes, setWalletDunes] = useState([]);
-  const [balanceError, setBalanceError] = useState("");
 
   useEffect(() => {
     const fetchTrendingDunes = async () => {
@@ -80,25 +78,6 @@ const TrendingDunes = () => {
     dune.name.includes(searchTerm)
   );
 
-  const handleWalletAddressChange = (e) => {
-    setWalletAddress(e.target.value);
-  };
-
-  const handleFetchBalance = async () => {
-    if (!walletAddress) {
-      setBalanceError("Please enter a wallet address.");
-      return;
-    }
-    try {
-      const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
-      setWalletDunes(response.data.dunes);
-      setBalanceError("");
-    } catch (error) {
-      console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
-      setBalanceError("Failed to fetch dunes balance. Please try again later.");
-    }
-  };
-
   const handleSubmit = async (formData) => {
     try {
       const result = await submitOrder(formData);
@@ -126,29 +105,12 @@ const TrendingDunes = () => {
       <div className="trending-header-container">
         <h1 className="trending-ttitle" onClick={() => setView("dunes")}>All Dunes</h1>
         <h1 className="trending-ttitle" onClick={() => setView("etcher")}>Etcher</h1>
+        <h1 className="trending-ttitle" onClick={() => setView("myDunes")}>My Dunes</h1> {/* New tab */}
       </div>
+
       {view === "dunes" && (
         <>
           {error && <p className="trending-error">{error}</p>}
-          <div className="trending-balance-container">
-            <input
-              type="text"
-              placeholder="Enter wallet address..."
-              value={walletAddress}
-              onChange={handleWalletAddressChange}
-            />
-            <button onClick={handleFetchBalance}>Check Balance</button>
-          </div>
-          {balanceError && <p className="trending-error">{balanceError}</p>}
-          {walletDunes.length > 0 && (
-            <div className="trending-wallet-dunes-list">
-              {walletDunes.map((dune, index) => (
-                <div key={index} className="trending-wallet-dune-card">
-                  <p>{dune.dune} ({dune.symbol}): {dune.total_balance / (10 ** dune.divisibility)} {dune.symbol}</p>
-                </div>
-              ))}
-            </div>
-          )}
           <div className="trending-sort-container">
             <label htmlFor="sortOrder">Sort by:</label>
             <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
@@ -182,6 +144,7 @@ const TrendingDunes = () => {
           </div>
         </>
       )}
+
       {view === "etcher" && (
         <div className="trending-form-container">
           <DuneForm onSubmit={handleSubmit} />
@@ -194,6 +157,10 @@ const TrendingDunes = () => {
             </div>
           )}
         </div>
+      )}
+
+      {view === "myDunes" && (
+        <MyDunes /> // Render the My Dunes component
       )}
     </div>
   );
