@@ -11,12 +11,12 @@ const DuneForm = ({ onSubmit }) => {
     mintId: '',
     mintAmount: '',
     mintToAddress: '',
-    paymentAddress: '',  // Add paymentAddress if it's included in the form
+    paymentAddress: '',  // Include paymentAddress in the form data
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleSubmit = (e) => {
@@ -28,7 +28,6 @@ const DuneForm = ({ onSubmit }) => {
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
-      {/* Form fields go here */}
       <label>
         Operation Type:
         <select name="operationType" value={formData.operationType} onChange={handleChange}>
@@ -36,6 +35,7 @@ const DuneForm = ({ onSubmit }) => {
           <option value="mint">Mint</option>
         </select>
       </label>
+
       {formData.operationType === 'deploy' && (
         <>
           <label>
@@ -87,6 +87,7 @@ const DuneForm = ({ onSubmit }) => {
           </label>
         </>
       )}
+
       {formData.operationType === 'mint' && (
         <>
           <label>
@@ -121,6 +122,19 @@ const DuneForm = ({ onSubmit }) => {
           </label>
         </>
       )}
+
+      {/* Add the payment address field if applicable */}
+      <label>
+        Payment Address:
+        <input
+          type="text"
+          name="paymentAddress"
+          value={formData.paymentAddress}
+          onChange={handleChange}
+          required
+        />
+      </label>
+
       <button type="submit">Submit</button>
     </form>
   );
