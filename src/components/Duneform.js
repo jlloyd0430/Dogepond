@@ -15,7 +15,7 @@ const DuneForm = ({ onSubmit }) => {
 
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(true); // Maintenance mode toggle
   const [password, setPassword] = useState('');
-  const correctPassword = 'your_password_here'; // Replace with your actual password
+  const correctPassword = 'doginalsaredead'; // Replace with your actual password
 
   const [paymentInfo, setPaymentInfo] = useState(null); 
   const [orderStatus, setOrderStatus] = useState('');
