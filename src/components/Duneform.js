@@ -15,7 +15,7 @@ const DuneForm = ({ onSubmit }) => {
 
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(true); // Toggle for maintenance mode
   const [password, setPassword] = useState('');
-  const correctPassword = 'your_password_here'; // Set your maintenance password
+  const correctPassword = 'doginalsaredead'; // Set your maintenance password
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +55,7 @@ const DuneForm = ({ onSubmit }) => {
               Password:
               <input
                 type="password"
-                value={doginalsaredead}
+                value={password}
                 onChange={handlePasswordChange}
                 required
               />
