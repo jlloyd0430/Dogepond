@@ -15,27 +15,9 @@ const DuneForm = ({ onSubmit }) => {
     paymentAddress: '',
   });
 
-  const [password, setPassword] = useState('');
-  const [isPasswordVerified, setIsPasswordVerified] = useState(false);
-
-  const correctPassword = 'doginalsaredead'; // Replace with your desired password
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handlePasswordSubmit = (e) => {
-    e.preventDefault();
-    if (password === correctPassword) {
-      setIsPasswordVerified(true);
-    } else {
-      alert('Incorrect password. Please try again.');
-    }
   };
 
   const handleSubmit = (e) => {
@@ -124,22 +106,7 @@ const DuneForm = ({ onSubmit }) => {
         </>
       )}
 
-      {formData.operationType === 'mint' && !isPasswordVerified && (
-        <div>
-          <label>
-            mint section is under maintainence will be back open shortly:
-            <input
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-              required
-            />
-          </label>
-          <button onClick={handlePasswordSubmit}>Unlock</button>
-        </div>
-      )}
-
-      {formData.operationType === 'mint' && isPasswordVerified && (
+      {formData.operationType === 'mint' && (
         <>
           <label>
             Mint ID:
@@ -189,9 +156,7 @@ const DuneForm = ({ onSubmit }) => {
         </>
       )}
 
-      <button type="submit" disabled={formData.operationType === 'mint' && !isPasswordVerified}>
-        Submit
-      </button>
+      <button type="submit">Submit</button>
     </form>
   );
 };
