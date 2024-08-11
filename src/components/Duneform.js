@@ -11,7 +11,7 @@ const DuneForm = ({ onSubmit }) => {
     mintId: '',
     mintAmount: '',
     mintToAddress: '',
-    paymentAddress: '',  // Include paymentAddress in the form data
+    paymentAddress: '',
   });
 
   const handleChange = (e) => {
@@ -22,7 +22,13 @@ const DuneForm = ({ onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const timestamp = Date.now(); // Get the current timestamp
-    const orderData = { ...formData, timestamp }; // Add the timestamp to the order data
+    const orderData = { 
+      ...formData, 
+      timestamp,
+      limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
+      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
+    }; 
     onSubmit(orderData); // Submit the form data with the timestamp
   };
 
@@ -71,7 +77,12 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="limitPerMint"
               value={formData.limitPerMint}
-              onChange={handleChange}
+              onChange={(e) => handleChange({
+                target: {
+                  name: 'limitPerMint',
+                  value: e.target.value,
+                },
+              })}
               required
             />
           </label>
@@ -81,7 +92,12 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="maxNrOfMints"
               value={formData.maxNrOfMints}
-              onChange={handleChange}
+              onChange={(e) => handleChange({
+                target: {
+                  name: 'maxNrOfMints',
+                  value: e.target.value,
+                },
+              })}
               required
             />
           </label>
@@ -106,7 +122,12 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="mintAmount"
               value={formData.mintAmount}
-              onChange={handleChange}
+              onChange={(e) => handleChange({
+                target: {
+                  name: 'mintAmount',
+                  value: e.target.value,
+                },
+              })}
               required
             />
           </label>
@@ -122,7 +143,6 @@ const DuneForm = ({ onSubmit }) => {
           </label>
         </>
       )}
-
 
       <button type="submit">Submit</button>
     </form>
