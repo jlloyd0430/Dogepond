@@ -127,7 +127,7 @@ const DuneForm = ({ onSubmit }) => {
       {formData.operationType === 'mint' && !isPasswordVerified && (
         <div>
           <label>
-            Enter Password to Access Mint Section:
+            mint section is under maintainence will be back open shortly:
             <input
               type="password"
               value={password}
