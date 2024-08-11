@@ -135,7 +135,7 @@ const DuneForm = ({ onSubmit }) => {
               required
             />
           </label>
-          <button onClick={handlePasswordSubmit}>Submit Password</button>
+          <button onClick={handlePasswordSubmit}>Unlock</button>
         </div>
       )}
 
