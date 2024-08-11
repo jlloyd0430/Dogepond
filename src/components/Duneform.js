@@ -10,6 +10,7 @@ const DuneForm = ({ onSubmit }) => {
     maxNrOfMints: '',
     mintId: '',
     mintAmount: '',
+    numberOfMints: '', // Added field
     mintToAddress: '',
     paymentAddress: '',
   });
@@ -28,6 +29,7 @@ const DuneForm = ({ onSubmit }) => {
       limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
       maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
     }; 
     onSubmit(orderData); // Submit the form data with the timestamp
   };
@@ -128,6 +130,16 @@ const DuneForm = ({ onSubmit }) => {
                   value: e.target.value,
                 },
               })}
+              required
+            />
+          </label>
+          <label>
+            Number of Mints: {/* Added field */}
+            <input
+              type="number"
+              name="numberOfMints"
+              value={formData.numberOfMints}
+              onChange={handleChange}
               required
             />
           </label>
