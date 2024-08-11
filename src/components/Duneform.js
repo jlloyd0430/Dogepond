@@ -18,7 +18,7 @@ const DuneForm = ({ onSubmit }) => {
   const [password, setPassword] = useState('');
   const [isPasswordVerified, setIsPasswordVerified] = useState(false);
 
-  const correctPassword = 'yourSecretPassword'; // Replace with your desired password
+  const correctPassword = 'doginalsaredead'; // Replace with your desired password
 
   const handleChange = (e) => {
     const { name, value } = e.target;
