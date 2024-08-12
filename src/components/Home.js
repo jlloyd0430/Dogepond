@@ -218,22 +218,6 @@ const Home = () => {
     }
   };
 
-  const fetchDuneSnapshot = async () => {
-  try {
-    setDuneLoading(true);
-    const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/utxos`, {
-      headers: {
-        "Accept": "application/json",
-        "api-key": process.env.REACT_APP_API_KEY,
-      },
-    });
-    setDuneSnapshotData(response.data.data);
-    setDuneLoading(false);
-  } catch (error) {
-    console.error("Failed to fetch Dune snapshot data:", error.response ? error.response.data : error.message);
-    setDuneLoading(false);
-  }
-};
 
 
   const exportDuneToTXT = () => {
