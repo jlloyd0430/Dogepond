@@ -34,8 +34,12 @@ const Home = () => {
   // State for DRC-20 snapshot
   const [ticker, setTicker] = useState("");
   const [drc20Holders, setDrc20Holders] = useState([]);
-  const [drc20Cursor, setDrc20Cursor] = useState(null);
   const [drc20Loading, setDrc20Loading] = useState(false);
+
+  // State for Dune snapshot
+  const [duneId, setDuneId] = useState("");
+  const [duneSnapshotData, setDuneSnapshotData] = useState([]);
+  const [duneLoading, setDuneLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -153,40 +157,39 @@ const Home = () => {
   };
 
   // DRC-20 Snapshot functions
- const fetchDrc20Snapshot = async () => {
-  try {
-    setDrc20Loading(true);
-    let allHolders = [];
-    let cursor = null;
+  const fetchDrc20Snapshot = async () => {
+    try {
+      setDrc20Loading(true);
+      let allHolders = [];
+      let cursor = null;
 
-    do {
-      const response = await fetch(
-        `https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${ticker}/holders${
-          cursor ? `?cursor=${cursor}` : ""
-        }`,
-        {
-          method: "GET",
-          headers: {
-            "Accept": "application/json",
-            "api-key": process.env.REACT_APP_API_KEY,
-          },
-        }
-      );
+      do {
+        const response = await fetch(
+          `https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${ticker}/holders${
+            cursor ? `?cursor=${cursor}` : ""
+          }`,
+          {
+            method: "GET",
+            headers: {
+              "Accept": "application/json",
+              "api-key": process.env.REACT_APP_API_KEY,
+            },
+          }
+        );
 
-      const data = await response.json();
-      allHolders = [...allHolders, ...data.data];
+        const data = await response.json();
+        allHolders = [...allHolders, ...data.data];
 
-      cursor = data.next_cursor;
-    } while (cursor);
+        cursor = data.next_cursor;
+      } while (cursor);
 
-    setDrc20Holders(allHolders);
-    setDrc20Loading(false);
-  } catch (error) {
-    console.error("Failed to fetch DRC-20 holders:", error);
-    setDrc20Loading(false);
-  }
-};
-
+      setDrc20Holders(allHolders);
+      setDrc20Loading(false);
+    } catch (error) {
+      console.error("Failed to fetch DRC-20 holders:", error);
+      setDrc20Loading(false);
+    }
+  };
 
   const exportDrc20ToTXT = () => {
     const txt = drc20Holders.map(({ address, balance }) => `${address}: ${balance}`).join('\n');
@@ -194,6 +197,42 @@ const Home = () => {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${ticker}_drc20_snapshot.txt`;
+    link.click();
+  };
+
+  // Dune Snapshot functions
+  const fetchDuneSnapshot = async () => {
+    try {
+      setDuneLoading(true);
+      const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/utxos`, {
+        headers: {
+          "Accept": "application/json",
+          "api-key": process.env.REACT_APP_API_KEY,
+        },
+      });
+      setDuneSnapshotData(response.data.data);
+      setDuneLoading(false);
+    } catch (error) {
+      console.error("Failed to fetch Dune snapshot data:", error);
+      setDuneLoading(false);
+    }
+  };
+
+  const exportDuneToTXT = () => {
+    const txt = duneSnapshotData.map(({ address, dune_amount }) => `${address}: ${dune_amount}`).join('\n');
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${duneId}_dune_snapshot.txt`;
+    link.click();
+  };
+
+  const exportDuneToJSON = () => {
+    const json = JSON.stringify(duneSnapshotData, null, 2);
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${duneId}_dune_snapshot.json`;
     link.click();
   };
 
@@ -349,7 +388,30 @@ const Home = () => {
               </div>
             )}
           </div>
-          {/* The snapshot and other side content can go here */}
+          <div className="snapshot-section">
+            <h3>Dune Snapshot</h3>
+            <input
+              type="text"
+              placeholder="Enter Dune ID"
+              value={duneId}
+              onChange={(e) => setDuneId(e.target.value)}
+            />
+            <button onClick={fetchDuneSnapshot} disabled={duneLoading}>
+              {duneLoading ? "Loading..." : "Fetch Snapshot"}
+            </button>
+            {duneSnapshotData.length > 0 && (
+              <div className="snapshot-results">
+                <button onClick={exportDuneToTXT}>Export to TXT</button>
+                <button onClick={exportDuneToJSON}>Export to JSON</button>
+                <h4>Snapshot Results (Total UTXOs: {duneSnapshotData.length})</h4>
+                <ul>
+                  {duneSnapshotData.map(({ address, dune_amount }) => (
+                    <li key={address}>{address}: {dune_amount}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
