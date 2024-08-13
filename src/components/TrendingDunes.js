@@ -16,9 +16,6 @@ const TrendingDunes = () => {
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState("");
   const [view, setView] = useState("dunes");
-  const [walletAddress, setWalletAddress] = useState("");
-  const [walletDunes, setWalletDunes] = useState([]);
-  const [balanceError, setBalanceError] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
@@ -29,7 +26,6 @@ const TrendingDunes = () => {
         const response = await axios.get("https://ord.dunesprotocol.com/dunes");
         const htmlData = response.data;
         const $ = cheerio.load(htmlData);
-        const duneList = [];
 
         const fetchDuneDetails = async (duneName, duneLink) => {
           const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
@@ -67,32 +63,11 @@ const TrendingDunes = () => {
 
   const handleSortOrderChange = (order) => {
     setSortOrder(order);
-    if (order === "mostRecent") {
-      setDunes([...dunes].reverse());
-    } else if (order === "oldest") {
+    if (order === "mostRecent" || order === "oldest") {
       setDunes([...dunes].reverse());
     } else if (order === "minting") {
       const mintingDunes = dunes.filter(dune => dune.mintable);
       setDunes(mintingDunes);
-    }
-  };
-
-  const handleWalletAddressChange = (e) => {
-    setWalletAddress(e.target.value);
-  };
-
-  const handleFetchBalance = async () => {
-    if (!walletAddress) {
-      setBalanceError("Please enter a wallet address.");
-      return;
-    }
-    try {
-      const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
-      setWalletDunes(response.data.dunes);
-      setBalanceError("");
-    } catch (error) {
-      console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
-      setBalanceError("Failed to fetch dunes balance. Please try again later.");
     }
   };
 
@@ -136,36 +111,24 @@ const TrendingDunes = () => {
       {view === "dunes" && (
         <>
           {error && <p className="trending-error">{error}</p>}
-          <div className="trending-controls-container">
-            <div className="trending-search-filter">
-              <input
-                type="text"
-                placeholder="Search by project name..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                className="trending-search-input"
-              />
-              <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-                <DropdownToggle caret>
-                  <FontAwesomeIcon icon={faFilter} />
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
-                  <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
-                  <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-            <div className="wallet-checker">
-              <input
-                type="text"
-                placeholder="Enter wallet address..."
-                value={walletAddress}
-                onChange={handleWalletAddressChange}
-                className="wallet-check-input"
-              />
-              <button onClick={handleFetchBalance}>Check Balance</button>
-            </div>
+          <div className="trending-controls-container" style={{ display: "flex", alignItems: "center" }}>
+            <input
+              type="text"
+              placeholder="Search by project name..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="trending-search-input"
+            />
+            <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="trending-filter-dropdown">
+              <DropdownToggle tag="span" data-toggle="dropdown" aria-expanded={dropdownOpen}>
+                <FontAwesomeIcon icon={faFilter} />
+              </DropdownToggle>
+              <DropdownMenu>
+                <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
+                <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
+                <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </div>
           <div className="trending-dune-list">
             {filteredDunes.map((dune, index) => (
@@ -200,30 +163,10 @@ const TrendingDunes = () => {
       )}
 
       {view === "myDunes" && (
-        <>
-          <div className="my-dunes-container">
-            <h1>My Dunes</h1>
-            <div className="my-dunes-balance-container">
-              <input
-                type="text"
-                placeholder="Enter wallet address..."
-                value={walletAddress}
-                onChange={handleWalletAddressChange}
-              />
-              <button onClick={handleFetchBalance}>Check Balance</button>
-            </div>
-            {balanceError && <p className="my-dunes-error">{balanceError}</p>}
-            {walletDunes.length > 0 && (
-              <div className="my-dunes-list">
-                {walletDunes.map((dune, index) => (
-                  <div key={index} className="my-dune-card">
-                    <p>{dune.dune} ({dune.symbol}): {dune.total_balance / (10 ** dune.divisibility)} {dune.symbol}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </>
+        <div className="my-dunes-container">
+          <h1>My Dunes</h1>
+          {/* Content for My Dunes will go here */}
+        </div>
       )}
     </div>
   );
