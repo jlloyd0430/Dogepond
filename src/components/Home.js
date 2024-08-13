@@ -204,24 +204,38 @@ const Home = () => {
   const fetchDuneSnapshot = async () => {
     try {
       setDuneLoading(true);
-      const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/utxos`, {
+      const utxoResponse = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/utxos`, {
         headers: {
           "Accept": "application/json",
           "api-key": process.env.REACT_APP_API_KEY,
         },
       });
-      setDuneSnapshotData(response.data.data);
+
+      const addresses = utxoResponse.data.data.map(utxo => utxo.address);
+      const uniqueAddresses = [...new Set(addresses)]; // Get unique addresses
+
+      const duneAmounts = await Promise.all(uniqueAddresses.map(async (address) => {
+        const addressResponse = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/addresses/${address}/dunes`, {
+          headers: {
+            "Accept": "application/json",
+            "api-key": process.env.REACT_APP_API_KEY,
+          },
+        });
+
+        const duneAmount = addressResponse.data.data[duneId] || 0; // Get the dune amount for this address
+        return { address, totalAmount: parseFloat(duneAmount) };
+      }));
+
+      setDuneSnapshotData(duneAmounts);
       setDuneLoading(false);
     } catch (error) {
-      console.error("Failed to fetch Dune snapshot data:", error);
+      console.error("Failed to fetch Dune snapshot data:", error.response ? error.response.data : error.message);
       setDuneLoading(false);
     }
   };
 
-
-
   const exportDuneToTXT = () => {
-    const txt = duneSnapshotData.map(({ address, dune_amount }) => `${address}: ${dune_amount}`).join('\n');
+    const txt = duneSnapshotData.map(({ address, totalAmount }) => `${address}: ${totalAmount.toFixed(8)}`).join('\n');
     const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -392,7 +406,6 @@ const Home = () => {
           </div>
           <div className="snapshot-section">
             <h3>Dune Snapshot</h3>
-              <h1>(coming soon)</h1>
             <input
               type="text"
               placeholder="Enter Dune ID"
@@ -408,8 +421,8 @@ const Home = () => {
                 <button onClick={exportDuneToJSON}>Export to JSON</button>
                 <h4>Snapshot Results (Total UTXOs: {duneSnapshotData.length})</h4>
                 <ul>
-                  {duneSnapshotData.map(({ address, dune_amount }) => (
-                    <li key={address}>{address}: {dune_amount}</li>
+                  {duneSnapshotData.map(({ address, totalAmount }) => (
+                    <li key={address}>{address}: {totalAmount.toFixed(8)}</li>
                   ))}
                 </ul>
               </div>
