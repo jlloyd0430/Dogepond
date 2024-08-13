@@ -29,48 +29,39 @@ const DuneForm = ({ onSubmit }) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const timestamp = Date.now(); // Get the current timestamp
-  const orderData = { 
-    ...formData, 
-    timestamp,
-    limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
-    maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
-    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
-  }; 
-  try {
-    const result = await onSubmit(orderData); // Submit the form data with the timestamp
-    
-    if (result && result.index !== undefined) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const timestamp = Date.now(); // Get the current timestamp
+    const orderData = { 
+      ...formData, 
+      timestamp,
+      limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
+      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
+    }; 
+    try {
+      const result = await onSubmit(orderData); // Submit the form data with the timestamp
       setOrderResult(result); // Save the result to display later
       setOrderStatus('pending'); // Initially set the order status to pending
 
       // Start polling for order status
       pollOrderStatus(result.index);
-    } else {
-      console.error('Unexpected response from order submission:', result);
+    } catch (error) {
+      console.error('Error submitting order:', error);
     }
-  } catch (error) {
-    console.error('Error submitting order:', error);
-  }
-};
-
+  };
 
   const pollOrderStatus = (orderIndex) => {
     intervalId = setInterval(async () => {
       try {
         const response = await axios.get(`/order/status/${orderIndex}`);
-        const status = response.data.status;
+        const { status, duneId, txId } = response.data;
         setOrderStatus(status); // Update the status
+        setDuneId(duneId); // Update Dune ID
+        setTxId(txId); // Update Transaction ID
         if (status !== 'pending') {
           clearInterval(intervalId); // Stop polling if the status is no longer pending
-          
-          // Fetch additional information like Dune ID and Transaction ID
-          const additionalInfoResponse = await axios.get(`/order/info/${orderIndex}`);
-          setDuneId(additionalInfoResponse.data.duneId);
-          setTxId(additionalInfoResponse.data.txId);
         }
       } catch (error) {
         console.error('Error fetching order status:', error);
