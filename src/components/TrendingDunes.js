@@ -63,7 +63,9 @@ const TrendingDunes = () => {
 
   const handleSortOrderChange = (order) => {
     setSortOrder(order);
-    if (order === "mostRecent" || order === "oldest") {
+    if (order === "mostRecent") {
+      setDunes([...dunes].reverse());
+    } else if (order === "oldest") {
       setDunes([...dunes].reverse());
     } else if (order === "minting") {
       const mintingDunes = dunes.filter(dune => dune.mintable);
@@ -121,8 +123,8 @@ const TrendingDunes = () => {
               style={{ flex: 1 }} // Allow the search input to take up available space
             />
             <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="trending-filter-dropdown">
-              <DropdownToggle tag="span" data-toggle="dropdown" aria-expanded={dropdownOpen} style={{ cursor: 'pointer' }}>
-                <FontAwesomeIcon icon={faFilter} style={{ color: 'goldenrod', marginLeft: '10px' }} />
+              <DropdownToggle tag="span" data-toggle="dropdown" aria-expanded={dropdownOpen} style={{ cursor: 'pointer', marginLeft: '10px' }}>
+                <FontAwesomeIcon icon={faFilter} style={{ color: 'goldenrod' }} />
               </DropdownToggle>
               <DropdownMenu>
                 <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
