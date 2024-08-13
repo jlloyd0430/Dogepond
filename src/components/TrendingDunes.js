@@ -6,6 +6,7 @@ import DuneForm from "./Duneform"; // Import the form component
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'; // Ensure reactstrap is installed
+import MyDunes from "./MyDunes"; // Import the MyDunes component
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the Dune API functions
 
 const TrendingDunes = () => {
@@ -126,7 +127,7 @@ const TrendingDunes = () => {
               <DropdownToggle tag="span" data-toggle="dropdown" aria-expanded={dropdownOpen} style={{ cursor: 'pointer', marginLeft: '10px' }}>
                 <FontAwesomeIcon icon={faFilter} style={{ color: 'goldenrod' }} />
               </DropdownToggle>
-              <DropdownMenu>
+              <DropdownMenu right>
                 <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
                 <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
                 <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
@@ -166,10 +167,7 @@ const TrendingDunes = () => {
       )}
 
       {view === "myDunes" && (
-        <div className="my-dunes-container">
-          <h1>My Dunes</h1>
-          {/* Content for My Dunes will go here */}
-        </div>
+        <MyDunes /> // Render the My Dunes component here
       )}
     </div>
   );
