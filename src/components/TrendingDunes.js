@@ -19,7 +19,7 @@ const TrendingDunes = () => {
   const [view, setView] = useState("dunes");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+  const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
     const fetchTrendingDunes = async () => {
@@ -72,6 +72,7 @@ const TrendingDunes = () => {
       const mintingDunes = dunes.filter(dune => dune.mintable);
       setDunes(mintingDunes);
     }
+    setDropdownOpen(false); // Close the dropdown after selection
   };
 
   const filteredDunes = dunes.filter(dune => {
