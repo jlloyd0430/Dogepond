@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import * as cheerio from "cheerio";
 import "./Trending.css"; // Add appropriate styles
 import DuneForm from "./Duneform"; // Import the form component
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,28 +29,12 @@ const TrendingDunes = () => {
     const fetchTrendingDunes = async () => {
       try {
         const response = await axios.get("https://ord.dunesprotocol.com/dunes");
-        const htmlData = response.data;
-        const $ = cheerio.load(htmlData);
-
-        const fetchDuneDetails = async (duneName, duneLink) => {
-          const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
-          const duneResponse = await axios.get(duneUrl);
-          const dunePage = cheerio.load(duneResponse.data);
-          const duneID = dunePage('dt:contains("id") + dd').text().trim();
-          const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
-
-          return { name: duneName, link: duneUrl, duneID, mintable };
-        };
-
-        const dunePromises = $("ul > li > a").map(async (index, element) => {
-          const duneName = $(element).text();
-          const duneLink = $(element).attr("href");
-          return fetchDuneDetails(duneName, duneLink);
-        }).get();
-
-        const fetchedDunes = await Promise.all(dunePromises);
-
-        // By default, display the dunes in reverse order to show the most recent first
+        const fetchedDunes = response.data.map(dune => ({
+          name: dune.name,
+          link: dune.link,
+          duneID: dune.duneID,
+          mintable: dune.mintable
+        }));
         setDunes(fetchedDunes.reverse());
       } catch (error) {
         console.error("Error fetching trending dunes:", error);
@@ -112,33 +95,29 @@ const TrendingDunes = () => {
   const fetchDuneSnapshot = async () => {
     try {
       setDuneLoading(true);
-      const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/utxos`, {
+      const utxoResponse = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/utxos`, {
         headers: {
           "Accept": "application/json",
           "api-key": process.env.REACT_APP_API_KEY,
         },
       });
 
-      // Aggregating the dune amounts by address
-      const aggregatedData = response.data.data.reduce((acc, utxo) => {
-        const { address, dune_amount } = utxo;
+      const addresses = utxoResponse.data.data.map(utxo => utxo.address);
+      const uniqueAddresses = [...new Set(addresses)]; // Get unique addresses
 
-        if (acc[address]) {
-          acc[address] += parseFloat(dune_amount);
-        } else {
-          acc[address] = parseFloat(dune_amount);
-        }
+      const duneAmounts = await Promise.all(uniqueAddresses.map(async (address) => {
+        const addressResponse = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/addresses/${address}/dunes`, {
+          headers: {
+            "Accept": "application/json",
+            "api-key": process.env.REACT_APP_API_KEY,
+          },
+        });
 
-        return acc;
-      }, {});
-
-      // Convert the aggregated data object back to an array for easy display
-      const aggregatedArray = Object.entries(aggregatedData).map(([address, totalAmount]) => ({
-        address,
-        totalAmount,
+        const duneAmount = addressResponse.data.data[duneId] || 0; // Get the dune amount for this address
+        return { address, totalAmount: parseFloat(duneAmount) };
       }));
 
-      setDuneSnapshotData(aggregatedArray);
+      setDuneSnapshotData(duneAmounts);
       setDuneLoading(false);
     } catch (error) {
       console.error("Failed to fetch Dune snapshot data:", error.response ? error.response.data : error.message);
