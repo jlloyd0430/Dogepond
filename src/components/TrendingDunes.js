@@ -5,7 +5,8 @@ import "./Trending.css"; // Add appropriate styles
 import DuneForm from "./Duneform"; // Import the form component
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'; // Make sure to install reactstrap if not already
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'; // Ensure reactstrap is installed
+import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the Dune API functions
 
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
