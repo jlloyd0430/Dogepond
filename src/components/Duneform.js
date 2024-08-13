@@ -84,7 +84,7 @@ const DuneForm = ({ onSubmit }) => {
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
     // Simple password check; replace 'yourpassword' with the actual password you want
-    if (password === 'yourpassword') {
+    if (password === 'doginals are dead') {
       setIsAuthenticated(true);
     } else {
       alert('Incorrect password');
