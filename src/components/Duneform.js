@@ -20,21 +20,35 @@ const DuneForm = ({ onSubmit }) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const timestamp = Date.now(); // Get the current timestamp
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const timestamp = Date.now();
 
-    const orderData = { 
-      ...formData, 
-      timestamp,
-      limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
-      maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
-      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, 
-    }; 
-
-    onSubmit(orderData); // Submit the form data with the timestamp
+  const orderData = {
+    ...formData,
+    timestamp,
+    limitPerMint: parseInt(formData.limitPerMint, 10),
+    maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
+    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
+    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
   };
+
+  try {
+    const result = await onSubmit(orderData);
+
+    if (!result || typeof result.id === 'undefined') {
+      throw new Error('Order ID is missing in the backend response.');
+    }
+
+    setOrderResult(result);
+    setOrderStatus('pending');
+
+    pollOrderStatus(result.id);
+  } catch (error) {
+    console.error('Error submitting order:', error);
+  }
+};
+
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
