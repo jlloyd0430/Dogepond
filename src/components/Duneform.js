@@ -15,12 +15,14 @@ const DuneForm = ({ onSubmit }) => {
     paymentAddress: '',
   });
 
+  const [orderResult, setOrderResult] = useState(null); // Store order result
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const timestamp = Date.now(); // Get the current timestamp
     const orderData = { 
@@ -31,7 +33,8 @@ const DuneForm = ({ onSubmit }) => {
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
       numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
     }; 
-    onSubmit(orderData); // Submit the form data with the timestamp
+    const result = await onSubmit(orderData); // Submit the form data with the timestamp
+    setOrderResult(result); // Save the result to display later
   };
 
   return (
@@ -157,6 +160,14 @@ const DuneForm = ({ onSubmit }) => {
       )}
 
       <button type="submit">Submit</button>
+
+      {orderResult && (
+        <div className="order-result">
+          <h3>Order Result</h3>
+          <p><strong>Dune ID:</strong> {orderResult.duneId}</p>
+          <p><strong>Transaction ID:</strong> {orderResult.txId}</p>
+        </div>
+      )}
     </form>
   );
 };
