@@ -21,6 +21,9 @@ const DuneForm = ({ onSubmit }) => {
   const [duneId, setDuneId] = useState(null); // Store Dune ID
   const [txId, setTxId] = useState(null); // Store Transaction ID
 
+  // To store the interval ID so it can be cleared later
+  let intervalId = null;
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -37,16 +40,20 @@ const DuneForm = ({ onSubmit }) => {
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
       numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
     }; 
-    const result = await onSubmit(orderData); // Submit the form data with the timestamp
-    setOrderResult(result); // Save the result to display later
-    setOrderStatus('pending'); // Initially set the order status to pending
+    try {
+      const result = await onSubmit(orderData); // Submit the form data with the timestamp
+      setOrderResult(result); // Save the result to display later
+      setOrderStatus('pending'); // Initially set the order status to pending
 
-    // Start polling for order status
-    pollOrderStatus(result.index);
+      // Start polling for order status
+      pollOrderStatus(result.index);
+    } catch (error) {
+      console.error('Error submitting order:', error);
+    }
   };
 
   const pollOrderStatus = (orderIndex) => {
-    const intervalId = setInterval(async () => {
+    intervalId = setInterval(async () => {
       try {
         const response = await axios.get(`/order/status/${orderIndex}`);
         const status = response.data.status;
@@ -64,6 +71,13 @@ const DuneForm = ({ onSubmit }) => {
       }
     }, 10000); // Poll every 10 seconds
   };
+
+  // Clean up the interval when the component unmounts
+  useEffect(() => {
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [intervalId]);
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
@@ -193,8 +207,8 @@ const DuneForm = ({ onSubmit }) => {
         <div className="order-result">
           <h3>Order Result</h3>
           <p><strong>Order Status:</strong> {orderStatus}</p>
-          <p><strong>Dune ID:</strong> {duneId}</p>
-          <p><strong>Transaction ID:</strong> {txId}</p>
+          {duneId && <p><strong>Dune ID:</strong> {duneId}</p>}
+          {txId && <p><strong>Transaction ID:</strong> {txId}</p>}
         </div>
       )}
     </form>
