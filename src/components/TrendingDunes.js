@@ -5,6 +5,8 @@ import "./Trending.css"; // Add appropriate styles
 import DuneForm from "./Duneform"; // Import the form component
 import MyDunes from "./MyDunes"; // Import the MyDunes component
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the Dune API functions
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
@@ -14,6 +16,10 @@ const TrendingDunes = () => {
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState("");
   const [view, setView] = useState("dunes");
+
+  const [walletAddress, setWalletAddress] = useState("");
+  const [walletDunes, setWalletDunes] = useState([]);
+  const [balanceError, setBalanceError] = useState("");
 
   useEffect(() => {
     const fetchTrendingDunes = async () => {
@@ -57,8 +63,32 @@ const TrendingDunes = () => {
     setSearchTerm(formattedSearchTerm);
   };
 
-  const handleSortOrderChange = (e) => {
-    setSortOrder(e.target.value);
+  const handleSortOrderChange = (order) => {
+    setSortOrder(order);
+    if (order === "mostRecent") {
+      setDunes([...dunes].reverse());
+    } else if (order === "oldest") {
+      setDunes([...dunes].reverse());
+    }
+  };
+
+  const handleWalletAddressChange = (e) => {
+    setWalletAddress(e.target.value);
+  };
+
+  const handleFetchBalance = async () => {
+    if (!walletAddress) {
+      setBalanceError("Please enter a wallet address.");
+      return;
+    }
+    try {
+      const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
+      setWalletDunes(response.data.dunes);
+      setBalanceError("");
+    } catch (error) {
+      console.error(`Error fetching dunes for wallet ${walletAddress}:`, error);
+      setBalanceError("Failed to fetch dunes balance. Please try again later.");
+    }
   };
 
   const filteredDunes = dunes.filter(dune => {
@@ -67,14 +97,6 @@ const TrendingDunes = () => {
     }
     return dune.name.includes(searchTerm);
   });
-
-  useEffect(() => {
-    if (sortOrder === "mostRecent") {
-      setDunes([...dunes].reverse());
-    } else if (sortOrder === "oldest") {
-      setDunes([...dunes].reverse());
-    }
-  }, [sortOrder]);
 
   const handleSubmit = async (formData) => {
     try {
@@ -109,22 +131,27 @@ const TrendingDunes = () => {
       {view === "dunes" && (
         <>
           {error && <p className="trending-error">{error}</p>}
-          <div className="trending-sort-container">
-            <label htmlFor="sortOrder">Sort by:</label>
-            <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
-              <option value="mostRecent">Most Recent</option>
-              <option value="oldest">Oldest</option>
-              <option value="minting">Minting Now</option>
-            </select>
-          </div>
-          <div className="trending-search-container">
-            <input
-              type="text"
-              placeholder="Search Dunes..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="trending-search-input"
-            />
+          <div className="trending-controls-container">
+            <div className="trending-search-filter">
+              <FontAwesomeIcon icon={faFilter} onClick={() => handleSortOrderChange(sortOrder === "mostRecent" ? "oldest" : "mostRecent")} />
+              <input
+                type="text"
+                placeholder="Search by project name..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="trending-search-input"
+              />
+            </div>
+            <div className="wallet-checker">
+              <input
+                type="text"
+                placeholder="Enter wallet address..."
+                value={walletAddress}
+                onChange={handleWalletAddressChange}
+                className="wallet-check-input"
+              />
+              <button onClick={handleFetchBalance}>Check Balance</button>
+            </div>
           </div>
           <div className="trending-dune-list">
             {filteredDunes.map((dune, index) => (
@@ -159,7 +186,30 @@ const TrendingDunes = () => {
       )}
 
       {view === "myDunes" && (
-        <MyDunes /> // Render the My Dunes component
+        <>
+          <div className="my-dunes-container">
+            <h1>My Dunes</h1>
+            <div className="my-dunes-balance-container">
+              <input
+                type="text"
+                placeholder="Enter wallet address..."
+                value={walletAddress}
+                onChange={handleWalletAddressChange}
+              />
+              <button onClick={handleFetchBalance}>Check Balance</button>
+            </div>
+            {balanceError && <p className="my-dunes-error">{balanceError}</p>}
+            {walletDunes.length > 0 && (
+              <div className="my-dunes-list">
+                {walletDunes.map((dune, index) => (
+                  <div key={index} className="my-dune-card">
+                    <p>{dune.dune} ({dune.symbol}): {dune.total_balance / (10 ** dune.divisibility)} {dune.symbol}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
