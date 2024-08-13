@@ -47,8 +47,14 @@
   gap: 20px;
 }
 
-/* Ensure the rest of your CSS styles remain consistent */
+/* Additional styles that may be necessary for proper layout */
 
+.dropdown-menu {
+  position: absolute;
+  z-index: 1000;
+}
+
+/* Existing styles for other components */
 
 .under-maintenance-message {
   color: black;
@@ -59,8 +65,6 @@
   color: black;
   /* Add any additional styling you need */
 }
-
-
 
 .trending-sort-container,
 .trending-search-container {
@@ -89,9 +93,11 @@
   margin: 0;
   line-height: 1.4;
 }
+
 .trending-ttitle {
   cursor: pointer;
 }
+
 .trending-balance-container,
 .trending-sort-container {
   margin-bottom: 20px;
@@ -100,12 +106,14 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+
 .trending-balance-container input {
   padding: 10px;
   font-size: 16px;
   width: 100%;
   box-sizing: border-box;
 }
+
 .trending-balance-container button {
   padding: 10px 20px;
   font-size: 16px;
@@ -114,6 +122,7 @@
   max-width: 150px;
   box-sizing: border-box;
 }
+
 .trending-dune-list,
 .trending-wallet-dunes-list,
 .trending-drc20-list,
@@ -123,6 +132,7 @@
   justify-content: center;
   gap: 20px;
 }
+
 .trending-wallet-dune-card,
 .trending-dune-card,
 .trending-nftCard,
@@ -135,6 +145,7 @@
   width: 100%;
   box-sizing: border-box;
 }
+
 .trending-drc20-card img,
 .trending-nftCard img {
   max-width: 120px;
@@ -142,6 +153,7 @@
   max-height: 120px;
   display: block;
 }
+
 .trending-dune-card a {
   text-decoration: none;
   color: inherit;
@@ -180,8 +192,6 @@
   background-color: gold;
 }
 
-
-
 .trending-dune-card h2,
 .trending-drc20-card h2 {
   font-size: 18px;
@@ -189,15 +199,14 @@
 }
 
 .trending-drci {
-    flex-direction: row;
-    align-items: center;
+  flex-direction: row;
+  align-items: center;
 }
-
-
 
 .trending-error {
   color: red;
 }
+
 .trending-form-container {
   margin: 0 auto;
   color: black;
@@ -206,11 +215,13 @@
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
+
 .trending-form-container label {
   display: block;
   margin-bottom: 10px;
   font-weight: bold;
 }
+
 .trending-form-container input[type="text"],
 .trending-form-container input[type="number"],
 .trending-form-container select {
@@ -221,9 +232,11 @@
   border: 1px solid #ddd;
   box-sizing: border-box;
 }
+
 .trending-form-container input[type="checkbox"] {
   margin-right: 10px;
 }
+
 .trending-form-container button[type="submit"] {
   width: 100%;
   padding: 10px;
@@ -233,9 +246,11 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
 .trending-form-container button[type="submit"]:hover {
   background-color: gold;
 }
+
 .trending-payment-popup {
   background-color: #f9f9f9;
   padding: 20px;
@@ -243,29 +258,7 @@
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
 }
-.trending-sort-search-container {
-  display: flex;
-  align-items: center; /* Vertically centers the items */
-  justify-content: space-between;
-}
 
-.trending-search-input {
-  flex: 1; /* Grows to fill the available space */
-  margin-right: 10px; /* Provides space between input and filter */
-}
-
-.dropdown-menu {
-  position: absolute;
-  z-index: 1000;
-}
-
-
-.positive-change {
-  color: green;
-}
-.negative-change {
-  color: red;
-}
 /* Mobile-specific styles */
 @media (max-width: 768px) {
   .trending-dune-list,
@@ -279,7 +272,7 @@
     width: 400px;
     padding: 20px;
     text-align: center;
-}
+  }
   .trending-dune-card,
   .trending-wallet-dune-card,
   .trending-nftCard,
