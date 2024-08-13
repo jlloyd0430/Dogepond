@@ -21,9 +21,10 @@ const TrendingDunes = () => {
         const response = await axios.get("https://ord.dunesprotocol.com/dunes");
         const htmlData = response.data;
         const $ = cheerio.load(htmlData);
-        const duneList = [];
 
-        const fetchDuneDetails = async (duneName, duneLink) => {
+        const dunePromises = $("ul > li > a").map(async (index, element) => {
+          const duneName = $(element).text();
+          const duneLink = $(element).attr("href");
           const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
           const duneResponse = await axios.get(duneUrl);
           const dunePage = cheerio.load(duneResponse.data);
@@ -31,16 +32,13 @@ const TrendingDunes = () => {
           const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
 
           return { name: duneName, link: duneUrl, duneID, mintable };
-        };
-
-        const dunePromises = $("ul > li > a").map(async (index, element) => {
-          const duneName = $(element).text();
-          const duneLink = $(element).attr("href");
-          return fetchDuneDetails(duneName, duneLink);
         }).get();
 
         const fetchedDunes = await Promise.all(dunePromises);
-        setDunes(fetchedDunes);
+
+        // Reverse the order to show the last dune first
+        const sortedDunes = fetchedDunes.reverse();
+        setDunes(sortedDunes);
       } catch (error) {
         console.error("Error fetching trending dunes:", error);
         setError("Failed to fetch trending dunes. Please try again later.");
@@ -50,11 +48,13 @@ const TrendingDunes = () => {
     fetchTrendingDunes();
   }, []);
 
-  // This effect will handle sorting whenever the sortOrder changes
+  // Handle sorting based on the selected option
   useEffect(() => {
-    let sortedDunes = [...dunes];
+    const sortedDunes = [...dunes];
     if (sortOrder === "mostRecent") {
-      sortedDunes.reverse(); // Simply reverse the order to show the last dune first
+      sortedDunes.reverse(); // Most recent first
+    } else if (sortOrder === "oldest") {
+      sortedDunes.reverse(); // Oldest first
     }
     setDunes(sortedDunes);
   }, [sortOrder, dunes]);
