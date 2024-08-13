@@ -10,7 +10,7 @@ import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Im
 
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
-  const [error, setError] = useState("");
+  const [trendingError, setTrendingError] = useState("");
   const [sortOrder, setSortOrder] = useState("mostRecent");
   const [searchTerm, setSearchTerm] = useState("");
   const [paymentInfo, setPaymentInfo] = useState(null);
@@ -38,7 +38,7 @@ const TrendingDunes = () => {
         setDunes(fetchedDunes.reverse());
       } catch (error) {
         console.error("Error fetching trending dunes:", error);
-        setError("Failed to fetch trending dunes. Please try again later.");
+        setTrendingError("Failed to fetch trending dunes. Please try again later.");
       }
     };
 
@@ -153,7 +153,7 @@ const TrendingDunes = () => {
 
       {view === "dunes" && (
         <>
-          {error && <p className="trending-error">{error}</p>}
+          {trendingError && <p className="trending-error">{trendingError}</p>}
           <div className="trending-controls-container" style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             <input
               type="text"
