@@ -20,7 +20,7 @@ export const submitOrder = async (orderData) => {
 export const checkOrderStatus = async (index) => {
   try {
     const response = await apiClient.get(`/order/status/${index}`);
-    return response.data.status;
+    return response.data; // Return the full response data to access status, duneId, and txId
   } catch (error) {
     console.error('Error checking order status:', error);
     throw new Error('An error occurred while checking the order status');
