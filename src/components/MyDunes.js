@@ -35,7 +35,7 @@ const MyDunes = () => {
           placeholder="Enter wallet address..."
           value={walletAddress}
           onChange={handleWalletAddressChange}
-          className="trending-search-input"  {/* Reusing input style */}
+          className="trending-search-input"  // Corrected comment placement
         />
         <button onClick={handleFetchBalance}>Check Balance</button>
       </div>
