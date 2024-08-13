@@ -8,6 +8,7 @@ import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'; // Ensure reactstrap is installed
 import MyDunes from "./MyDunes"; // Import the MyDunes component
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the Dune API functions
+
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
   const [error, setError] = useState("");
@@ -17,26 +18,31 @@ const TrendingDunes = () => {
   const [orderStatus, setOrderStatus] = useState("");
   const [view, setView] = useState("dunes");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
+
   useEffect(() => {
     const fetchTrendingDunes = async () => {
       try {
         const response = await axios.get("https://ord.dunesprotocol.com/dunes");
         const htmlData = response.data;
         const $ = cheerio.load(htmlData);
+
         const fetchDuneDetails = async (duneName, duneLink) => {
-          const duneUrl = https://ord.dunesprotocol.com${duneLink};
+          const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
           const duneResponse = await axios.get(duneUrl);
           const dunePage = cheerio.load(duneResponse.data);
           const duneID = dunePage('dt:contains("id") + dd').text().trim();
           const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
           return { name: duneName, link: duneUrl, duneID, mintable };
         };
+
         const dunePromises = $("ul > li > a").map(async (index, element) => {
           const duneName = $(element).text();
           const duneLink = $(element).attr("href");
           return fetchDuneDetails(duneName, duneLink);
         }).get();
+
         const fetchedDunes = await Promise.all(dunePromises);
         // By default, display the dunes in reverse order to show the most recent first
         setDunes(fetchedDunes.reverse());
@@ -45,12 +51,15 @@ const TrendingDunes = () => {
         setError("Failed to fetch trending dunes. Please try again later.");
       }
     };
+
     fetchTrendingDunes();
   }, []);
+
   const handleSearchChange = (e) => {
     const formattedSearchTerm = e.target.value.toUpperCase().replace(/ /g, '•');
     setSearchTerm(formattedSearchTerm);
   };
+
   const handleSortOrderChange = (order) => {
     setSortOrder(order);
     if (order === "mostRecent") {
@@ -63,16 +72,19 @@ const TrendingDunes = () => {
     }
     setDropdownOpen(false); // Close the dropdown after selection
   };
+
   const filteredDunes = dunes.filter(dune => {
     if (sortOrder === "minting") {
       return dune.mintable && dune.name.includes(searchTerm);
     }
     return dune.name.includes(searchTerm);
   });
+
   const handleSubmit = async (formData) => {
     try {
       const result = await submitOrder(formData);
       setPaymentInfo({ dogeAmount: result.dogeAmount, address: result.address, index: result.index });
+
       const intervalId = setInterval(async () => {
         try {
           const status = await checkOrderStatus(result.index);
@@ -89,6 +101,7 @@ const TrendingDunes = () => {
       alert('An error occurred. Please try again.');
     }
   };
+
   return (
     <div className="trending-container">
       <div className="trending-header-container">
@@ -155,4 +168,5 @@ const TrendingDunes = () => {
     </div>
   );
 };
+
 export default TrendingDunes;
