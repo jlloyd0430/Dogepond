@@ -109,38 +109,39 @@ const TrendingDunes = () => {
     }
   };
 
-  const fetchDuneSnapshot = async () => {
+const fetchDuneSnapshot = async () => {
     try {
-      setDuneLoading(true);
-      const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/utxos`, {
-        headers: {
-          "Accept": "application/json",
-          "api-key": process.env.REACT_APP_API_KEY,
-        },
-      });
+        setDuneLoading(true);
+        const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/utxos`, {
+            headers: {
+                "Accept": "application/json",
+                "api-key": process.env.REACT_APP_API_KEY,
+            },
+        });
 
-      // Aggregating the dune amounts by address
-      const aggregatedData = response.data.data.reduce((acc, utxo) => {
-        const { address, dune_amount } = utxo;
-        if (!acc[address]) {
-          acc[address] = {
-            address,
-            totalAmount: 0,
-          };
-        }
-        acc[address].totalAmount += parseFloat(dune_amount);
-        return acc;
-      }, {});
+        // Aggregating the dune amounts by address
+        const aggregatedData = response.data.data.reduce((acc, utxo) => {
+            const { address, dune_amount } = utxo;
+            if (!acc[address]) {
+                acc[address] = {
+                    address,
+                    totalAmount: 0,
+                };
+            }
+            acc[address].totalAmount += parseFloat(dune_amount);
+            return acc;
+        }, {});
 
-      // Convert the aggregated data object back to an array for easy display
-      const aggregatedArray = Object.values(aggregatedData);
-      setDuneSnapshotData(aggregatedArray);
-      setDuneLoading(false);
+        // Convert the aggregated data object back to an array for easy display
+        const aggregatedArray = Object.values(aggregatedData);
+        setDuneSnapshotData(aggregatedArray);
+        setDuneLoading(false);
     } catch (error) {
-      console.error("Failed to fetch Dune snapshot data:", error.response ? error.response.data : error.message);
-      setDuneLoading(false);
+        console.error("Failed to fetch Dune snapshot data:", error.response ? error.response.data : error.message);
+        setDuneLoading(false);
     }
-  };
+};
+
 
   const exportDuneToTXT = () => {
     const txt = duneSnapshotData.map(({ address, totalAmount }) => `${address}: ${totalAmount.toFixed(8)}`).join('\n');
