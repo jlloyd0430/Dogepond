@@ -148,11 +148,38 @@
   word-wrap: break-word;
 }
 
-.dune-form-container label,
-.dune-form-container input,
-.dune-form-container select {
-  color: black !important;
+.dune-form {
+  color: black; /* Ensures the text color is always dark */
+  background-color: white; /* Optional: Sets a white background for better contrast */
 }
+
+.dune-form label {
+  color: black; /* Ensures label text is always dark */
+}
+
+.dune-form input,
+.dune-form select {
+  color: black; /* Ensures input text is always dark */
+  background-color: white; /* Optional: Keeps inputs' background white for better contrast */
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.dune-form button[type="submit"] {
+  background-color: goldenrod; /* Keep the button styling consistent */
+  color: white; /* Ensures the button text color is always white */
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.dune-form button[type="submit"]:hover {
+  background-color: gold;
+}
+
 
 
 .trending-dune-card h2,
