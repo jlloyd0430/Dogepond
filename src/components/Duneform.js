@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Trending.css';
+import axios from 'axios'; // Importing axios
 
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -15,9 +16,9 @@ const DuneForm = ({ onSubmit }) => {
     paymentAddress: '',
   });
 
-  const [orderResult, setOrderResult] = useState(null); // Added state for order result
-  const [orderStatus, setOrderStatus] = useState(null); // Added state for order status
-  const [intervalId, setIntervalId] = useState(null); // Added state for interval ID
+  const [orderResult, setOrderResult] = useState(null);
+  const [orderStatus, setOrderStatus] = useState(null);
+  const [intervalId, setIntervalId] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,14 +62,14 @@ const DuneForm = ({ onSubmit }) => {
         setOrderStatus(status);
         if (status !== 'pending') {
           clearInterval(id);
-          setIntervalId(null); // Clear interval ID state
+          setIntervalId(null);
         }
       } catch (error) {
         console.error('Error fetching order status:', error);
       }
     }, 10000);
 
-    setIntervalId(id); // Store interval ID in state
+    setIntervalId(id);
   };
 
   return (
