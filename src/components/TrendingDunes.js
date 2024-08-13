@@ -28,10 +28,9 @@ const TrendingDunes = () => {
           const duneResponse = await axios.get(duneUrl);
           const dunePage = cheerio.load(duneResponse.data);
           const duneID = dunePage('dt:contains("id") + dd').text().trim();
-          const timestamp = dunePage('dt:contains("timestamp") + dd').text().trim();
           const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
 
-          return { name: duneName, link: duneUrl, duneID, timestamp, mintable };
+          return { name: duneName, link: duneUrl, duneID, mintable };
         };
 
         const dunePromises = $("ul > li > a").map(async (index, element) => {
@@ -41,10 +40,7 @@ const TrendingDunes = () => {
         }).get();
 
         const fetchedDunes = await Promise.all(dunePromises);
-
-        // Sort dunes by timestamp immediately after fetching
-        const sortedDunes = fetchedDunes.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        setDunes(sortedDunes);
+        setDunes(fetchedDunes);
       } catch (error) {
         console.error("Error fetching trending dunes:", error);
         setError("Failed to fetch trending dunes. Please try again later.");
@@ -56,14 +52,12 @@ const TrendingDunes = () => {
 
   // This effect will handle sorting whenever the sortOrder changes
   useEffect(() => {
-    const sortedDunes = [...dunes].sort((a, b) => {
-      if (sortOrder === "mostRecent") {
-        return new Date(b.timestamp) - new Date(a.timestamp);
-      }
-      return new Date(a.timestamp) - new Date(b.timestamp);
-    });
+    let sortedDunes = [...dunes];
+    if (sortOrder === "mostRecent") {
+      sortedDunes.reverse(); // Simply reverse the order to show the last dune first
+    }
     setDunes(sortedDunes);
-  }, [sortOrder]);
+  }, [sortOrder, dunes]);
 
   const handleSearchChange = (e) => {
     const formattedSearchTerm = e.target.value.toUpperCase().replace(/ /g, '•');
