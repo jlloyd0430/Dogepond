@@ -1,6 +1,7 @@
+
 import React, { useState } from "react";
 import axios from "axios";
-import "./Trending.css"; // Add appropriate styles
+import "./Trending.css"; // Use the same stylesheet for consistent styling
 
 const MyDunes = () => {
   const [walletAddress, setWalletAddress] = useState("");
@@ -27,22 +28,23 @@ const MyDunes = () => {
   };
 
   return (
-    <div className="my-dunes-container">
-      <h1>My Dunes</h1>
-      <div className="my-dunes-balance-container">
+    <div className="trending-container"> {/* Reusing the same container style */}
+      <h1 className="trending-ttitle">My Dunes</h1>
+      <div className="trending-balance-container"> {/* Reusing balance container style */}
         <input
           type="text"
           placeholder="Enter wallet address..."
           value={walletAddress}
           onChange={handleWalletAddressChange}
+          className="trending-search-input" {/* Reusing input style */}
         />
         <button onClick={handleFetchBalance}>Check Balance</button>
       </div>
-      {balanceError && <p className="my-dunes-error">{balanceError}</p>}
+      {balanceError && <p className="trending-error">{balanceError}</p>} {/* Reusing error style */}
       {walletDunes.length > 0 && (
-        <div className="my-dunes-list">
+        <div className="trending-dune-list"> {/* Reusing list style */}
           {walletDunes.map((dune, index) => (
-            <div key={index} className="my-dune-card">
+            <div key={index} className="trending-dune-card"> {/* Reusing card style */}
               <p>{dune.dune} ({dune.symbol}): {dune.total_balance / (10 ** dune.divisibility)} {dune.symbol}</p>
             </div>
           ))}
@@ -53,4 +55,3 @@ const MyDunes = () => {
 };
 
 export default MyDunes;
-
