@@ -3,6 +3,8 @@ import './Trending.css';
 import axios from 'axios';
 
 const DuneForm = ({ onSubmit }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
   const [formData, setFormData] = useState({
     operationType: 'deploy',
     duneName: '',
@@ -78,6 +80,33 @@ const DuneForm = ({ onSubmit }) => {
       if (intervalId) clearInterval(intervalId);
     };
   }, [intervalId]);
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    // Simple password check; replace 'yourpassword' with the actual password you want
+    if (password === 'yourpassword') {
+      setIsAuthenticated(true);
+    } else {
+      alert('Incorrect password');
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <form onSubmit={handlePasswordSubmit}>
+        <label>
+          Enter Password:
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    );
+  }
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
