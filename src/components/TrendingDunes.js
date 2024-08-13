@@ -3,10 +3,9 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import "./Trending.css"; // Add appropriate styles
 import DuneForm from "./Duneform"; // Import the form component
-import MyDunes from "./MyDunes"; // Import the MyDunes component
-import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the Dune API functions
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'; // Make sure to install reactstrap if not already
 
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
@@ -16,10 +15,12 @@ const TrendingDunes = () => {
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState("");
   const [view, setView] = useState("dunes");
-
   const [walletAddress, setWalletAddress] = useState("");
   const [walletDunes, setWalletDunes] = useState([]);
   const [balanceError, setBalanceError] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
     const fetchTrendingDunes = async () => {
@@ -69,6 +70,9 @@ const TrendingDunes = () => {
       setDunes([...dunes].reverse());
     } else if (order === "oldest") {
       setDunes([...dunes].reverse());
+    } else if (order === "minting") {
+      const mintingDunes = dunes.filter(dune => dune.mintable);
+      setDunes(mintingDunes);
     }
   };
 
@@ -125,6 +129,7 @@ const TrendingDunes = () => {
       <div className="trending-header-container">
         <h1 className="trending-ttitle" onClick={() => setView("dunes")}>All Dunes</h1>
         <h1 className="trending-ttitle" onClick={() => setView("etcher")}>Etch Dunes</h1>
+        <h1 className="trending-ttitle" onClick={() => setView("myDunes")}>My Dunes</h1>
       </div>
 
       {view === "dunes" && (
@@ -132,7 +137,6 @@ const TrendingDunes = () => {
           {error && <p className="trending-error">{error}</p>}
           <div className="trending-controls-container">
             <div className="trending-search-filter">
-              <FontAwesomeIcon icon={faFilter} onClick={() => handleSortOrderChange(sortOrder === "mostRecent" ? "oldest" : "mostRecent")} />
               <input
                 type="text"
                 placeholder="Search by project name..."
@@ -140,6 +144,16 @@ const TrendingDunes = () => {
                 onChange={handleSearchChange}
                 className="trending-search-input"
               />
+              <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+                <DropdownToggle caret>
+                  <FontAwesomeIcon icon={faFilter} />
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
+                  <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
+                  <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </div>
             <div className="wallet-checker">
               <input
