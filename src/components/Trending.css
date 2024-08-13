@@ -4,6 +4,7 @@
   max-width: 1000px;
   width: 80%;
 }
+
 .trending-header-container {
   display: flex;
   flex-direction: row;
@@ -11,24 +12,43 @@
   align-items: center;
   margin-bottom: 20px;
 }
-.trending-sort-search-container {
+
+.trending-controls-container {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
   gap: 10px;
-  flex-wrap: wrap;
-  border-radius: 10px;
-  border: solid 2px gold;
-  
+  flex-wrap: nowrap;
 }
-.trending-search-container input {
+
+.trending-search-input {
   padding: 10px;
   font-size: 16px;
-  margin:20px;
   border: solid 2px gold;
   border-radius: 10px;
   box-sizing: border-box;
+  flex-grow: 1;
 }
+
+.trending-filter-dropdown .dropdown-menu {
+  right: 0; /* Align to the right of the dropdown */
+  left: auto; /* Ensure left is unset */
+  position: absolute;
+  top: 100%; /* Make it appear right under the filter icon */
+  z-index: 1000;
+}
+
+.trending-dune-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Ensure the rest of your CSS styles remain consistent */
+
 
 .under-maintenance-message {
   color: black;
