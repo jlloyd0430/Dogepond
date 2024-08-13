@@ -20,9 +20,9 @@ const TrendingDunes = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // State variables for Dune Snapshot
-  const [duneId, setDuneId] = useState(""); // Add this
-  const [duneSnapshotData, setDuneSnapshotData] = useState([]); // Add this
-  const [duneLoading, setDuneLoading] = useState(false); // Add this
+  const [duneId, setDuneId] = useState(""); // Dune ID to fetch snapshot
+  const [duneSnapshotData, setDuneSnapshotData] = useState([]); // Snapshot data
+  const [duneLoading, setDuneLoading] = useState(false); // Loading state for snapshot
 
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
@@ -109,39 +109,38 @@ const TrendingDunes = () => {
     }
   };
 
-const fetchDuneSnapshot = async () => {
+  const fetchDuneSnapshot = async () => {
     try {
-        setDuneLoading(true);
-        const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/utxos`, {
-            headers: {
-                "Accept": "application/json",
-                "api-key": process.env.REACT_APP_API_KEY,
-            },
-        });
+      setDuneLoading(true);
+      const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/utxos`, {
+        headers: {
+          "Accept": "application/json",
+          "api-key": process.env.REACT_APP_API_KEY,
+        },
+      });
 
-        // Aggregating the dune amounts by address
-        const aggregatedData = response.data.data.reduce((acc, utxo) => {
-            const { address, dune_amount } = utxo;
-            if (!acc[address]) {
-                acc[address] = {
-                    address,
-                    totalAmount: 0,
-                };
-            }
-            acc[address].totalAmount += parseFloat(dune_amount);
-            return acc;
-        }, {});
+      // Aggregating the dune amounts by address
+      const aggregatedData = response.data.data.reduce((acc, utxo) => {
+        const { address, dune_amount } = utxo;
+        if (!acc[address]) {
+          acc[address] = {
+            address,
+            totalAmount: 0,
+          };
+        }
+        acc[address].totalAmount += parseFloat(dune_amount);
+        return acc;
+      }, {});
 
-        // Convert the aggregated data object back to an array for easy display
-        const aggregatedArray = Object.values(aggregatedData);
-        setDuneSnapshotData(aggregatedArray);
-        setDuneLoading(false);
+      // Convert the aggregated data object back to an array for easy display
+      const aggregatedArray = Object.values(aggregatedData);
+      setDuneSnapshotData(aggregatedArray);
+      setDuneLoading(false);
     } catch (error) {
-        console.error("Failed to fetch Dune snapshot data:", error.response ? error.response.data : error.message);
-        setDuneLoading(false);
+      console.error("Failed to fetch Dune snapshot data:", error.response ? error.response.data : error.message);
+      setDuneLoading(false);
     }
-};
-
+  };
 
   const exportDuneToTXT = () => {
     const txt = duneSnapshotData.map(({ address, totalAmount }) => `${address}: ${totalAmount.toFixed(8)}`).join('\n');
@@ -227,6 +226,32 @@ const fetchDuneSnapshot = async () => {
       {view === "myDunes" && (
         <MyDunes /> // Render the My Dunes component here
       )}
+
+      {/* Dune Snapshot Section */}
+      <div className="snapshot-section">
+        <h3>Dune Snapshot</h3>
+        <input
+          type="text"
+          placeholder="Enter Dune ID"
+          value={duneId}
+          onChange={(e) => setDuneId(e.target.value)}
+        />
+        <button onClick={fetchDuneSnapshot} disabled={duneLoading}>
+          {duneLoading ? "Loading..." : "Fetch Snapshot"}
+        </button>
+        {duneSnapshotData.length > 0 && (
+          <div className="snapshot-results">
+            <button onClick={exportDuneToTXT}>Export to TXT</button>
+            <button onClick={exportDuneToJSON}>Export to JSON</button>
+            <h4>Snapshot Results (Total Addresses: {duneSnapshotData.length})</h4>
+            <ul>
+              {duneSnapshotData.map(({ address, totalAmount }) => (
+                <li key={address}>{address}: {totalAmount.toFixed(8)}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
