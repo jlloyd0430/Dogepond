@@ -118,7 +118,7 @@ const TrendingDunes = () => {
           <div className="trending-controls-container" style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             <input
               type="text"
-              placeholder="Search by project name..."
+              placeholder="Search by dune name..."
               value={searchTerm}
               onChange={handleSearchChange}
               className="trending-search-input"
