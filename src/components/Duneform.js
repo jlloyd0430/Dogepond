@@ -15,15 +15,10 @@ const DuneForm = ({ onSubmit }) => {
     mintAmount: '',
     numberOfMints: '',
     mintToAddress: '',
-    paymentAddress: '',
   });
 
   const [orderResult, setOrderResult] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
-  const [duneId, setDuneId] = useState(null);
-  const [txId, setTxId] = useState(null);
-
-  let intervalId = null;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,8 +28,8 @@ const DuneForm = ({ onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const timestamp = Date.now();
-    const orderData = { 
-      ...formData, 
+    const orderData = {
+      ...formData,
       timestamp,
       limitPerMint: parseInt(formData.limitPerMint, 10),
       maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
@@ -45,46 +40,18 @@ const DuneForm = ({ onSubmit }) => {
     try {
       const result = await onSubmit(orderData);
 
-      // Log the result for debugging
       console.log("Order submission result:", result);
 
-      if (!result || typeof result.index === 'undefined') {
-        throw new Error('Order index is missing in the backend response.');
+      if (!result || typeof result.dogeAmount === 'undefined' || typeof result.paymentAddress === 'undefined') {
+        throw new Error('Missing dogeAmount or paymentAddress in the backend response.');
       }
 
       setOrderResult(result);
       setOrderStatus('pending');
-
-      pollOrderStatus(result.index);
     } catch (error) {
       console.error('Error submitting order:', error);
     }
   };
-
-  const pollOrderStatus = (orderIndex) => {
-    intervalId = setInterval(async () => {
-      try {
-        const response = await axios.get(`/order/status/${orderIndex}`);
-        const status = response.data.status;
-        setOrderStatus(status);
-        if (status !== 'pending') {
-          clearInterval(intervalId);
-
-          const additionalInfoResponse = await axios.get(`/order/status/${orderIndex}`);
-          setDuneId(additionalInfoResponse.data.duneId);
-          setTxId(additionalInfoResponse.data.txId);
-        }
-      } catch (error) {
-        console.error('Error fetching order status:', error);
-      }
-    }, 10000);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [intervalId]);
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
@@ -260,8 +227,6 @@ const DuneForm = ({ onSubmit }) => {
             </p>
           )}
           {orderResult.dogeAmount && <p><strong>Doge Amount:</strong> {orderResult.dogeAmount}</p>}
-          {duneId && <p><strong>Dune ID:</strong> {duneId}</p>}
-          {txId && <p><strong>Transaction ID:</strong> {txId}</p>}
         </div>
       )}
     </form>
