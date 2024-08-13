@@ -162,7 +162,6 @@
 
 .dune-form {
   color: black; /* Ensures the text color is always dark */
-  background-color: white; /* Optional: Sets a white background for better contrast */
 }
 
 .dune-form label {
