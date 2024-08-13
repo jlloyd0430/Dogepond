@@ -25,54 +25,41 @@ const DuneForm = ({ onSubmit }) => {
 
   let intervalId = null;
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const timestamp = Date.now();
-  const orderData = { 
-    ...formData, 
-    timestamp,
-    limitPerMint: parseInt(formData.limitPerMint, 10),
-    maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
-    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  try {
-    const result = await onSubmit(orderData);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const timestamp = Date.now();
+    const orderData = { 
+      ...formData, 
+      timestamp,
+      limitPerMint: parseInt(formData.limitPerMint, 10),
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
+      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
+    };
 
-    // Log the result for debugging
-    console.log("Order submission result:", result);
+    try {
+      const result = await onSubmit(orderData);
 
-    if (!result || typeof result.index === 'undefined') {
-      throw new Error('Order index is missing in the backend response.');
+      // Log the result for debugging
+      console.log("Order submission result:", result);
+
+      if (!result || typeof result.index === 'undefined') {
+        throw new Error('Order index is missing in the backend response.');
+      }
+
+      setOrderResult(result);
+      setOrderStatus('pending');
+
+      pollOrderStatus(result.index);
+    } catch (error) {
+      console.error('Error submitting order:', error);
     }
-
-    setOrderResult(result);
-    setOrderStatus('pending');
-
-    pollOrderStatus(result.index);
-  } catch (error) {
-    console.error('Error submitting order:', error);
-  }
-};
-
-
-  try {
-    const result = await onSubmit(orderData);
-
-    if (!result || typeof result.index === 'undefined') {
-      throw new Error('Order index is missing in the backend response.');
-    }
-
-    setOrderResult(result);
-    setOrderStatus('pending');
-
-    pollOrderStatus(result.index);
-  } catch (error) {
-    console.error('Error submitting order:', error);
-  }
-};
-
+  };
 
   const pollOrderStatus = (orderIndex) => {
     intervalId = setInterval(async () => {
@@ -82,7 +69,7 @@ const handleSubmit = async (e) => {
         setOrderStatus(status);
         if (status !== 'pending') {
           clearInterval(intervalId);
-          
+
           const additionalInfoResponse = await axios.get(`/order/status/${orderIndex}`);
           setDuneId(additionalInfoResponse.data.duneId);
           setTxId(additionalInfoResponse.data.txId);
@@ -101,7 +88,6 @@ const handleSubmit = async (e) => {
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
-    // Simple password check; replace 'yourpassword' with the actual password you want
     if (password === 'doginals are dead') {
       setIsAuthenticated(true);
     } else {
