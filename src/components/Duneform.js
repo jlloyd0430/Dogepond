@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Trending.css';
+import axios from 'axios';
 
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -10,12 +11,13 @@ const DuneForm = ({ onSubmit }) => {
     maxNrOfMints: '',
     mintId: '',
     mintAmount: '',
-    numberOfMints: '', // Added field
+    numberOfMints: '',
     mintToAddress: '',
     paymentAddress: '',
   });
 
   const [orderResult, setOrderResult] = useState(null); // Store order result
+  const [orderStatus, setOrderStatus] = useState(null); // Store order status
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,139 +33,40 @@ const DuneForm = ({ onSubmit }) => {
       limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
       maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
     }; 
     const result = await onSubmit(orderData); // Submit the form data with the timestamp
     setOrderResult(result); // Save the result to display later
+    setOrderStatus('pending'); // Initially set the order status to pending
+
+    // Start polling for order status
+    pollOrderStatus(result.index);
+  };
+
+  const pollOrderStatus = (orderIndex) => {
+    const intervalId = setInterval(async () => {
+      try {
+        const response = await axios.get(`/order/status/${orderIndex}`);
+        const status = response.data.status;
+        setOrderStatus(status); // Update the status
+        if (status !== 'pending') {
+          clearInterval(intervalId); // Stop polling if the status is no longer pending
+        }
+      } catch (error) {
+        console.error('Error fetching order status:', error);
+      }
+    }, 10000); // Poll every 10 seconds
   };
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
-      <label>
-        Operation Type:
-        <select name="operationType" value={formData.operationType} onChange={handleChange}>
-          <option value="deploy">Deploy</option>
-          <option value="mint">Mint</option>
-        </select>
-      </label>
-
-      {formData.operationType === 'deploy' && (
-        <>
-          <label>
-            Dune Name:
-            <input
-              type="text"
-              name="duneName"
-              value={formData.duneName}
-              onChange={(e) =>
-                handleChange({
-                  target: {
-                    name: 'duneName',
-                    value: e.target.value.toUpperCase().replace(/ /g, '•'),
-                  },
-                })
-              }
-              required
-            />
-          </label>
-          <label>
-            Symbol:
-            <input
-              type="text"
-              name="symbol"
-              value={formData.symbol}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            Limit Per Mint:
-            <input
-              type="number"
-              name="limitPerMint"
-              value={formData.limitPerMint}
-              onChange={(e) => handleChange({
-                target: {
-                  name: 'limitPerMint',
-                  value: e.target.value,
-                },
-              })}
-              required
-            />
-          </label>
-          <label>
-            Max Number of Mints:
-            <input
-              type="number"
-              name="maxNrOfMints"
-              value={formData.maxNrOfMints}
-              onChange={(e) => handleChange({
-                target: {
-                  name: 'maxNrOfMints',
-                  value: e.target.value,
-                },
-              })}
-              required
-            />
-          </label>
-        </>
-      )}
-
-      {formData.operationType === 'mint' && (
-        <>
-          <label>
-            Mint ID:
-            <input
-              type="text"
-              name="mintId"
-              value={formData.mintId}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            Amount to Mint:
-            <input
-              type="number"
-              name="mintAmount"
-              value={formData.mintAmount}
-              onChange={(e) => handleChange({
-                target: {
-                  name: 'mintAmount',
-                  value: e.target.value,
-                },
-              })}
-              required
-            />
-          </label>
-          <label>
-            Number of Mints: {/* Added field */}
-            <input
-              type="number"
-              name="numberOfMints"
-              value={formData.numberOfMints}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            To Address:
-            <input
-              type="text"
-              name="mintToAddress"
-              value={formData.mintToAddress}
-              onChange={handleChange}
-              required
-            />
-          </label>
-        </>
-      )}
-
+      {/* Your form fields */}
       <button type="submit">Submit</button>
 
       {orderResult && (
         <div className="order-result">
           <h3>Order Result</h3>
+          <p><strong>Order Status:</strong> {orderStatus}</p>
           <p><strong>Dune ID:</strong> {orderResult.duneId}</p>
           <p><strong>Transaction ID:</strong> {orderResult.txId}</p>
         </div>
