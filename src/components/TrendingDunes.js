@@ -18,7 +18,7 @@ const TrendingDunes = () => {
   const [view, setView] = useState("dunes");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   useEffect(() => {
     const fetchTrendingDunes = async () => {
@@ -111,17 +111,18 @@ const TrendingDunes = () => {
       {view === "dunes" && (
         <>
           {error && <p className="trending-error">{error}</p>}
-          <div className="trending-controls-container" style={{ display: "flex", alignItems: "center" }}>
+          <div className="trending-controls-container" style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             <input
               type="text"
               placeholder="Search by project name..."
               value={searchTerm}
               onChange={handleSearchChange}
               className="trending-search-input"
+              style={{ flex: 1 }} // Allow the search input to take up available space
             />
             <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="trending-filter-dropdown">
-              <DropdownToggle tag="span" data-toggle="dropdown" aria-expanded={dropdownOpen}>
-                <FontAwesomeIcon icon={faFilter} />
+              <DropdownToggle tag="span" data-toggle="dropdown" aria-expanded={dropdownOpen} style={{ cursor: 'pointer' }}>
+                <FontAwesomeIcon icon={faFilter} style={{ color: 'goldenrod', marginLeft: '10px' }} />
               </DropdownToggle>
               <DropdownMenu>
                 <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
