@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Trending.css';
 import axios from 'axios';
 
@@ -15,10 +15,10 @@ const DuneForm = ({ onSubmit }) => {
     mintAmount: '',
     numberOfMints: '',
     mintToAddress: '',
+    paymentAddress: '',
   });
 
   const [orderResult, setOrderResult] = useState(null);
-  const [orderStatus, setOrderStatus] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,8 +28,8 @@ const DuneForm = ({ onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const timestamp = Date.now();
-    const orderData = {
-      ...formData,
+    const orderData = { 
+      ...formData, 
       timestamp,
       limitPerMint: parseInt(formData.limitPerMint, 10),
       maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
@@ -40,14 +40,10 @@ const DuneForm = ({ onSubmit }) => {
     try {
       const result = await onSubmit(orderData);
 
+      // Log the result for debugging
       console.log("Order submission result:", result);
 
-      if (!result || typeof result.dogeAmount === 'undefined' || typeof result.paymentAddress === 'undefined') {
-        throw new Error('Missing dogeAmount or paymentAddress in the backend response.');
-      }
-
       setOrderResult(result);
-      setOrderStatus('pending');
     } catch (error) {
       console.error('Error submitting order:', error);
     }
@@ -206,7 +202,6 @@ const DuneForm = ({ onSubmit }) => {
       {orderResult && (
         <div className="order-result">
           <h3>Order Result</h3>
-          <p><strong>Order Status:</strong> {orderStatus}</p>
           {orderResult.paymentAddress && (
             <p>
               <strong>Payment Address:</strong>
