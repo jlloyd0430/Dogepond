@@ -104,6 +104,57 @@ const TrendingDunes = () => {
     }
   };
 
+  const fetchDuneSnapshot = async () => {
+    try {
+      setDuneLoading(true);
+      const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/utxos`, {
+        headers: {
+          "Accept": "application/json",
+          "api-key": process.env.REACT_APP_API_KEY,
+        },
+      });
+
+      // Aggregating the dune amounts by address
+      const aggregatedData = response.data.data.reduce((acc, utxo) => {
+        const { address, dune_amount } = utxo;
+        if (!acc[address]) {
+          acc[address] = {
+            address,
+            totalAmount: 0,
+          };
+        }
+        acc[address].totalAmount += parseFloat(dune_amount);
+        return acc;
+      }, {});
+
+      // Convert the aggregated data object back to an array for easy display
+      const aggregatedArray = Object.values(aggregatedData);
+      setDuneSnapshotData(aggregatedArray);
+      setDuneLoading(false);
+    } catch (error) {
+      console.error("Failed to fetch Dune snapshot data:", error.response ? error.response.data : error.message);
+      setDuneLoading(false);
+    }
+  };
+
+  const exportDuneToTXT = () => {
+    const txt = duneSnapshotData.map(({ address, totalAmount }) => `${address}: ${totalAmount.toFixed(8)}`).join('\n');
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${duneId}_dune_snapshot.txt`;
+    link.click();
+  };
+
+  const exportDuneToJSON = () => {
+    const json = JSON.stringify(duneSnapshotData, null, 2);
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${duneId}_dune_snapshot.json`;
+    link.click();
+  };
+
   return (
     <div className="trending-container">
       <div className="trending-header-container">
