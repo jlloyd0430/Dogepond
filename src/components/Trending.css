@@ -243,6 +243,23 @@
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
 }
+.trending-sort-search-container {
+  display: flex;
+  align-items: center; /* Vertically centers the items */
+  justify-content: space-between;
+}
+
+.trending-search-input {
+  flex: 1; /* Grows to fill the available space */
+  margin-right: 10px; /* Provides space between input and filter */
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: 1000;
+}
+
+
 .positive-change {
   color: green;
 }
