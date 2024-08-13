@@ -18,7 +18,6 @@ const TrendingDunes = () => {
   const [view, setView] = useState("dunes");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // State variables for Dune Snapshot
   const [duneId, setDuneId] = useState("");
   const [duneSnapshotData, setDuneSnapshotData] = useState([]);
   const [duneLoading, setDuneLoading] = useState(false);
@@ -103,7 +102,7 @@ const TrendingDunes = () => {
       });
 
       const addresses = utxoResponse.data.data.map(utxo => utxo.address);
-      const uniqueAddresses = [...new Set(addresses)]; // Get unique addresses
+      const uniqueAddresses = [...new Set(addresses)];
 
       const duneAmounts = await Promise.all(uniqueAddresses.map(async (address) => {
         const addressResponse = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/addresses/${address}/dunes`, {
@@ -113,7 +112,7 @@ const TrendingDunes = () => {
           },
         });
 
-        const duneAmount = addressResponse.data.data[duneId] || 0; // Get the dune amount for this address
+        const duneAmount = addressResponse.data.data[duneId] || 0;
         return { address, totalAmount: parseFloat(duneAmount) };
       }));
 
@@ -161,7 +160,7 @@ const TrendingDunes = () => {
               value={searchTerm}
               onChange={handleSearchChange}
               className="trending-search-input"
-              style={{ flex: 1 }} // Allow the search input to take up available space
+              style={{ flex: 1 }}
             />
             <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="trending-filter-dropdown">
               <DropdownToggle tag="span" data-toggle="dropdown" aria-expanded={dropdownOpen} style={{ cursor: 'pointer', marginLeft: '10px' }}>
@@ -207,10 +206,10 @@ const TrendingDunes = () => {
       )}
 
       {view === "myDunes" && (
-        <MyDunes /> // Render the My Dunes component here
+        <MyDunes />
       )}
 
-      {/* Dune Snapshot Section */}
+      {/* This is the section where the snapshot tool will be placed */}
       <div className="snapshot-section">
         <h3>Dune Snapshot</h3>
         <input
