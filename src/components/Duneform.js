@@ -45,6 +45,7 @@ const DuneForm = ({ onSubmit }) => {
           <option value="mint">Mint</option>
         </select>
       </label>
+
       {formData.operationType === 'deploy' && (
         <>
           <label>
