@@ -21,24 +21,19 @@ const TrendingDunes = () => {
         const response = await axios.get("https://ord.dunesprotocol.com/dunes");
         const htmlData = response.data;
         const $ = cheerio.load(htmlData);
+        const duneList = [];
 
-        const dunePromises = $("ul > li > a").map(async (index, element) => {
+        $("ul > li > a").each((index, element) => {
           const duneName = $(element).text();
           const duneLink = $(element).attr("href");
           const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
-          const duneResponse = await axios.get(duneUrl);
-          const dunePage = cheerio.load(duneResponse.data);
-          const duneID = dunePage('dt:contains("id") + dd').text().trim();
-          const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
 
-          return { name: duneName, link: duneUrl, duneID, mintable };
-        }).get();
+          duneList.push({ name: duneName, link: duneUrl });
+        });
 
-        const fetchedDunes = await Promise.all(dunePromises);
-
-        // Reverse the order to show the last dune first
-        const sortedDunes = fetchedDunes.reverse();
-        setDunes(sortedDunes);
+        // Reverse the order of dunes to show the last dune first
+        const reversedDunes = duneList.reverse();
+        setDunes(reversedDunes);
       } catch (error) {
         console.error("Error fetching trending dunes:", error);
         setError("Failed to fetch trending dunes. Please try again later.");
@@ -48,24 +43,9 @@ const TrendingDunes = () => {
     fetchTrendingDunes();
   }, []);
 
-  // Handle sorting based on the selected option
-  useEffect(() => {
-    const sortedDunes = [...dunes];
-    if (sortOrder === "mostRecent") {
-      sortedDunes.reverse(); // Most recent first
-    } else if (sortOrder === "oldest") {
-      sortedDunes.reverse(); // Oldest first
-    }
-    setDunes(sortedDunes);
-  }, [sortOrder, dunes]);
-
   const handleSearchChange = (e) => {
     const formattedSearchTerm = e.target.value.toUpperCase().replace(/ /g, '•');
     setSearchTerm(formattedSearchTerm);
-  };
-
-  const handleSortOrderChange = (e) => {
-    setSortOrder(e.target.value);
   };
 
   const filteredDunes = dunes.filter(dune =>
@@ -105,13 +85,6 @@ const TrendingDunes = () => {
       {view === "dunes" && (
         <>
           {error && <p className="trending-error">{error}</p>}
-          <div className="trending-sort-container">
-            <label htmlFor="sortOrder">Sort by:</label>
-            <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
-              <option value="mostRecent">Most Recent</option>
-              <option value="oldest">Oldest</option>
-            </select>
-          </div>
           <div className="trending-search-container">
             <input
               type="text"
@@ -129,8 +102,7 @@ const TrendingDunes = () => {
                     <h2>{dune.name}</h2>
                   </a>
                   <div className="wonkyi" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
-                    <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
+                    <button onClick={() => navigator.clipboard.writeText(dune.name)}>Copy Name</button>
                   </div>
                 </div>
               </div>
