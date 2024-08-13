@@ -23,17 +23,26 @@ const TrendingDunes = () => {
         const $ = cheerio.load(htmlData);
         const duneList = [];
 
-        $("ul > li > a").each((index, element) => {
+        const fetchDuneDetails = async (duneName, duneLink) => {
+          const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
+          const duneResponse = await axios.get(duneUrl);
+          const dunePage = cheerio.load(duneResponse.data);
+          const duneID = dunePage('dt:contains("id") + dd').text().trim();
+          const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
+
+          return { name: duneName, link: duneUrl, duneID, mintable };
+        };
+
+        const dunePromises = $("ul > li > a").map(async (index, element) => {
           const duneName = $(element).text();
           const duneLink = $(element).attr("href");
-          const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
+          return fetchDuneDetails(duneName, duneLink);
+        }).get();
 
-          duneList.push({ name: duneName, link: duneUrl });
-        });
+        const fetchedDunes = await Promise.all(dunePromises);
 
-        // Reverse the order of dunes to show the last dune first
-        const reversedDunes = duneList.reverse();
-        setDunes(reversedDunes);
+        // By default, display the dunes in reverse order to show the most recent first
+        setDunes(fetchedDunes.reverse());
       } catch (error) {
         console.error("Error fetching trending dunes:", error);
         setError("Failed to fetch trending dunes. Please try again later.");
@@ -48,9 +57,21 @@ const TrendingDunes = () => {
     setSearchTerm(formattedSearchTerm);
   };
 
+  const handleSortOrderChange = (e) => {
+    setSortOrder(e.target.value);
+  };
+
   const filteredDunes = dunes.filter(dune =>
     dune.name.includes(searchTerm)
   );
+
+  useEffect(() => {
+    if (sortOrder === "mostRecent") {
+      setDunes([...dunes].reverse());
+    } else {
+      setDunes([...dunes].reverse());
+    }
+  }, [sortOrder]);
 
   const handleSubmit = async (formData) => {
     try {
@@ -85,6 +106,13 @@ const TrendingDunes = () => {
       {view === "dunes" && (
         <>
           {error && <p className="trending-error">{error}</p>}
+          <div className="trending-sort-container">
+            <label htmlFor="sortOrder">Sort by:</label>
+            <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
+              <option value="mostRecent">Most Recent</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </div>
           <div className="trending-search-container">
             <input
               type="text"
@@ -102,7 +130,8 @@ const TrendingDunes = () => {
                     <h2>{dune.name}</h2>
                   </a>
                   <div className="wonkyi" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <button onClick={() => navigator.clipboard.writeText(dune.name)}>Copy Name</button>
+                    {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
+                    <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
                   </div>
                 </div>
               </div>
