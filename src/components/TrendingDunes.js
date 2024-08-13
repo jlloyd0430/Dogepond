@@ -122,11 +122,13 @@ const TrendingDunes = () => {
       // Aggregating the dune amounts by address
       const aggregatedData = response.data.data.reduce((acc, utxo) => {
         const { address, dune_amount } = utxo;
-        if (!acc[address]) {
-          acc[address] = parseFloat(dune_amount);
-        } else {
+
+        if (acc[address]) {
           acc[address] += parseFloat(dune_amount);
+        } else {
+          acc[address] = parseFloat(dune_amount);
         }
+
         return acc;
       }, {});
 
