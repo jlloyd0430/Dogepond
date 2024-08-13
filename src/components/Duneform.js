@@ -30,10 +30,8 @@ const DuneForm = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const timestamp = Date.now();
     const orderData = { 
       ...formData, 
-      timestamp,
       limitPerMint: parseInt(formData.limitPerMint, 10),
       maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
@@ -53,7 +51,6 @@ const DuneForm = ({ onSubmit }) => {
       pollOrderStatus(result.index);
     } catch (error) {
       console.error('Error submitting order:', error);
-      alert('Error submitting order: ' + error.message);
     }
   };
 
