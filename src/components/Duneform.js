@@ -15,40 +15,61 @@ const DuneForm = ({ onSubmit }) => {
     paymentAddress: '',
   });
 
+  const [orderResult, setOrderResult] = useState(null); // Added state for order result
+  const [orderStatus, setOrderStatus] = useState(null); // Added state for order status
+  const [intervalId, setIntervalId] = useState(null); // Added state for interval ID
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const timestamp = Date.now();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const timestamp = Date.now();
 
-  const orderData = {
-    ...formData,
-    timestamp,
-    limitPerMint: parseInt(formData.limitPerMint, 10),
-    maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
-    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
+    const orderData = {
+      ...formData,
+      timestamp,
+      limitPerMint: parseInt(formData.limitPerMint, 10),
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
+      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
+    };
+
+    try {
+      const result = await onSubmit(orderData);
+
+      if (!result || typeof result.id === 'undefined') {
+        throw new Error('Order ID is missing in the backend response.');
+      }
+
+      setOrderResult(result);
+      setOrderStatus('pending');
+
+      pollOrderStatus(result.id);
+    } catch (error) {
+      console.error('Error submitting order:', error);
+    }
   };
 
-  try {
-    const result = await onSubmit(orderData);
+  const pollOrderStatus = (orderId) => {
+    const id = setInterval(async () => {
+      try {
+        const response = await axios.get(`/order/status/${orderId}`);
+        const status = response.data.status;
+        setOrderStatus(status);
+        if (status !== 'pending') {
+          clearInterval(id);
+          setIntervalId(null); // Clear interval ID state
+        }
+      } catch (error) {
+        console.error('Error fetching order status:', error);
+      }
+    }, 10000);
 
-    if (!result || typeof result.id === 'undefined') {
-      throw new Error('Order ID is missing in the backend response.');
-    }
-
-    setOrderResult(result);
-    setOrderStatus('pending');
-
-    pollOrderStatus(result.id);
-  } catch (error) {
-    console.error('Error submitting order:', error);
-  }
-};
-
+    setIntervalId(id); // Store interval ID in state
+  };
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
@@ -158,6 +179,33 @@ const handleSubmit = async (e) => {
       )}
 
       <button type="submit">Submit</button>
+
+      {orderResult && (
+        <div className="order-result">
+          <h3>Order Result</h3>
+          <p><strong>Order Status:</strong> {orderStatus}</p>
+          {orderResult.paymentAddress && (
+            <p>
+              <strong>Payment Address:</strong>
+              <input
+                type="text"
+                value={orderResult.paymentAddress}
+                readOnly
+                onClick={(e) => e.target.select()}
+              />
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(orderResult.paymentAddress);
+                  alert("Payment Address copied!");
+                }}
+              >
+                Copy Address
+              </button>
+            </p>
+          )}
+          {orderResult.dogeAmount && <p><strong>Doge Amount:</strong> {orderResult.dogeAmount}</p>}
+        </div>
+      )}
     </form>
   );
 };
