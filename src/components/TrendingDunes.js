@@ -20,9 +20,9 @@ const TrendingDunes = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // State variables for Dune Snapshot
-  const [duneId, setDuneId] = useState(""); // Dune ID to fetch snapshot
-  const [duneSnapshotData, setDuneSnapshotData] = useState([]); // Snapshot data
-  const [duneLoading, setDuneLoading] = useState(false); // Loading state for snapshot
+  const [duneId, setDuneId] = useState("");
+  const [duneSnapshotData, setDuneSnapshotData] = useState([]);
+  const [duneLoading, setDuneLoading] = useState(false);
 
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
@@ -123,17 +123,19 @@ const TrendingDunes = () => {
       const aggregatedData = response.data.data.reduce((acc, utxo) => {
         const { address, dune_amount } = utxo;
         if (!acc[address]) {
-          acc[address] = {
-            address,
-            totalAmount: 0,
-          };
+          acc[address] = parseFloat(dune_amount);
+        } else {
+          acc[address] += parseFloat(dune_amount);
         }
-        acc[address].totalAmount += parseFloat(dune_amount);
         return acc;
       }, {});
 
       // Convert the aggregated data object back to an array for easy display
-      const aggregatedArray = Object.values(aggregatedData);
+      const aggregatedArray = Object.entries(aggregatedData).map(([address, totalAmount]) => ({
+        address,
+        totalAmount,
+      }));
+
       setDuneSnapshotData(aggregatedArray);
       setDuneLoading(false);
     } catch (error) {
