@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import axios from "axios";
 import "./Trending.css"; // Use the same stylesheet for consistent styling
@@ -36,7 +35,7 @@ const MyDunes = () => {
           placeholder="Enter wallet address..."
           value={walletAddress}
           onChange={handleWalletAddressChange}
-          className="trending-search-input" {/* Reusing input style */}
+          className="trending-search-input"  {/* Reusing input style */}
         />
         <button onClick={handleFetchBalance}>Check Balance</button>
       </div>
