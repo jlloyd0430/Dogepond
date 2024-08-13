@@ -28,34 +28,34 @@ const DuneForm = ({ onSubmit }) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const timestamp = Date.now();
-  const orderData = { 
-    ...formData, 
-    timestamp,
-    limitPerMint: parseInt(formData.limitPerMint, 10),
-    maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
-    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const timestamp = Date.now();
+    const orderData = { 
+      ...formData, 
+      timestamp,
+      limitPerMint: parseInt(formData.limitPerMint, 10),
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
+      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
+    };
 
-  try {
-    const result = await onSubmit(orderData);
+    try {
+      const result = await onSubmit(orderData);
 
-    if (!result || typeof result.index === 'undefined') {
-      throw new Error('Order index is missing in the backend response.');
+      if (!result || typeof result.index === 'undefined') {
+        throw new Error('Order index is missing in the backend response.');
+      }
+
+      setOrderResult(result);
+      setOrderStatus('pending');
+
+      pollOrderStatus(result.index);
+    } catch (error) {
+      console.error('Error submitting order:', error);
+      alert('Error submitting order: ' + error.message);
     }
-
-    setOrderResult(result);
-    setOrderStatus('pending');
-
-    pollOrderStatus(result.index);
-  } catch (error) {
-    console.error('Error submitting order:', error);
-  }
-};
-
+  };
 
   const pollOrderStatus = (orderIndex) => {
     intervalId = setInterval(async () => {
