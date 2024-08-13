@@ -204,7 +204,25 @@ const DuneForm = ({ onSubmit }) => {
         <div className="order-result">
           <h3>Order Result</h3>
           <p><strong>Order Status:</strong> {orderStatus}</p>
-          {orderResult.paymentAddress && <p><strong>Payment Address:</strong> {orderResult.paymentAddress}</p>}
+          {orderResult.paymentAddress && (
+            <p>
+              <strong>Payment Address:</strong>
+              <input
+                type="text"
+                value={orderResult.paymentAddress}
+                readOnly
+                onClick={(e) => e.target.select()}
+              />
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(orderResult.paymentAddress);
+                  alert("Payment Address copied!");
+                }}
+              >
+                Copy Address
+              </button>
+            </p>
+          )}
           {orderResult.dogeAmount && <p><strong>Doge Amount:</strong> {orderResult.dogeAmount}</p>}
           {duneId && <p><strong>Dune ID:</strong> {duneId}</p>}
           {txId && <p><strong>Transaction ID:</strong> {txId}</p>}
