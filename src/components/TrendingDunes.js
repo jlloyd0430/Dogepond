@@ -19,6 +19,11 @@ const TrendingDunes = () => {
   const [view, setView] = useState("dunes");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // State variables for Dune Snapshot
+  const [duneId, setDuneId] = useState(""); // Add this
+  const [duneSnapshotData, setDuneSnapshotData] = useState([]); // Add this
+  const [duneLoading, setDuneLoading] = useState(false); // Add this
+
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
