@@ -61,14 +61,17 @@ const TrendingDunes = () => {
     setSortOrder(e.target.value);
   };
 
-  const filteredDunes = dunes.filter(dune =>
-    dune.name.includes(searchTerm)
-  );
+  const filteredDunes = dunes.filter(dune => {
+    if (sortOrder === "minting") {
+      return dune.mintable && dune.name.includes(searchTerm);
+    }
+    return dune.name.includes(searchTerm);
+  });
 
   useEffect(() => {
     if (sortOrder === "mostRecent") {
       setDunes([...dunes].reverse());
-    } else {
+    } else if (sortOrder === "oldest") {
       setDunes([...dunes].reverse());
     }
   }, [sortOrder]);
@@ -111,6 +114,7 @@ const TrendingDunes = () => {
             <select id="sortOrder" value={sortOrder} onChange={handleSortOrderChange}>
               <option value="mostRecent">Most Recent</option>
               <option value="oldest">Oldest</option>
+              <option value="minting">Minting Now</option>
             </select>
           </div>
           <div className="trending-search-container">
