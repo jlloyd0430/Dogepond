@@ -35,17 +35,6 @@ const MyDunes = () => {
         />
         <button onClick={handleFetchBalance}>Check Balance</button>
       </div>
-
-    
-          
-            
-    
-
-          
-          Expand Down
-    
-    
-  
       {balanceError && <p className="trending-error">{balanceError}</p>} {/* Reusing error style */}
       {walletDunes.length > 0 && (
         <div className="trending-dune-list"> {/* Reusing list style */}
