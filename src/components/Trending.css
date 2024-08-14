@@ -32,13 +32,21 @@
   flex-grow: 1;
 }
 
+.trending-filter-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
 .trending-filter-dropdown .dropdown-menu {
-  right: 0; /* Align to the right of the dropdown */
-  left: auto; /* Ensure left is unset */
+  right: 0;
+  left: auto;
   position: absolute;
   top: 100%; /* Make it appear right under the filter icon */
   z-index: 1000;
+  min-width: 150px; /* Set a minimum width to ensure it's not too small */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 
 .trending-dune-list {
   display: flex;
@@ -49,10 +57,6 @@
 
 /* Additional styles that may be necessary for proper layout */
 
-.dropdown-menu {
-  position: absolute;
-  z-index: 1000;
-}
 
 /* Existing styles for other components */
 
