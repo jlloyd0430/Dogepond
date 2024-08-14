@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Trending.css';
-import axios from 'axios'; // Importing axios
+import { submitOrder, checkOrderStatus } from './duneApiClient';
 
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -15,10 +15,6 @@ const DuneForm = ({ onSubmit }) => {
     mintToAddress: '',
     paymentAddress: '',
   });
-
-  const [orderResult, setOrderResult] = useState(null);
-  const [orderStatus, setOrderStatus] = useState(null);
-  const [intervalId, setIntervalId] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,37 +35,20 @@ const DuneForm = ({ onSubmit }) => {
     };
 
     try {
-      const result = await onSubmit(orderData);
+      const result = await submitOrder(orderData);
 
       if (!result || typeof result.id === 'undefined') {
         throw new Error('Order ID is missing in the backend response.');
       }
 
+      // Now result.id should be your unique order ID (UUID)
       setOrderResult(result);
       setOrderStatus('pending');
 
-      pollOrderStatus(result.id);
+      pollOrderStatus(result.id);  // Poll using UUID
     } catch (error) {
       console.error('Error submitting order:', error);
     }
-  };
-
-  const pollOrderStatus = (orderId) => {
-    const id = setInterval(async () => {
-      try {
-        const response = await axios.get(`/order/status/${orderId}`);
-        const status = response.data.status;
-        setOrderStatus(status);
-        if (status !== 'pending') {
-          clearInterval(id);
-          setIntervalId(null);
-        }
-      } catch (error) {
-        console.error('Error fetching order status:', error);
-      }
-    }, 10000);
-
-    setIntervalId(id);
   };
 
   return (
@@ -180,33 +159,6 @@ const DuneForm = ({ onSubmit }) => {
       )}
 
       <button type="submit">Submit</button>
-
-      {orderResult && (
-        <div className="order-result">
-          <h3>Order Result</h3>
-          <p><strong>Order Status:</strong> {orderStatus}</p>
-          {orderResult.paymentAddress && (
-            <p>
-              <strong>Payment Address:</strong>
-              <input
-                type="text"
-                value={orderResult.paymentAddress}
-                readOnly
-                onClick={(e) => e.target.select()}
-              />
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(orderResult.paymentAddress);
-                  alert("Payment Address copied!");
-                }}
-              >
-                Copy Address
-              </button>
-            </p>
-          )}
-          {orderResult.dogeAmount && <p><strong>Doge Amount:</strong> {orderResult.dogeAmount}</p>}
-        </div>
-      )}
     </form>
   );
 };
