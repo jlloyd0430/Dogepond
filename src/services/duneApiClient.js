@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://form.dogepond.com',
+  baseURL: 'https://form.dogepond.com',  // Updated to use your domain
   headers: {
     'Content-Type': 'application/json'
   }
@@ -10,23 +10,12 @@ const apiClient = axios.create({
 export const submitOrder = async (orderData) => {
   try {
     const response = await apiClient.post('/order', orderData);
-
-    // Log the full response to see what's coming back from the server
-    console.log('Full response from API:', response.data);
-    
-    if (!response.data || typeof response.data.index === 'undefined') {
-      throw new Error('Order response does not contain expected data.');
-    }
-
-    return response.data; // Ensure this contains the index and other details
+    return response.data;
   } catch (error) {
     console.error('Error submitting order:', error);
     throw new Error('An error occurred while submitting the order');
   }
 };
-
-
-
 
 export const checkOrderStatus = async (index) => {
   try {
