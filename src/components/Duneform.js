@@ -34,17 +34,29 @@ const DuneForm = ({ onSubmit }) => {
       numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
     }; 
 
-    const orderResponse = await onSubmit(orderData);
-    pollOrderStatus(orderResponse.index);
+    try {
+      setOrderStatus('pending'); // Immediately set status to pending
+      const orderResponse = await onSubmit(orderData);
+      pollOrderStatus(orderResponse.index);
+    } catch (error) {
+      setOrderStatus('failed');
+      console.error('Error submitting order:', error);
+    }
   };
 
   const pollOrderStatus = async (orderIndex) => {
     const interval = setInterval(async () => {
-      const response = await fetch(`/order/status/${orderIndex}`);
-      const data = await response.json();
-      if (data.status === 'complete' || data.status === 'failed') {
+      try {
+        const response = await fetch(`/order/status/${orderIndex}`);
+        const data = await response.json();
+        if (data.status === 'complete' || data.status === 'failed') {
+          clearInterval(interval);
+          setOrderStatus(data.status);
+        }
+      } catch (error) {
+        console.error('Error fetching order status:', error);
+        setOrderStatus('failed');
         clearInterval(interval);
-        setOrderStatus(data.status);
       }
     }, 5000); // Poll every 5 seconds
   };
