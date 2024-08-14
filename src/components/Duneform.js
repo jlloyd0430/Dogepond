@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Trending.css';
-import { submitOrder, checkOrderStatus } from './duneApiClient';
+import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
 
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
