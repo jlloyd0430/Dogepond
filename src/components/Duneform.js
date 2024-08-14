@@ -37,6 +37,7 @@ const DuneForm = ({ onSubmit }) => {
     try {
       setOrderStatus('pending'); // Immediately set status to pending
       const orderResponse = await onSubmit(orderData);
+      console.log("Order Response:", orderResponse);
       
       if (!orderResponse || !orderResponse.index) {
         throw new Error("Order response is undefined or does not contain index.");
@@ -54,6 +55,8 @@ const DuneForm = ({ onSubmit }) => {
       try {
         const response = await fetch(`/order/status/${orderIndex}`);
         const data = await response.json();
+        console.log("Polling Order Status:", data);
+
         if (data.status === 'complete' || data.status === 'failed') {
           clearInterval(interval);
           setOrderStatus(data.status);
