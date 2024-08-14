@@ -38,12 +38,15 @@ const DuneForm = ({ onSubmit }) => {
       setOrderStatus('pending'); // Immediately set status to pending
       const orderResponse = await onSubmit(orderData);
 
+      console.log('Order Response:', orderResponse);
+
       if (orderResponse && orderResponse.index) {
         // Poll for the order status using the returned index
         pollOrderStatus(orderResponse.index);
       } else {
         console.error('Order response does not contain index.');
         setOrderStatus('failed');
+        // Optionally, retry or display a user-friendly message here
       }
     } catch (error) {
       setOrderStatus('failed');
