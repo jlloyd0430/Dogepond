@@ -35,7 +35,13 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "no-console": "off",
+      "no-unused-vars": "warn",
+      "no-async-promise-executor": "off",
+      "no-restricted-globals": "off"
+    }
   },
   "browserslist": {
     "production": [
