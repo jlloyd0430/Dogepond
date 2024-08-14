@@ -28,14 +28,16 @@ const TrendingDunes = () => {
         const htmlData = response.data;
         const $ = cheerio.load(htmlData);
 
-        const fetchDuneDetails = async (duneName, duneLink) => {
-          const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
-          const duneResponse = await axios.get(duneUrl);
-          const dunePage = cheerio.load(duneResponse.data);
-          const duneID = dunePage('dt:contains("id") + dd').text().trim();
-          const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
-          return { name: duneName, link: duneUrl, duneID, mintable };
-        };
+       const fetchDuneDetails = async (duneName, duneLink) => {
+  const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
+  const duneResponse = await axios.get(duneUrl);
+  const dunePage = cheerio.load(duneResponse.data);
+  const duneID = dunePage('dt:contains("id") + dd').text().trim();
+  const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
+  const mints = parseInt(dunePage('dt:contains("mints") + dd').text().trim(), 10); // Extract the number of mints
+  return { name: duneName, link: duneUrl, duneID, mintable, mints }; // Include mints in the returned object
+};
+
 
         const dunePromises = $("ul > li > a").map(async (index, element) => {
           const duneName = $(element).text();
@@ -60,18 +62,25 @@ const TrendingDunes = () => {
     setSearchTerm(formattedSearchTerm);
   };
 
-  const handleSortOrderChange = (order) => {
-    setSortOrder(order);
-    if (order === "mostRecent") {
-      setDunes([...dunes].reverse());
-    } else if (order === "oldest") {
-      setDunes([...dunes].reverse());
-    } else if (order === "minting") {
-      const mintingDunes = dunes.filter(dune => dune.mintable);
-      setDunes(mintingDunes);
-    }
-    setDropdownOpen(false); // Close the dropdown after selection
-  };
+ const handleSortOrderChange = (order) => {
+  setSortOrder(order);
+  
+  let sortedDunes = [...dunes];
+
+  if (order === "mostRecent") {
+    sortedDunes.reverse();
+  } else if (order === "oldest") {
+    sortedDunes.reverse();
+  } else if (order === "minting") {
+    sortedDunes = sortedDunes.filter(dune => dune.mintable);
+  } else if (order === "mostMinted") {
+    sortedDunes.sort((a, b) => b.mints - a.mints); // Sort by the number of mints
+  }
+
+  setDunes(sortedDunes);
+  setDropdownOpen(false); // Close the dropdown after selection
+};
+
 
   const filteredDunes = dunes.filter(dune => {
     if (sortOrder === "minting") {
@@ -121,18 +130,20 @@ const TrendingDunes = () => {
               className="trending-search-input"
               style={{ flex: 1 }} // Allow the search input to take up available space
             />
-            <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="trending-filter-dropdown">
-              <DropdownToggle tag="span" aria-expanded={dropdownOpen} style={{ cursor: 'pointer', marginLeft: '10px' }}>
-                <FontAwesomeIcon icon={faFilter} style={{ color: 'goldenrod' }} />
-              </DropdownToggle>
-              {dropdownOpen && (
-                <DropdownMenu right>
-                  <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
-                  <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
-                  <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
-                </DropdownMenu>
-              )}
-            </Dropdown>
+          <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="trending-filter-dropdown">
+  <DropdownToggle tag="span" aria-expanded={dropdownOpen} style={{ cursor: 'pointer', marginLeft: '10px' }}>
+    <FontAwesomeIcon icon={faFilter} style={{ color: 'goldenrod' }} />
+  </DropdownToggle>
+  {dropdownOpen && (
+    <DropdownMenu right>
+      <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
+      <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
+      <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
+      <DropdownItem onClick={() => handleSortOrderChange("mostMinted")}>Most Minted</DropdownItem> {/* New option */}
+    </DropdownMenu>
+  )}
+</Dropdown>
+
           </div>
           <div className="trending-dune-list">
             {filteredDunes.map((dune, index) => (
