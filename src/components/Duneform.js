@@ -10,7 +10,7 @@ const DuneForm = ({ onSubmit }) => {
     maxNrOfMints: '',
     mintId: '',
     mintAmount: '',
-    numberOfMints: '', // Added field
+    numberOfMints: '',
     mintToAddress: '',
     paymentAddress: '',
   });
@@ -22,39 +22,17 @@ const DuneForm = ({ onSubmit }) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const timestamp = Date.now(); // Get the current timestamp
-  const orderData = { 
-    ...formData, 
-    timestamp,
-    limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
-    maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
-    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
-  }; 
-
-  try {
-    setOrderStatus('pending'); // Immediately set status to pending
-    const orderResponse = await onSubmit(orderData);
-
-    console.log('Order Response:', orderResponse);
-
-    if (orderResponse && orderResponse.index) {
-      // Poll for the order status using the returned index
-      await pollOrderStatus(orderResponse.index); // Use await to make sure this is called asynchronously
-    } else {
-      console.error('Order response does not contain index.');
-      setOrderStatus('failed');
-      // Optionally, retry or display a user-friendly message here
-    }
-  } catch (error) {
-    setOrderStatus('failed');
-    console.error('Error submitting order:', error);
-  }
-};
-
-
+  const handleSubmit = async (e) => {  // Ensure this function is marked as async
+    e.preventDefault();
+    const timestamp = Date.now(); // Get the current timestamp
+    const orderData = { 
+      ...formData, 
+      timestamp,
+      limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
+      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
+    }; 
 
     try {
       setOrderStatus('pending'); // Immediately set status to pending
@@ -63,12 +41,10 @@ const handleSubmit = async (e) => {
       console.log('Order Response:', orderResponse);
 
       if (orderResponse && orderResponse.index) {
-        // Poll for the order status using the returned index
         pollOrderStatus(orderResponse.index);
       } else {
         console.error('Order response does not contain index.');
         setOrderStatus('failed');
-        // Optionally, retry or display a user-friendly message here
       }
     } catch (error) {
       setOrderStatus('failed');
@@ -76,27 +52,25 @@ const handleSubmit = async (e) => {
     }
   };
 
-const pollOrderStatus = async (orderIndex) => {
-  const interval = setInterval(async () => {
-    try {
-      console.log(`Polling status for order index: ${orderIndex}`);
-      const response = await fetch(`/order/status/${orderIndex}`);
-      const data = await response.json();
-      console.log(`Order status response: ${JSON.stringify(data)}`);
+  const pollOrderStatus = async (orderIndex) => {
+    const interval = setInterval(async () => {
+      try {
+        console.log(`Polling status for order index: ${orderIndex}`);
+        const response = await fetch(`/order/status/${orderIndex}`);
+        const data = await response.json();
+        console.log(`Order status response: ${JSON.stringify(data)}`);
 
-      if (data.status === 'complete' || data.status === 'failed') {
+        if (data.status === 'complete' || data.status === 'failed') {
+          clearInterval(interval);
+          setOrderStatus(data.status);
+        }
+      } catch (error) {
+        console.error('Error fetching order status:', error);
+        setOrderStatus('failed');
         clearInterval(interval);
-        setOrderStatus(data.status);
       }
-    } catch (error) {
-      console.error('Error fetching order status:', error);
-      setOrderStatus('failed');
-      clearInterval(interval);
-    }
-  }, 5000); // Poll every 5 seconds
-};
-
-
+    }, 5000); // Poll every 5 seconds
+  };
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
