@@ -122,14 +122,16 @@ const TrendingDunes = () => {
               style={{ flex: 1 }} // Allow the search input to take up available space
             />
             <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="trending-filter-dropdown">
-              <DropdownToggle tag="span" data-toggle="dropdown" aria-expanded={dropdownOpen} style={{ cursor: 'pointer', marginLeft: '10px' }}>
+              <DropdownToggle tag="span" aria-expanded={dropdownOpen} style={{ cursor: 'pointer', marginLeft: '10px' }}>
                 <FontAwesomeIcon icon={faFilter} style={{ color: 'goldenrod' }} />
               </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
-                <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
-                <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
-              </DropdownMenu>
+              {dropdownOpen && (
+                <DropdownMenu right>
+                  <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
+                  <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
+                  <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
+                </DropdownMenu>
+              )}
             </Dropdown>
           </div>
           <div className="trending-dune-list">
