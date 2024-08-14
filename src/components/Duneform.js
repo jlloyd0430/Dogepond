@@ -15,12 +15,14 @@ const DuneForm = ({ onSubmit }) => {
     paymentAddress: '',
   });
 
+  const [orderStatus, setOrderStatus] = useState(null);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const timestamp = Date.now(); // Get the current timestamp
     const orderData = { 
@@ -31,7 +33,20 @@ const DuneForm = ({ onSubmit }) => {
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
       numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
     }; 
-    onSubmit(orderData); // Submit the form data with the timestamp
+
+    const orderResponse = await onSubmit(orderData);
+    pollOrderStatus(orderResponse.index);
+  };
+
+  const pollOrderStatus = async (orderIndex) => {
+    const interval = setInterval(async () => {
+      const response = await fetch(`/order/status/${orderIndex}`);
+      const data = await response.json();
+      if (data.status === 'complete' || data.status === 'failed') {
+        clearInterval(interval);
+        setOrderStatus(data.status);
+      }
+    }, 5000); // Poll every 5 seconds
   };
 
   return (
@@ -157,6 +172,7 @@ const DuneForm = ({ onSubmit }) => {
       )}
 
       <button type="submit">Submit</button>
+      {orderStatus && <div>Order Status: {orderStatus}</div>}
     </form>
   );
 };
