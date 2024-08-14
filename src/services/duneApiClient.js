@@ -10,7 +10,8 @@ const apiClient = axios.create({
 export const submitOrder = async (orderData) => {
   try {
     const response = await apiClient.post('/order', orderData);
-    
+
+    // Log the full response to see what's coming back from the server
     console.log('Full response from API:', response.data);
     
     if (!response.data || typeof response.data.index === 'undefined') {
@@ -23,6 +24,7 @@ export const submitOrder = async (orderData) => {
     throw new Error('An error occurred while submitting the order');
   }
 };
+
 
 
 
