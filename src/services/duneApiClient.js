@@ -10,15 +10,20 @@ const apiClient = axios.create({
 export const submitOrder = async (orderData) => {
   try {
     const response = await apiClient.post('/order', orderData);
-    if (!response.data || !response.data.index) {
+    
+    console.log('Full response from API:', response.data);
+    
+    if (!response.data || typeof response.data.index === 'undefined') {
       throw new Error('Order response does not contain expected data.');
     }
+
     return response.data; // Ensure this contains the index and other details
   } catch (error) {
     console.error('Error submitting order:', error);
     throw new Error('An error occurred while submitting the order');
   }
 };
+
 
 
 export const checkOrderStatus = async (index) => {
