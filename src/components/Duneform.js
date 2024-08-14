@@ -22,17 +22,34 @@ const DuneForm = ({ onSubmit }) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const timestamp = Date.now(); // Get the current timestamp
-    const orderData = { 
-      ...formData, 
-      timestamp,
-      limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
-      maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
-      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
-    }; 
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const timestamp = Date.now(); // Get the current timestamp
+  const orderData = { 
+    ...formData, 
+    timestamp,
+    limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
+    maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
+    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
+    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
+  }; 
+
+  try {
+    setOrderStatus('pending'); // Immediately set status to pending
+    const orderResponse = await onSubmit(orderData);
+    console.log("Order Response:", orderResponse);
+
+    if (!orderResponse || typeof orderResponse.index === 'undefined') {
+      throw new Error("Order response is undefined or does not contain index.");
+    }
+    
+    pollOrderStatus(orderResponse.index);
+  } catch (error) {
+    console.error('Error submitting order:', error);
+    setOrderStatus('failed');
+  }
+};
+
 
     try {
       setOrderStatus('pending'); // Immediately set status to pending
