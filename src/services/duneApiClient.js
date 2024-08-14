@@ -17,9 +17,9 @@ export const submitOrder = async (orderData) => {
   }
 };
 
-export const checkOrderStatus = async (index) => {
+export const checkOrderStatus = async (orderId) => {  // Use orderId instead of index
   try {
-    const response = await apiClient.get(`/order/status/${index}`);
+    const response = await apiClient.get(`/order/status/${orderId}`);
     return response.data.status;
   } catch (error) {
     console.error('Error checking order status:', error);
