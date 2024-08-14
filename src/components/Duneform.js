@@ -37,6 +37,26 @@ const handleSubmit = async (e) => {
   try {
     setOrderStatus('pending'); // Immediately set status to pending
     const orderResponse = await onSubmit(orderData);
+
+    // Log the response to inspect its structure
+    console.log("Order Response:", orderResponse);
+
+    if (!orderResponse || typeof orderResponse.index === 'undefined') {
+      console.error('Order response is undefined or does not contain index.');
+      throw new Error("Order response is undefined or does not contain index.");
+    }
+    
+    pollOrderStatus(orderResponse.index);
+  } catch (error) {
+    console.error('Error submitting order:', error);
+    setOrderStatus('failed');
+  }
+};
+
+
+  try {
+    setOrderStatus('pending'); // Immediately set status to pending
+    const orderResponse = await onSubmit(orderData);
     console.log("Order Response:", orderResponse);
 
     if (!orderResponse || typeof orderResponse.index === 'undefined') {
