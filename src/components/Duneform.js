@@ -10,7 +10,7 @@ const DuneForm = ({ onSubmit }) => {
     maxNrOfMints: '',
     mintId: '',
     mintAmount: '',
-    numberOfMints: '', // Added field
+    numberOfMints: '',
     mintToAddress: '',
     paymentAddress: '',
   });
@@ -24,27 +24,27 @@ const DuneForm = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const timestamp = Date.now(); // Get the current timestamp
+    const timestamp = Date.now();
     const orderData = { 
       ...formData, 
       timestamp,
-      limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
-      maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
+      limitPerMint: parseInt(formData.limitPerMint, 10),
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
     }; 
 
     try {
-      setOrderStatus('pending'); // Immediately set status to pending
+      setOrderStatus('pending');
       const orderResponse = await onSubmit(orderData);
-      pollOrderStatus(orderResponse.id); // Use `id` instead of `index`
+      pollOrderStatus(orderResponse.orderId); // Fixed from `orderResponse.id`
     } catch (error) {
       setOrderStatus('failed');
       console.error('Error submitting order:', error);
     }
   };
 
-  const pollOrderStatus = async (orderId) => { // Use `orderId` instead of `orderIndex`
+  const pollOrderStatus = async (orderId) => {
     const interval = setInterval(async () => {
       try {
         const response = await fetch(`/order/status/${orderId}`);
@@ -58,7 +58,7 @@ const DuneForm = ({ onSubmit }) => {
         setOrderStatus('failed');
         clearInterval(interval);
       }
-    }, 5000); // Poll every 5 seconds
+    }, 5000);
   };
 
   return (
@@ -106,12 +106,7 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="limitPerMint"
               value={formData.limitPerMint}
-              onChange={(e) => handleChange({
-                target: {
-                  name: 'limitPerMint',
-                  value: e.target.value,
-                },
-              })}
+              onChange={handleChange}
               required
             />
           </label>
@@ -121,12 +116,7 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="maxNrOfMints"
               value={formData.maxNrOfMints}
-              onChange={(e) => handleChange({
-                target: {
-                  name: 'maxNrOfMints',
-                  value: e.target.value,
-                },
-              })}
+              onChange={handleChange}
               required
             />
           </label>
@@ -151,17 +141,12 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="mintAmount"
               value={formData.mintAmount}
-              onChange={(e) => handleChange({
-                target: {
-                  name: 'mintAmount',
-                  value: e.target.value,
-                },
-              })}
+              onChange={handleChange}
               required
             />
           </label>
           <label>
-            Number of Mints: {/* Added field */}
+            Number of Mints:
             <input
               type="number"
               name="numberOfMints"
@@ -184,7 +169,7 @@ const DuneForm = ({ onSubmit }) => {
       )}
 
       <button type="submit">Submit</button>
-        {orderStatus && <div>Order Status: {orderStatus}</div>}
+      {orderStatus && <div>Order Status: {orderStatus}</div>}
     </form>
   );
 };
