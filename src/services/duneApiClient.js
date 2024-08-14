@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://form.dogepond.com',  // Updated to use your domain
+  baseURL: 'https://form.dogepond.com',  // Ensure your server is reachable
   headers: {
     'Content-Type': 'application/json'
   }
@@ -17,7 +17,7 @@ export const submitOrder = async (orderData) => {
   }
 };
 
-export const checkOrderStatus = async (orderId) => {  // Use orderId instead of index
+export const checkOrderStatus = async (orderId) => {
   try {
     const response = await apiClient.get(`/order/status/${orderId}`);
     return response.data.status;
