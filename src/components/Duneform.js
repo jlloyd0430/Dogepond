@@ -184,7 +184,6 @@ const DuneForm = ({ onSubmit }) => {
       )}
 
       <button type="submit">Submit</button>
-      <div>Order Status: {orderStatus}</div>}
     </form>
   );
 };
