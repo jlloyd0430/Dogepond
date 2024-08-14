@@ -23,24 +23,37 @@ const DuneForm = ({ onSubmit }) => {
   };
 
 const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-        setOrderStatus('pending');
-        const orderResponse = await onSubmit(orderData);
+  e.preventDefault();
+  const timestamp = Date.now(); // Get the current timestamp
+  const orderData = { 
+    ...formData, 
+    timestamp,
+    limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
+    maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
+    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
+    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
+  }; 
 
-        if (orderResponse && orderResponse.index) {
-            pollOrderStatus(orderResponse.index);
-        } else {
-            console.error('Order response does not contain index.');
-            setOrderStatus('failed');
-            alert('Order could not be processed. Please try again.');
-        }
-    } catch (error) {
-        console.error('Error submitting order:', error);
-        setOrderStatus('failed');
-        alert('An error occurred while processing your order.');
+  try {
+    setOrderStatus('pending'); // Immediately set status to pending
+    const orderResponse = await onSubmit(orderData);
+
+    console.log('Order Response:', orderResponse);
+
+    if (orderResponse && orderResponse.index) {
+      // Poll for the order status using the returned index
+      await pollOrderStatus(orderResponse.index); // Use await to make sure this is called asynchronously
+    } else {
+      console.error('Order response does not contain index.');
+      setOrderStatus('failed');
+      // Optionally, retry or display a user-friendly message here
     }
+  } catch (error) {
+    setOrderStatus('failed');
+    console.error('Error submitting order:', error);
+  }
 };
+
 
 
     try {
