@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Trending.css';
-import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
+import { submitOrder, checkOrderStatus } from './duneApiClient';
 
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -15,6 +15,10 @@ const DuneForm = ({ onSubmit }) => {
     mintToAddress: '',
     paymentAddress: '',
   });
+
+  // Define state hooks
+  const [orderResult, setOrderResult] = useState(null);
+  const [orderStatus, setOrderStatus] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,14 +45,29 @@ const DuneForm = ({ onSubmit }) => {
         throw new Error('Order ID is missing in the backend response.');
       }
 
-      // Now result.id should be your unique order ID (UUID)
       setOrderResult(result);
       setOrderStatus('pending');
 
-      pollOrderStatus(result.id);  // Poll using UUID
+      pollOrderStatus(result.id);
     } catch (error) {
       console.error('Error submitting order:', error);
     }
+  };
+
+  // Define the pollOrderStatus function
+  const pollOrderStatus = (orderId) => {
+    const intervalId = setInterval(async () => {
+      try {
+        const status = await checkOrderStatus(orderId);
+        setOrderStatus(status);
+        if (status !== 'pending') {
+          clearInterval(intervalId);
+        }
+      } catch (error) {
+        console.error('Error checking order status:', error);
+        clearInterval(intervalId);
+      }
+    }, 10000); // Check every 10 seconds
   };
 
   return (
