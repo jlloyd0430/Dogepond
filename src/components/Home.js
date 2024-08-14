@@ -406,6 +406,7 @@ const Home = () => {
           </div>
           <div className="snapshot-section">
             <h3>Dune Snapshot</h3>
+              <p>(Coming Soon)</p>
             <input
               type="text"
               placeholder="Enter Dune ID"
