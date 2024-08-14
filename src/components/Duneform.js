@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Trending.css';
-import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
 
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -11,63 +10,28 @@ const DuneForm = ({ onSubmit }) => {
     maxNrOfMints: '',
     mintId: '',
     mintAmount: '',
-    numberOfMints: '',
+    numberOfMints: '', // Added field
     mintToAddress: '',
     paymentAddress: '',
   });
-
-  // Define state hooks
-  const [orderResult, setOrderResult] = useState(null);
-  const [orderStatus, setOrderStatus] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const timestamp = Date.now();
-
-    const orderData = {
-      ...formData,
+    const timestamp = Date.now(); // Get the current timestamp
+    const orderData = { 
+      ...formData, 
       timestamp,
-      limitPerMint: parseInt(formData.limitPerMint, 10),
-      maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
+      limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
-    };
-
-    try {
-      const result = await submitOrder(orderData);
-
-      if (!result || typeof result.id === 'undefined') {
-        throw new Error('Order ID is missing in the backend response.');
-      }
-
-      setOrderResult(result);
-      setOrderStatus('pending');
-
-      pollOrderStatus(result.id);
-    } catch (error) {
-      console.error('Error submitting order:', error);
-    }
-  };
-
-  // Define the pollOrderStatus function
-  const pollOrderStatus = (orderId) => {
-    const intervalId = setInterval(async () => {
-      try {
-        const status = await checkOrderStatus(orderId);
-        setOrderStatus(status);
-        if (status !== 'pending') {
-          clearInterval(intervalId);
-        }
-      } catch (error) {
-        console.error('Error checking order status:', error);
-        clearInterval(intervalId);
-      }
-    }, 10000); // Check every 10 seconds
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
+    }; 
+    onSubmit(orderData); // Submit the form data with the timestamp
   };
 
   return (
@@ -115,7 +79,12 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="limitPerMint"
               value={formData.limitPerMint}
-              onChange={handleChange}
+              onChange={(e) => handleChange({
+                target: {
+                  name: 'limitPerMint',
+                  value: e.target.value,
+                },
+              })}
               required
             />
           </label>
@@ -125,7 +94,12 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="maxNrOfMints"
               value={formData.maxNrOfMints}
-              onChange={handleChange}
+              onChange={(e) => handleChange({
+                target: {
+                  name: 'maxNrOfMints',
+                  value: e.target.value,
+                },
+              })}
               required
             />
           </label>
@@ -150,12 +124,17 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="mintAmount"
               value={formData.mintAmount}
-              onChange={handleChange}
+              onChange={(e) => handleChange({
+                target: {
+                  name: 'mintAmount',
+                  value: e.target.value,
+                },
+              })}
               required
             />
           </label>
           <label>
-            Number of Mints:
+            Number of Mints: {/* Added field */}
             <input
               type="number"
               name="numberOfMints"
