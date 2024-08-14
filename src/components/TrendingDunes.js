@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import * as cheerio from "cheerio";
-import "./Trending.css"; // Add appropriate styles
-import DuneForm from "./Duneform"; // Import the form component
+import "./Trending.css";
+import DuneForm from "./Duneform";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'; // Ensure reactstrap is installed
-import MyDunes from "./MyDunes"; // Import the MyDunes component
-import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the Dune API functions
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import MyDunes from "./MyDunes";
+import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
 
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
@@ -18,7 +18,9 @@ const TrendingDunes = () => {
   const [orderStatus, setOrderStatus] = useState("");
   const [view, setView] = useState("dunes");
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  const [selectedDune, setSelectedDune] = useState(null);
+  const [duneDetails, setDuneDetails] = useState(null);
+  
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
@@ -28,16 +30,15 @@ const TrendingDunes = () => {
         const htmlData = response.data;
         const $ = cheerio.load(htmlData);
 
-       const fetchDuneDetails = async (duneName, duneLink) => {
-  const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
-  const duneResponse = await axios.get(duneUrl);
-  const dunePage = cheerio.load(duneResponse.data);
-  const duneID = dunePage('dt:contains("id") + dd').text().trim();
-  const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
-  const mints = parseInt(dunePage('dt:contains("mints") + dd').text().trim(), 10); // Extract the number of mints
-  return { name: duneName, link: duneUrl, duneID, mintable, mints }; // Include mints in the returned object
-};
-
+        const fetchDuneDetails = async (duneName, duneLink) => {
+          const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
+          const duneResponse = await axios.get(duneUrl);
+          const dunePage = cheerio.load(duneResponse.data);
+          const duneID = dunePage('dt:contains("id") + dd').text().trim();
+          const mintable = dunePage('dt:contains("mintable") + dd').text().trim() === 'true';
+          const mints = parseInt(dunePage('dt:contains("mints") + dd').text().trim(), 10);
+          return { name: duneName, link: duneUrl, duneID, mintable, mints };
+        };
 
         const dunePromises = $("ul > li > a").map(async (index, element) => {
           const duneName = $(element).text();
@@ -46,7 +47,6 @@ const TrendingDunes = () => {
         }).get();
 
         const fetchedDunes = await Promise.all(dunePromises);
-        // By default, display the dunes in reverse order to show the most recent first
         setDunes(fetchedDunes.reverse());
       } catch (error) {
         console.error("Error fetching trending dunes:", error);
@@ -57,30 +57,52 @@ const TrendingDunes = () => {
     fetchTrendingDunes();
   }, []);
 
+  const fetchDuneData = async (duneID) => {
+    try {
+      const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneID}`, {
+        headers: {
+          'Accept': 'application/json',
+          'api-key': process.env.REACT_APP_API_KEY,
+        }
+      });
+      setDuneDetails(response.data.data);
+    } catch (error) {
+      console.error("Error fetching dune details:", error);
+    }
+  };
+
+  const handleDuneClick = (dune) => {
+    if (selectedDune && selectedDune.name === dune.name) {
+      setSelectedDune(null);
+      setDuneDetails(null);
+    } else {
+      setSelectedDune(dune);
+      fetchDuneData(dune.duneID);
+    }
+  };
+
   const handleSearchChange = (e) => {
     const formattedSearchTerm = e.target.value.toUpperCase().replace(/ /g, '•');
     setSearchTerm(formattedSearchTerm);
   };
 
- const handleSortOrderChange = (order) => {
-  setSortOrder(order);
-  
-  let sortedDunes = [...dunes];
+  const handleSortOrderChange = (order) => {
+    setSortOrder(order);
+    let sortedDunes = [...dunes];
 
-  if (order === "mostRecent") {
-    sortedDunes.reverse();
-  } else if (order === "oldest") {
-    sortedDunes.reverse();
-  } else if (order === "minting") {
-    sortedDunes = sortedDunes.filter(dune => dune.mintable);
-  } else if (order === "mostMinted") {
-    sortedDunes.sort((a, b) => b.mints - a.mints); // Sort by the number of mints
-  }
+    if (order === "mostRecent") {
+      sortedDunes.reverse();
+    } else if (order === "oldest") {
+      sortedDunes.reverse();
+    } else if (order === "minting") {
+      sortedDunes = sortedDunes.filter(dune => dune.mintable);
+    } else if (order === "mostMinted") {
+      sortedDunes.sort((a, b) => b.mints - a.mints);
+    }
 
-  setDunes(sortedDunes);
-  setDropdownOpen(false); // Close the dropdown after selection
-};
-
+    setDunes(sortedDunes);
+    setDropdownOpen(false); 
+  };
 
   const filteredDunes = dunes.filter(dune => {
     if (sortOrder === "minting") {
@@ -128,35 +150,46 @@ const TrendingDunes = () => {
               value={searchTerm}
               onChange={handleSearchChange}
               className="trending-search-input"
-              style={{ flex: 1 }} // Allow the search input to take up available space
+              style={{ flex: 1 }}
             />
-          <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="trending-filter-dropdown">
-  <DropdownToggle tag="span" aria-expanded={dropdownOpen} style={{ cursor: 'pointer', marginLeft: '10px' }}>
-    <FontAwesomeIcon icon={faFilter} style={{ color: 'goldenrod' }} />
-  </DropdownToggle>
-  {dropdownOpen && (
-    <DropdownMenu right>
-      <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
-      <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
-      <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
-      <DropdownItem onClick={() => handleSortOrderChange("mostMinted")}>Most Minted</DropdownItem> {/* New option */}
-    </DropdownMenu>
-  )}
-</Dropdown>
-
+            <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="trending-filter-dropdown">
+              <DropdownToggle tag="span" aria-expanded={dropdownOpen} style={{ cursor: 'pointer', marginLeft: '10px' }}>
+                <FontAwesomeIcon icon={faFilter} style={{ color: 'goldenrod' }} />
+              </DropdownToggle>
+              {dropdownOpen && (
+                <DropdownMenu right>
+                  <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
+                  <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
+                  <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
+                  <DropdownItem onClick={() => handleSortOrderChange("mostMinted")}>Most Minted</DropdownItem>
+                </DropdownMenu>
+              )}
+            </Dropdown>
           </div>
           <div className="trending-dune-list">
             {filteredDunes.map((dune, index) => (
               <div key={index} className="trending-dune-card">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <a href={dune.link} target="_blank" rel="noopener noreferrer">
-                    <h2>{dune.name}</h2>
-                  </a>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
+                  onClick={() => handleDuneClick(dune)}
+                >
+                  <h2>{dune.name}</h2>
                   <div className="wonkyi" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                     {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
                     <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
                   </div>
                 </div>
+                {selectedDune && selectedDune.name === dune.name && duneDetails && (
+                  <div className="dune-details">
+                    <p>Etching Transaction: {duneDetails.etching_tx}</p>
+                    <p>Etching Height: {duneDetails.etching_height}</p>
+                    <p>Max Supply: {duneDetails.max_supply}</p>
+                    <p>Mints: {duneDetails.mints}</p>
+                    <p>Unique Holders: {duneDetails.unique_holders}</p>
+                    <p>Total UTXOs: {duneDetails.total_utxos}</p>
+                    {/* Add more details as necessary */}
+                  </div>
+                )}
               </div>
             ))}
           </div>
