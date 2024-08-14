@@ -367,7 +367,7 @@ const Home = () => {
               value={collectionSlug}
               onChange={(e) => setCollectionSlug(e.target.value)}
             />
-            <button onClick={fetchSnapshot}>Snap!t</button>
+            <button onClick={fetchSnapshot}>Fetch Snapshot</button>
             {snapshotData.length > 0 && (
               <div className="snapshot-results">
                 <button onClick={exportToTXT}>Export to TXT</button>
