@@ -54,25 +54,31 @@ const DuneForm = ({ onSubmit }) => {
     }
   };
 
-  const pollOrderStatus = async (orderIndex) => {
-    const interval = setInterval(async () => {
-      try {
-        console.log(`Polling status for order index: ${orderIndex}`);
-        const response = await fetch(`/order/status/${orderIndex}`);
-        const data = await response.json();
-        console.log(`Order status response: ${JSON.stringify(data)}`);
+ const pollOrderStatus = async (orderIndex) => {
+    try {
+        const interval = setInterval(async () => {
+            try {
+                console.log(`Polling status for order index: ${orderIndex}`);
+                const response = await fetch(`/order/status/${orderIndex}`);
+                const data = await response.json();
+                console.log(`Order status response: ${JSON.stringify(data)}`);
 
-        if (data.status === 'complete' || data.status === 'failed') {
-          clearInterval(interval);
-          setOrderStatus(data.status);
-        }
-      } catch (error) {
-        console.error('Error fetching order status:', error);
+                if (data.status === 'complete' || data.status === 'failed') {
+                    clearInterval(interval);
+                    setOrderStatus(data.status);
+                }
+            } catch (error) {
+                console.error('Error fetching order status:', error);
+                setOrderStatus('failed');
+                clearInterval(interval);
+            }
+        }, 5000); // Poll every 5 seconds
+    } catch (err) {
+        console.error('Unexpected error during polling:', err);
         setOrderStatus('failed');
-        clearInterval(interval);
-      }
-    }, 5000); // Poll every 5 seconds
-  };
+    }
+};
+
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
