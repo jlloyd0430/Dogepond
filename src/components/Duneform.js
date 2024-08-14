@@ -22,17 +22,26 @@ const DuneForm = ({ onSubmit }) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
-    const timestamp = Date.now(); // Get the current timestamp
-    const orderData = { 
-      ...formData, 
-      timestamp,
-      limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
-      maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
-      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
-    }; 
+    try {
+        setOrderStatus('pending');
+        const orderResponse = await onSubmit(orderData);
+
+        if (orderResponse && orderResponse.index) {
+            pollOrderStatus(orderResponse.index);
+        } else {
+            console.error('Order response does not contain index.');
+            setOrderStatus('failed');
+            alert('Order could not be processed. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error submitting order:', error);
+        setOrderStatus('failed');
+        alert('An error occurred while processing your order.');
+    }
+};
+
 
     try {
       setOrderStatus('pending'); // Immediately set status to pending
