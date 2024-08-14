@@ -37,17 +37,17 @@ const DuneForm = ({ onSubmit }) => {
     try {
       setOrderStatus('pending'); // Immediately set status to pending
       const orderResponse = await onSubmit(orderData);
-      pollOrderStatus(orderResponse.index);
+      pollOrderStatus(orderResponse.id); // Use `id` instead of `index`
     } catch (error) {
       setOrderStatus('failed');
       console.error('Error submitting order:', error);
     }
   };
 
-  const pollOrderStatus = async (orderIndex) => {
+  const pollOrderStatus = async (orderId) => { // Use `orderId` instead of `orderIndex`
     const interval = setInterval(async () => {
       try {
-        const response = await fetch(`/order/status/${orderIndex}`);
+        const response = await fetch(`/order/status/${orderId}`);
         const data = await response.json();
         if (data.status === 'complete' || data.status === 'failed') {
           clearInterval(interval);
