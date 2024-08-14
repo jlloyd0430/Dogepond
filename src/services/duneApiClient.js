@@ -1,3 +1,4 @@
+import axios from 'axios';
 
 const apiClient = axios.create({
   baseURL: 'https://form.dogepond.com',
@@ -9,10 +10,6 @@ const apiClient = axios.create({
 export const submitOrder = async (orderData) => {
   try {
     const response = await apiClient.post('/order', orderData);
-
-    
-export const submitOrder = async (orderData) => {
-  
     return response.data;
   } catch (error) {
     console.error('Error submitting order:', error);
