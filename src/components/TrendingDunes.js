@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import MyDunes from "./MyDunes";
-import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
+import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Ensure duneApiClient points to form.dogepond.com
 import ErrorBoundary from './ErrorBoundary';
 
 const TrendingDunes = () => {
@@ -120,8 +120,8 @@ const TrendingDunes = () => {
       const intervalId = setInterval(async () => {
         try {
           const status = await checkOrderStatus(result.index);
-          setOrderStatus(status);
-          if (status === 'complete') {
+          setOrderStatus(status.status);
+          if (status.status === 'complete') {
             clearInterval(intervalId);
           }
         } catch (error) {
