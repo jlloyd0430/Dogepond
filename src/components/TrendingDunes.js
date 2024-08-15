@@ -8,6 +8,7 @@ import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import MyDunes from "./MyDunes";
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
+import ErrorBoundary from './ErrorBoundary';
 
 const TrendingDunes = () => {
   const [dunes, setDunes] = useState([]);
@@ -20,7 +21,7 @@ const TrendingDunes = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedDune, setSelectedDune] = useState(null);
   const [duneDetails, setDuneDetails] = useState(null);
-  
+
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
@@ -134,84 +135,85 @@ const TrendingDunes = () => {
   };
 
   return (
-    <div className="trending-container">
-      <div className="trending-header-container">
-        <h1 className="trending-ttitle" onClick={() => setView("dunes")}>All Dunes</h1>
-        <h1 className="trending-ttitle" onClick={() => setView("etcher")}>Etch Dunes</h1>
-        <h1 className="trending-ttitle" onClick={() => setView("myDunes")}>My Dunes</h1>
-      </div>
-      {view === "dunes" && (
-        <>
-          {error && <p className="trending-error">{error}</p>}
-          <div className="trending-controls-container" style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-            <input
-              type="text"
-              placeholder="Search by dune name..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="trending-search-input"
-              style={{ flex: 1 }}
-            />
-            <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="trending-filter-dropdown">
-              <DropdownToggle tag="span" aria-expanded={dropdownOpen} style={{ cursor: 'pointer', marginLeft: '10px' }}>
-                <FontAwesomeIcon icon={faFilter} style={{ color: 'goldenrod' }} />
-              </DropdownToggle>
-              {dropdownOpen && (
-                <DropdownMenu right>
-                  <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
-                  <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
-                  <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
-                  <DropdownItem onClick={() => handleSortOrderChange("mostMinted")}>Most Minted</DropdownItem>
-                </DropdownMenu>
-              )}
-            </Dropdown>
-          </div>
-          <div className="trending-dune-list">
-            {filteredDunes.map((dune, index) => (
-              <div key={index} className="trending-dune-card">
-                <div
-                  style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
-                  onClick={() => handleDuneClick(dune)}
-                >
-                  <h2>{dune.name}</h2>
-                  <div className="wonkyi" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
-                    <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
-                  </div>
-                </div>
-                {selectedDune && selectedDune.name === dune.name && duneDetails && (
-                  <div className="dune-details">
-                    <p>Etching Transaction: {duneDetails.etching_tx}</p>
-                    <p>Etching Height: {duneDetails.etching_height}</p>
-                    <p>Max Supply: {duneDetails.max_supply}</p>
-                    <p>Mints: {duneDetails.mints}</p>
-                    <p>Unique Holders: {duneDetails.unique_holders}</p>
-                    <p>Total UTXOs: {duneDetails.total_utxos}</p>
-                    {/* Add more details as necessary */}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-      {view === "etcher" && (
-        <div className="trending-form-container">
-          <DuneForm onSubmit={handleSubmit} />
-          {paymentInfo && (
-            <div className="trending-payment-popup">
-              <p>Please send {paymentInfo.dogeAmount} DOGE to the following address:</p>
-              <p>{paymentInfo.address}</p>
-              <button onClick={() => navigator.clipboard.writeText(paymentInfo.address)}>Copy Address</button>
-              {orderStatus && <p>Order Status: {orderStatus}</p>}
-            </div>
-          )}
+    <ErrorBoundary>
+      <div className="trending-container">
+        <div className="trending-header-container">
+          <h1 className="trending-ttitle" onClick={() => setView("dunes")}>All Dunes</h1>
+          <h1 className="trending-ttitle" onClick={() => setView("etcher")}>Etch Dunes</h1>
+          <h1 className="trending-ttitle" onClick={() => setView("myDunes")}>My Dunes</h1>
         </div>
-      )}
-      {view === "myDunes" && (
-        <MyDunes /> // Render the My Dunes component here
-      )}
-    </div>
+        {view === "dunes" && (
+          <>
+            {error && <p className="trending-error">{error}</p>}
+            <div className="trending-controls-container" style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+              <input
+                type="text"
+                placeholder="Search by dune name..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="trending-search-input"
+                style={{ flex: 1 }}
+              />
+              <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="trending-filter-dropdown">
+                <DropdownToggle tag="span" aria-expanded={dropdownOpen} style={{ cursor: 'pointer', marginLeft: '10px' }}>
+                  <FontAwesomeIcon icon={faFilter} style={{ color: 'goldenrod' }} />
+                </DropdownToggle>
+                {dropdownOpen && (
+                  <DropdownMenu right>
+                    <DropdownItem onClick={() => handleSortOrderChange("mostRecent")}>Most Recent</DropdownItem>
+                    <DropdownItem onClick={() => handleSortOrderChange("oldest")}>Oldest</DropdownItem>
+                    <DropdownItem onClick={() => handleSortOrderChange("minting")}>Minting Now</DropdownItem>
+                    <DropdownItem onClick={() => handleSortOrderChange("mostMinted")}>Most Minted</DropdownItem>
+                  </DropdownMenu>
+                )}
+              </Dropdown>
+            </div>
+            <div className="trending-dune-list">
+              {filteredDunes.map((dune, index) => (
+                <div key={index} className="trending-dune-card">
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
+                    onClick={() => handleDuneClick(dune)}
+                  >
+                    <h2>{dune.name}</h2>
+                    <div className="wonkyi" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      {dune.mintable && <span style={{ color: "green", fontWeight: "bold" }}>Minting</span>}
+                      <button onClick={() => navigator.clipboard.writeText(dune.duneID)}>Copy ID</button>
+                    </div>
+                  </div>
+                  {selectedDune && selectedDune.name === dune.name && duneDetails && (
+                    <div className="dune-details">
+                      <p>Etching Transaction: {duneDetails.etching_tx}</p>
+                      <p>Etching Height: {duneDetails.etching_height}</p>
+                      <p>Max Supply: {duneDetails.max_supply}</p>
+                      <p>Mints: {duneDetails.mints}</p>
+                      <p>Unique Holders: {duneDetails.unique_holders}</p>
+                      <p>Total UTXOs: {duneDetails.total_utxos}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        {view === "etcher" && (
+          <div className="trending-form-container">
+            <DuneForm onSubmit={handleSubmit} />
+            {paymentInfo && (
+              <div className="trending-payment-popup">
+                <p>Please send {paymentInfo.dogeAmount} DOGE to the following address:</p>
+                <p>{paymentInfo.address}</p>
+                <button onClick={() => navigator.clipboard.writeText(paymentInfo.address)}>Copy Address</button>
+                {orderStatus && <p>Order Status: {orderStatus}</p>}
+              </div>
+            )}
+          </div>
+        )}
+        {view === "myDunes" && (
+          <MyDunes /> 
+        )}
+      </div>
+    </ErrorBoundary>
   );
 };
 
