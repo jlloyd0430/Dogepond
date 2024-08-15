@@ -12,26 +12,58 @@ const DuneForm = ({ onSubmit }) => {
     mintAmount: '',
     numberOfMints: '', // Added field
     mintToAddress: '',
-    paymentAddress: '',
   });
+
+  const [orderStatus, setOrderStatus] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const timestamp = Date.now(); // Get the current timestamp
-    const orderData = { 
-      ...formData, 
+    const timestamp = Date.now();
+    const orderData = {
+      ...formData,
       timestamp,
-      limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
-      maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
+      limitPerMint: parseInt(formData.limitPerMint, 10),
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
-    }; 
-    onSubmit(orderData); // Submit the form data with the timestamp
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
+    };
+
+    try {
+      setOrderStatus('pending');
+      const orderResponse = await onSubmit(orderData);
+
+      if (orderResponse && orderResponse.index) {
+        // Poll for the order status using the returned index
+        pollOrderStatus(orderResponse.index);
+      } else {
+        setOrderStatus('failed');
+      }
+    } catch (error) {
+      setOrderStatus('failed');
+      console.error('Error submitting order:', error);
+    }
+  };
+
+  const pollOrderStatus = async (orderIndex) => {
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch(`/order/status/${orderIndex}`);
+        const data = await response.json();
+
+        if (data.status === 'complete' || data.status === 'failed') {
+          clearInterval(interval);
+          setOrderStatus(data.status);
+        }
+      } catch (error) {
+        setOrderStatus('failed');
+        clearInterval(interval);
+      }
+    }, 5000); // Poll every 5 seconds
   };
 
   return (
@@ -79,12 +111,7 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="limitPerMint"
               value={formData.limitPerMint}
-              onChange={(e) => handleChange({
-                target: {
-                  name: 'limitPerMint',
-                  value: e.target.value,
-                },
-              })}
+              onChange={handleChange}
               required
             />
           </label>
@@ -94,12 +121,7 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="maxNrOfMints"
               value={formData.maxNrOfMints}
-              onChange={(e) => handleChange({
-                target: {
-                  name: 'maxNrOfMints',
-                  value: e.target.value,
-                },
-              })}
+              onChange={handleChange}
               required
             />
           </label>
@@ -124,17 +146,12 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="mintAmount"
               value={formData.mintAmount}
-              onChange={(e) => handleChange({
-                target: {
-                  name: 'mintAmount',
-                  value: e.target.value,
-                },
-              })}
+              onChange={handleChange}
               required
             />
           </label>
           <label>
-            Number of Mints: {/* Added field */}
+            Number of Mints:
             <input
               type="number"
               name="numberOfMints"
@@ -157,6 +174,7 @@ const DuneForm = ({ onSubmit }) => {
       )}
 
       <button type="submit">Submit</button>
+      {orderStatus && <div>Order Status: {orderStatus}</div>}
     </form>
   );
 };
