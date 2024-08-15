@@ -79,7 +79,7 @@ const DuneForm = ({ onSubmit }) => {
         setOrderStatus('failed');
         clearInterval(interval);
       }
-    }, 5000); // Poll every 5 seconds
+    }, 60000); // Poll every 60 seconds
   };
 
   return (
