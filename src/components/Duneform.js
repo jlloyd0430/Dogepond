@@ -17,7 +17,7 @@ const DuneForm = ({ onSubmit }) => {
   const [orderStatus, setOrderStatus] = useState(null);
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(true);
   const [password, setPassword] = useState('');
-  const correctPassword = 'doginals are dead'; // Password to unlock the form
+  const correctPassword = 'doginals are dead';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +54,6 @@ const DuneForm = ({ onSubmit }) => {
       const orderResponse = await onSubmit(orderData);
 
       if (orderResponse && orderResponse.index) {
-        // Poll for the order status using the returned index
         pollOrderStatus(orderResponse.index);
       } else {
         setOrderStatus('failed');
@@ -79,7 +78,7 @@ const DuneForm = ({ onSubmit }) => {
         setOrderStatus('failed');
         clearInterval(interval);
       }
-    }, 60000); // Poll every 60 seconds
+    }, 60000);
   };
 
   return (
