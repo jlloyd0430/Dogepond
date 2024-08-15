@@ -148,6 +148,10 @@
   width: 100%;
   box-sizing: border-box;
 }
+   .trending-drc20-card {
+    display: flex;
+    flex-direction: row;
+   }
 
 .trending-drc20-card img,
 .trending-nftCard img {
