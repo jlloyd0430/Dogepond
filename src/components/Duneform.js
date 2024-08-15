@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { submitOrder, checkOrderStatus } from './duneApiClient'; // Import the functions from duneApiClient
 import './Trending.css';
 
 const DuneForm = ({ onSubmit }) => {
@@ -11,7 +11,7 @@ const DuneForm = ({ onSubmit }) => {
     maxNrOfMints: '',
     mintId: '',
     mintAmount: '',
-    numberOfMints: '', // Added field
+    numberOfMints: '',
     mintToAddress: '',
     paymentAddress: '',
   });
@@ -23,20 +23,20 @@ const DuneForm = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const timestamp = Date.now(); // Get the current timestamp
+    const timestamp = Date.now();
     
     const orderData = { 
       ...formData, 
       timestamp,
-      limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
-      maxNrOfMints: parseInt(formData.maxNrOfMints, 10), // Ensure integers
+      limitPerMint: parseInt(formData.limitPerMint, 10),
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
-      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined, // Added field
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
     }; 
 
     try {
-      const response = await axios.post('https://form.dogepond.com/order', orderData); // Update to use the correct backend URL
-      onSubmit(response.data); // Handle the response from the backend
+      const response = await submitOrder(orderData); // Use the submitOrder function from duneApiClient.js
+      onSubmit(response); // Handle the response from the backend
     } catch (error) {
       console.error('Error submitting order:', error);
     }
