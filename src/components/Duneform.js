@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { submitOrder, checkOrderStatus } from './duneApiClient'; // Import the functions from duneApiClient
+import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the functions from duneApiClient
 import './Trending.css';
 
 const DuneForm = ({ onSubmit }) => {
