@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://form.dogepond.com',  // Updated to use your domain
+  baseURL: 'https://form.dogepond.com',  // Ensure this is the correct domain
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   }
 });
 
@@ -20,7 +20,7 @@ export const submitOrder = async (orderData) => {
 export const checkOrderStatus = async (index) => {
   try {
     const response = await apiClient.get(`/order/status/${index}`);
-    return response.data; // Return the full response data to access status, duneId, and txId
+    return response.data; // This will return the status, duneId, and txId if available
   } catch (error) {
     console.error('Error checking order status:', error);
     throw new Error('An error occurred while checking the order status');
