@@ -23,6 +23,15 @@
   flex-wrap: nowrap;
 }
 
+.positive-change {
+  color: green;
+}
+
+.negative-change {
+  color: red;
+}
+
+
 .trending-search-input {
   padding: 10px;
   font-size: 16px;
