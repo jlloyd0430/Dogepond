@@ -1,6 +1,5 @@
-importReact, { useState, useEffect } from'react';
-import { submitOrder } from'../services/duneApiClient';
-import'./Trending.css';
+importReact, { useState } from'react';
+import { submitOrder } from'../services/duneApiClient'; // Import the submitOrder function from duneApiClientimport'./Trending.css';
 
 constDuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -18,9 +17,7 @@ constDuneForm = ({ onSubmit }) => {
 
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(true);
   const [password, setPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false); // To track the submission stateconst correctPassword = 'doginals are dead';
-
-  consthandleChange = (e) => {
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state to prevent multiple submissionsconst correctPassword = 'doginals are dead'; // Password to unlock the formconsthandleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
@@ -40,33 +37,30 @@ constDuneForm = ({ onSubmit }) => {
 
   consthandleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Prevent duplicate submissionsif (isSubmitting) return;
 
-    if (isSubmitting) return; // Prevent double submissionsetIsSubmitting(true);
+    setIsSubmitting(true);
 
     const timestamp = Date.now();
-    const orderData = {
-      ...formData,
+    
+    const orderData = { 
+      ...formData, 
       timestamp,
-      limitPerMint: formData.operationType === 'deploy' ? parseInt(formData.limitPerMint, 10) : undefined,
-      maxNrOfMints: formData.operationType === 'deploy' ? parseInt(formData.maxNrOfMints, 10) : undefined,
+      limitPerMint: parseInt(formData.limitPerMint, 10),
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10),
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) : undefined,
       numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) : undefined,
-    };
+    }; 
 
     try {
-      const response = awaitsubmitOrder(orderData); // Submit the orderonSubmit(response); // Notify parent of successful submission
+      const response = awaitsubmitOrder(orderData); // Use the submitOrder function from duneApiClient.jsonSubmit(response); // Handle the response from the backend
     } catch (error) {
       console.error('Error submitting order:', error);
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Reset the submitting state after the request completes
     }
   };
-
-  useEffect(() => {
-    return() => {
-      setIsSubmitting(false); // Reset submission state if the component unmounts
-    };
-  }, []);
 
   return (
     <divclassName="dune-form-container">
@@ -121,7 +115,7 @@ constDuneForm = ({ onSubmit }) => {
                 /></label></>
           )}
 
-          <button type="submit" disabled={isSubmitting}>Submit</button> {/* Disable button while submitting */}
+          <button type="submit" disabled={isSubmitting}>Submit</button>
         </form>
       )}
     </div>
@@ -129,3 +123,4 @@ constDuneForm = ({ onSubmit }) => {
 };
 
 exportdefaultDuneForm;
+
