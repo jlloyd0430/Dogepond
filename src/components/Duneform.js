@@ -1,4 +1,4 @@
-importReact, { useState } from'react';
+import { useState } from'react';
 import { submitOrder } from'../services/duneApiClient'; // Import the submitOrder function from duneApiClientimport'./Trending.css';
 
 constDuneForm = ({ onSubmit }) => {
@@ -123,4 +123,3 @@ constDuneForm = ({ onSubmit }) => {
 };
 
 exportdefaultDuneForm;
-
