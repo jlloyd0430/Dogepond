@@ -1,7 +1,8 @@
-import { useState } from'react';
-import { submitOrder } from'../services/duneApiClient'; // Import the submitOrder function from duneApiClientimport'./Trending.css';
+import React, { useState } from 'react';
+import { submitOrder } from '../services/duneApiClient'; // Import the submitOrder function from duneApiClient
+import './Trending.css';
 
-constDuneForm = ({ onSubmit }) => {
+const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
     operationType: 'deploy',
     duneName: '',
@@ -17,16 +18,20 @@ constDuneForm = ({ onSubmit }) => {
 
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(true);
   const [password, setPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false); // New state to prevent multiple submissionsconst correctPassword = 'doginals are dead'; // Password to unlock the formconsthandleChange = (e) => {
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state to prevent multiple submissions
+
+  const correctPassword = 'doginals are dead'; // Password to unlock the form
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  consthandlePasswordChange = (e) => {
+  const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
 
-  consthandlePasswordSubmit = (e) => {
+  const handlePasswordSubmit = (e) => {
     e.preventDefault();
     if (password === correctPassword) {
       setIsMaintenanceMode(false);
@@ -35,10 +40,11 @@ constDuneForm = ({ onSubmit }) => {
     }
   };
 
-  consthandleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Prevent duplicate submissionsif (isSubmitting) return;
+    // Prevent duplicate submissions
+    if (isSubmitting) return;
 
     setIsSubmitting(true);
 
@@ -54,7 +60,8 @@ constDuneForm = ({ onSubmit }) => {
     }; 
 
     try {
-      const response = awaitsubmitOrder(orderData); // Use the submitOrder function from duneApiClient.jsonSubmit(response); // Handle the response from the backend
+      const response = await submitOrder(orderData); // Use the submitOrder function from duneApiClient
+      onSubmit(response); // Handle the response from the backend
     } catch (error) {
       console.error('Error submitting order:', error);
     } finally {
@@ -63,21 +70,43 @@ constDuneForm = ({ onSubmit }) => {
   };
 
   return (
-    <divclassName="dune-form-container">
+    <div className="dune-form-container">
       {isMaintenanceMode ? (
-        <divclassName="maintenance-message"><h2>Dunes Etcher is under maintenance</h2><p>Please enter the password to unlock the form.</p><form onSubmit={handlePasswordSubmit}><label>
+        <div className="maintenance-message">
+          <h2>Dunes Etcher is under maintenance</h2>
+          <p>Please enter the password to unlock the form.</p>
+          <form onSubmit={handlePasswordSubmit}>
+            <label>
               Password:
-              <inputtype="password"value={password}onChange={handlePasswordChange}required
-              /></label><button type="submit">Unlock</button></form></div>
+              <input
+                type="password"
+                value={password}
+                onChange={handlePasswordChange}
+                required
+              />
+            </label>
+            <button type="submit">Unlock</button>
+          </form>
+        </div>
       ) : (
-        <formclassName="dune-form"onSubmit={handleSubmit}><label>
+        <form className="dune-form" onSubmit={handleSubmit}>
+          <label>
             Operation Type:
-            <selectname="operationType"value={formData.operationType}onChange={handleChange}><option value="deploy">Deploy</option><option value="mint">Mint</option></select></label>
+            <select name="operationType" value={formData.operationType} onChange={handleChange}>
+              <option value="deploy">Deploy</option>
+              <option value="mint">Mint</option>
+            </select>
+          </label>
 
           {formData.operationType === 'deploy' && (
-            <><label>
+            <>
+              <label>
                 Dune Name:
-                <inputtype="text"name="duneName"value={formData.duneName}onChange={(e) =>
+                <input
+                  type="text"
+                  name="duneName"
+                  value={formData.duneName}
+                  onChange={(e) =>
                     handleChange({
                       target: {
                         name: 'duneName',
@@ -87,32 +116,83 @@ constDuneForm = ({ onSubmit }) => {
                   }
                   required
                 />
-              </label><label>
+              </label>
+              <label>
                 Symbol:
-                <inputtype="text"name="symbol"value={formData.symbol}onChange={handleChange}required
-                /></label><label>
+                <input
+                  type="text"
+                  name="symbol"
+                  value={formData.symbol}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
                 Limit Per Mint:
-                <inputtype="number"name="limitPerMint"value={formData.limitPerMint}onChange={handleChange}required
-                /></label><label>
+                <input
+                  type="number"
+                  name="limitPerMint"
+                  value={formData.limitPerMint}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
                 Max Number of Mints:
-                <inputtype="number"name="maxNrOfMints"value={formData.maxNrOfMints}onChange={handleChange}required
-                /></label></>
+                <input
+                  type="number"
+                  name="maxNrOfMints"
+                  value={formData.maxNrOfMints}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+            </>
           )}
 
           {formData.operationType === 'mint' && (
-            <><label>
+            <>
+              <label>
                 Mint ID:
-                <inputtype="text"name="mintId"value={formData.mintId}onChange={handleChange}required
-                /></label><label>
+                <input
+                  type="text"
+                  name="mintId"
+                  value={formData.mintId}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
                 Amount to Mint:
-                <inputtype="number"name="mintAmount"value={formData.mintAmount}onChange={handleChange}required
-                /></label><label>
+                <input
+                  type="number"
+                  name="mintAmount"
+                  value={formData.mintAmount}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
                 Number of Mints:
-                <inputtype="number"name="numberOfMints"value={formData.numberOfMints}onChange={handleChange}required
-                /></label><label>
+                <input
+                  type="number"
+                  name="numberOfMints"
+                  value={formData.numberOfMints}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
                 To Address:
-                <inputtype="text"name="mintToAddress"value={formData.mintToAddress}onChange={handleChange}required
-                /></label></>
+                <input
+                  type="text"
+                  name="mintToAddress"
+                  value={formData.mintToAddress}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+            </>
           )}
 
           <button type="submit" disabled={isSubmitting}>Submit</button>
@@ -122,4 +202,4 @@ constDuneForm = ({ onSubmit }) => {
   );
 };
 
-exportdefaultDuneForm;
+export default DuneForm;
