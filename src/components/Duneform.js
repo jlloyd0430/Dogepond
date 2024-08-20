@@ -13,13 +13,23 @@ const DuneForm = ({ onSubmit }) => {
     numberOfMints: '', // Added field
     mintToAddress: '',
     paymentAddress: '',
+    mintAbsoluteStartBlockHeight: '',
+    mintAbsoluteStopBlockHeight: '',
+    mintRelativeStartBlockHeight: '',
+    mintRelativeEndBlockHeight: '',
+    optInForFutureProtocolChanges: false,
+    mintingAllowed: true,
   });
 
   const [orderStatus, setOrderStatus] = useState(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -32,6 +42,12 @@ const DuneForm = ({ onSubmit }) => {
       maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0, // Ensure integers
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
       numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined, // Added field
+      mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
+      mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
+      mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
+      mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
+      optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
+      mintingAllowed: formData.mintingAllowed,
     };
 
     const orderResponse = await onSubmit(orderData);
@@ -51,12 +67,12 @@ const DuneForm = ({ onSubmit }) => {
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
-     <div className="info-note">
-            <span className="info-icon">ℹ️</span>
-            <p className="info-text">
-              Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
-            </p>
-          </div>
+      <div className="info-note">
+        <span className="info-icon">ℹ️</span>
+        <p className="info-text">
+          Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
+        </p>
+      </div>
       <label>
         Operation Type:
         <select name="operationType" value={formData.operationType} onChange={handleChange}>
@@ -99,7 +115,7 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="limitPerMint"
               value={formData.limitPerMint}
-              onChange={(e) => handleChange(e)}
+              onChange={handleChange}
               required
             />
           </label>
@@ -109,10 +125,81 @@ const DuneForm = ({ onSubmit }) => {
               type="number"
               name="maxNrOfMints"
               value={formData.maxNrOfMints}
-              onChange={(e) => handleChange(e)}
+              onChange={handleChange}
               required
             />
           </label>
+
+          {/* Advanced options toggle */}
+          <label>
+            <input
+              type="checkbox"
+              name="showAdvanced"
+              checked={showAdvanced}
+              onChange={() => setShowAdvanced(!showAdvanced)}
+            />
+            Show Advanced Options
+          </label>
+
+          {/* Advanced options fields */}
+          {showAdvanced && (
+            <div className="advanced-options">
+              <label>
+                Mint Absolute Start Block Height:
+                <input
+                  type="number"
+                  name="mintAbsoluteStartBlockHeight"
+                  value={formData.mintAbsoluteStartBlockHeight}
+                  onChange={handleChange}
+                />
+              </label>
+              <label>
+                Mint Absolute Stop Block Height:
+                <input
+                  type="number"
+                  name="mintAbsoluteStopBlockHeight"
+                  value={formData.mintAbsoluteStopBlockHeight}
+                  onChange={handleChange}
+                />
+              </label>
+              <label>
+                Mint Relative Start Block Height:
+                <input
+                  type="number"
+                  name="mintRelativeStartBlockHeight"
+                  value={formData.mintRelativeStartBlockHeight}
+                  onChange={handleChange}
+                />
+              </label>
+              <label>
+                Mint Relative End Block Height:
+                <input
+                  type="number"
+                  name="mintRelativeEndBlockHeight"
+                  value={formData.mintRelativeEndBlockHeight}
+                  onChange={handleChange}
+                />
+              </label>
+              <label>
+                Opt-In for Future Protocol Changes:
+                <input
+                  type="checkbox"
+                  name="optInForFutureProtocolChanges"
+                  checked={formData.optInForFutureProtocolChanges}
+                  onChange={handleChange}
+                />
+              </label>
+              <label>
+                Minting Allowed:
+                <input
+                  type="checkbox"
+                  name="mintingAllowed"
+                  checked={formData.mintingAllowed}
+                  onChange={handleChange}
+                />
+              </label>
+            </div>
+          )}
         </>
       )}
       {formData.operationType === 'mint' && (
