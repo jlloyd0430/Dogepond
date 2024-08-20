@@ -51,6 +51,12 @@ const DuneForm = ({ onSubmit }) => {
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
+     <div className="info-note">
+            <span className="info-icon">ℹ️</span>
+            <p className="info-text">
+              Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
+            </p>
+          </div>
       <label>
         Operation Type:
         <select name="operationType" value={formData.operationType} onChange={handleChange}>
