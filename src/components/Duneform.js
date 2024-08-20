@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Trending.css';
+
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
     operationType: 'deploy',
@@ -25,10 +26,6 @@ const DuneForm = ({ onSubmit }) => {
     e.preventDefault();
     const timestamp = Date.now(); // Get the current timestamp
     const orderData = { 
-
-    
-   const DuneForm = ({ onSubmit }) => {
-  
       ...formData, 
       timestamp,
       limitPerMint: parseInt(formData.limitPerMint, 10), // Ensure integers
@@ -53,9 +50,6 @@ const DuneForm = ({ onSubmit }) => {
   };
 
   return (
-
-   const DuneForm = ({ onSubmit }) => {
-  
     <form className="dune-form" onSubmit={handleSubmit}>
       <label>
         Operation Type:
@@ -181,5 +175,4 @@ const DuneForm = ({ onSubmit }) => {
   );
 };
 
-    
 export default DuneForm;
