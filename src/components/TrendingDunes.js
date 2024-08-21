@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import MyDunes from "./MyDunes";
-import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Ensure duneApiClient points to form.dogepond.com
+import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
 import ErrorBoundary from './ErrorBoundary';
 
 const TrendingDunes = () => {
@@ -189,6 +189,12 @@ const TrendingDunes = () => {
                       <p>Mints: {duneDetails.mints}</p>
                       <p>Unique Holders: {duneDetails.unique_holders}</p>
                       <p>Total UTXOs: {duneDetails.total_utxos}</p>
+                      <p>Symbol: {duneDetails.symbol}</p>
+                      <p>Divisibility: {duneDetails.divisibility}</p>
+                      <p>Mint TXs Cap: {duneDetails.terms.mint_txs_cap}</p>
+                      <p>Amount per Mint: {duneDetails.terms.amount_per_mint}</p>
+                      <p>Start Height: {duneDetails.terms.start_height}</p>
+                      <p>End Height: {duneDetails.terms.end_height}</p>
                     </div>
                   )}
                 </div>
