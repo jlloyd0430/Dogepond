@@ -10,7 +10,7 @@ const DuneForm = ({ onSubmit }) => {
     maxNrOfMints: '',
     mintId: '',
     mintAmount: '',
-    numberOfMints: '', // Added field
+    numberOfMints: '',
     mintToAddress: '',
     paymentAddress: '',
     mintAbsoluteStartBlockHeight: '',
@@ -23,6 +23,7 @@ const DuneForm = ({ onSubmit }) => {
 
   const [orderStatus, setOrderStatus] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showInfo, setShowInfo] = useState(false); // State to control the visibility of the info text
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -34,14 +35,14 @@ const DuneForm = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const timestamp = Date.now(); // Get the current timestamp
+    const timestamp = Date.now();
     const orderData = {
       ...formData,
       timestamp,
-      limitPerMint: parseInt(formData.limitPerMint, 10) || 0, // Ensure integers
-      maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0, // Ensure integers
+      limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
       mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
-      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined, // Added field
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined,
       mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
       mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
       mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
@@ -62,16 +63,18 @@ const DuneForm = ({ onSubmit }) => {
         clearInterval(interval);
         setOrderStatus(data.status);
       }
-    }, 5000); // Poll every 5 seconds
+    }, 5000);
   };
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
       <div className="info-note">
-        <span className="info-icon">ℹ️</span>
-        <p className="info-text">
-          Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
-        </p>
+        <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>ℹ️</span>
+        {showInfo && (
+          <p className={`info-text ${showInfo ? 'visible' : ''}`}>
+            Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
+          </p>
+        )}
       </div>
       <label>
         Operation Type:
@@ -225,7 +228,7 @@ const DuneForm = ({ onSubmit }) => {
             />
           </label>
           <label>
-            Number of Mints: {/* Added field */}
+            Number of Mints:
             <input
               type="number"
               name="numberOfMints"
