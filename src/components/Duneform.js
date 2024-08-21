@@ -35,6 +35,13 @@ const DuneForm = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validation for number of mints
+    if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
+      alert('Number of mints must be between 1 and 12.');
+      return;
+    }
+
     const timestamp = Date.now();
     const orderData = {
       ...formData,
@@ -235,6 +242,7 @@ const DuneForm = ({ onSubmit }) => {
               value={formData.numberOfMints}
               onChange={handleChange}
               required
+              max="12" // This limits the input to a maximum of 12
             />
           </label>
           <label>
