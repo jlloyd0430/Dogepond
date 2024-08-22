@@ -93,6 +93,8 @@
 
 .info-note {
   display: flex;
+  flex-direction: row-reverse;
+  gap: 25px;
   align-items: center;
   margin-bottom: 15px;
   font-size: 12px;
