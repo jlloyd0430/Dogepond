@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Trending.css';
 
 const DuneForm = ({ onSubmit }) => {
@@ -24,6 +24,31 @@ const DuneForm = ({ onSubmit }) => {
   const [orderStatus, setOrderStatus] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [myDogeMask, setMyDogeMask] = useState(null);
+  const [connectedAddress, setConnectedAddress] = useState(null);
+
+  useEffect(() => {
+    window.addEventListener('doge#initialized', () => {
+      setMyDogeMask(window.doge);
+    }, { once: true });
+
+    if (window.doge?.isMyDoge) {
+      setMyDogeMask(window.doge);
+    }
+  }, []);
+
+  const handleConnectWallet = async () => {
+    if (myDogeMask) {
+      try {
+        const connectRes = await myDogeMask.connect();
+        setConnectedAddress(connectRes.address);
+      } catch (error) {
+        console.error('Failed to connect to MyDoge:', error);
+      }
+    } else {
+      alert('MyDoge wallet extension not found');
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -36,7 +61,6 @@ const DuneForm = ({ onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation for number of mints
     if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
       alert('Number of mints must be between 1 and 12.');
       return;
@@ -60,6 +84,20 @@ const DuneForm = ({ onSubmit }) => {
 
     const orderResponse = await onSubmit(orderData);
     pollOrderStatus(orderResponse.index);
+
+    if (connectedAddress) {
+      try {
+        const txReqRes = await myDogeMask.requestTransaction({
+          recipientAddress: orderData.paymentAddress,
+          dogeAmount: 4.2, // Replace with the actual Doge amount needed
+        });
+        console.log('Transaction successful:', txReqRes);
+      } catch (error) {
+        console.error('Transaction failed:', error);
+      }
+    } else {
+      alert('Please connect your wallet or manually send the payment.');
+    }
   };
 
   const pollOrderStatus = async (orderIndex) => {
@@ -77,6 +115,9 @@ const DuneForm = ({ onSubmit }) => {
     <form className="dune-form" onSubmit={handleSubmit}>
       <div className="info-note">
         <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>ℹ️</span>
+        <button type="button" onClick={handleConnectWallet} className="connect-wallet-button">
+          {connectedAddress ? `Connected: ${connectedAddress}` : 'Connect Wallet'}
+        </button>
         {showInfo && (
           <p className={`info-text ${showInfo ? 'visible' : ''}`}>
             Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
@@ -139,7 +180,6 @@ const DuneForm = ({ onSubmit }) => {
               required
             />
           </label>
-          {/* Advanced options toggle */}
           <label>
             <input
               type="checkbox"
@@ -149,7 +189,6 @@ const DuneForm = ({ onSubmit }) => {
             />
             Show Advanced Options
           </label>
-          {/* Advanced options fields */}
           {showAdvanced && (
             <div className="advanced-options">
               <label>
@@ -240,11 +279,11 @@ const DuneForm = ({ onSubmit }) => {
               value={formData.numberOfMints}
               onChange={handleChange}
               required
-              max="12" // This limits the input to a maximum of 12
+              max="12"
             />
           </label>
           <label>
-             To Address:
+            To Address:
             <input
               type="text"
               name="mintToAddress"
