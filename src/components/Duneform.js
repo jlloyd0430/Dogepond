@@ -83,16 +83,22 @@ const DuneForm = ({ onSubmit }) => {
   };
 
   try {
+    // Assume onSubmit returns the same data as shown in the popup
     const orderResponse = await onSubmit(orderData);
+
     if (orderResponse && orderResponse.paymentAddress && orderResponse.dogeAmount) {
+      // Update the popup with payment details
+      document.querySelector('.payment-address').textContent = orderResponse.paymentAddress;
+      document.querySelector('.doge-amount').textContent = orderResponse.dogeAmount;
+
       if (connectedAddress) {
         try {
           const txReqRes = await myDogeMask.requestTransaction({
             recipientAddress: orderResponse.paymentAddress,
-            dogeAmount: orderResponse.dogeAmount, // Use the actual Doge amount provided in the response
+            dogeAmount: orderResponse.dogeAmount, // Use the Doge amount provided in the response
           });
           console.log('Transaction successful:', txReqRes);
-          // Update order status or show success message here if needed
+          // Optionally update the UI with success information here
         } catch (error) {
           console.error('Transaction failed:', error);
           alert('Transaction failed. Please try again.');
@@ -108,6 +114,7 @@ const DuneForm = ({ onSubmit }) => {
     alert('There was an error processing your order. Please try again.');
   }
 };
+
 
   const pollOrderStatus = async (orderIndex) => {
     const interval = setInterval(async () => {
