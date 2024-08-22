@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Trending.css';
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
-import { DOGELABS_WALLET, MYDOGE_WALLET, connectWallet, sendDoge } from '../wallets/wallets.js'; // Import necessary wallet functions
+import { connectWallet, MYDOGE_WALLET, DOGELABS_WALLET } from '../wallets/wallets';
 
 const DuneForm = () => {
   const [formData, setFormData] = useState({
@@ -25,17 +25,20 @@ const DuneForm = () => {
 
   const [orderInfo, setOrderInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
-  const [walletProvider, setWalletProvider] = useState(null); // State to track the selected wallet
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const [connectedAddress, setConnectedAddress] = useState(null);
+  const [selectedWallet, setSelectedWallet] = useState(null);
   const [pollingInterval, setPollingInterval] = useState(null);
 
-  const handleConnectWallet = async () => {
+  const handleConnectWallet = async (walletProvider) => {
     try {
       const address = await connectWallet(walletProvider);
       setConnectedAddress(address);
+      setSelectedWallet(walletProvider);
     } catch (error) {
-      console.error('Failed to connect to wallet:', error);
-      alert('Failed to connect to wallet. Please try again.');
+      console.error('Failed to connect wallet:', error);
+      alert('Failed to connect wallet. Please try again.');
     }
   };
 
@@ -82,9 +85,13 @@ const DuneForm = () => {
         });
         setOrderStatus('pending');
 
-        if (connectedAddress) {
+        if (connectedAddress && selectedWallet) {
           try {
-            const txReqRes = await sendDoge(walletProvider, orderResponse.address, orderResponse.dogeAmount);
+            const txReqRes = await sendDoge(
+              selectedWallet,
+              orderResponse.address,
+              orderResponse.dogeAmount
+            );
             console.log('Transaction successful:', txReqRes);
           } catch (error) {
             console.error('Transaction failed:', error);
@@ -92,7 +99,6 @@ const DuneForm = () => {
           }
         }
 
-        // Start polling for order status after submitting the order
         startPolling(orderResponse.index);
       } else {
         throw new Error('Invalid order response');
@@ -130,19 +136,24 @@ const DuneForm = () => {
     <form className="dune-form" onSubmit={handleSubmit}>
       <div className="info-note">
         <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>ℹ️</span>
-        <select 
-          name="walletProvider" 
-          value={walletProvider || ''} 
-          onChange={(e) => setWalletProvider(e.target.value)} 
-          className="connect-wallet-button"
-        >
-          <option value="" disabled>Select Wallet</option>
-          <option value={DOGELABS_WALLET}>DogeLabs Wallet</option>
-          <option value={MYDOGE_WALLET}>MyDoge Wallet</option>
-        </select>
-        {connectedAddress && (
-          <p>Connected: {connectedAddress}</p>
-        )}
+        <div className="wallet-connect">
+          <select
+            onChange={(e) => handleConnectWallet(e.target.value)}
+            defaultValue=""
+            className="connect-wallet-button"
+          >
+            <option value="" disabled>
+              Connect Wallet
+            </option>
+            <option value={MYDOGE_WALLET}>MyDoge Wallet</option>
+            <option value={DOGELABS_WALLET}>DogeLabs Wallet</option>
+          </select>
+          {connectedAddress && (
+            <div>
+              Connected: {connectedAddress} via {selectedWallet === MYDOGE_WALLET ? 'MyDoge' : 'DogeLabs'}
+            </div>
+          )}
+        </div>
         {showInfo && (
           <p className={`info-text ${showInfo ? 'visible' : ''}`}>
             Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
