@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './Trending.css';
+
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
-    operationType: 'deploy', 
+    operationType: 'deploy',
     duneName: '',
     symbol: '',
     limitPerMint: '',
@@ -19,9 +20,11 @@ const DuneForm = ({ onSubmit }) => {
     optInForFutureProtocolChanges: false,
     mintingAllowed: true,
   });
+
   const [orderStatus, setOrderStatus] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [showInfo, setShowInfo] = useState(false); // State to control the visibility of the info text
+  const [showInfo, setShowInfo] = useState(false);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -42,9 +45,6 @@ const DuneForm = ({ onSubmit }) => {
     const timestamp = Date.now();
     const orderData = {
       ...formData,
-
-    const DuneForm = ({ onSubmit }) => {
-  
       timestamp,
       limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
       maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
@@ -57,9 +57,11 @@ const DuneForm = ({ onSubmit }) => {
       optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
       mintingAllowed: formData.mintingAllowed,
     };
+
     const orderResponse = await onSubmit(orderData);
     pollOrderStatus(orderResponse.index);
   };
+
   const pollOrderStatus = async (orderIndex) => {
     const interval = setInterval(async () => {
       const response = await fetch(`/order/status/${orderIndex}`);
@@ -70,6 +72,7 @@ const DuneForm = ({ onSubmit }) => {
       }
     }, 5000);
   };
+
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
       <div className="info-note">
@@ -257,4 +260,5 @@ const DuneForm = ({ onSubmit }) => {
     </form>
   );
 };
+
 export default DuneForm;
