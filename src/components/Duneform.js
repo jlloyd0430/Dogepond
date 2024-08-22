@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Trending.css';
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
+import { DOGELABS_WALLET, MYDOGE_WALLET, connectWallet, sendDoge } from '../wallets/wallet.js'; // Import necessary wallet functions
 
 const DuneForm = () => {
   const [formData, setFormData] = useState({
@@ -24,32 +25,17 @@ const DuneForm = () => {
 
   const [orderInfo, setOrderInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
-  const [myDogeMask, setMyDogeMask] = useState(null);
+  const [walletProvider, setWalletProvider] = useState(null); // State to track the selected wallet
   const [connectedAddress, setConnectedAddress] = useState(null);
   const [pollingInterval, setPollingInterval] = useState(null);
 
-  useEffect(() => {
-    window.addEventListener('doge#initialized', () => {
-      setMyDogeMask(window.doge);
-    }, { once: true });
-
-    if (window.doge?.isMyDoge) {
-      setMyDogeMask(window.doge);
-    }
-  }, []);
-
   const handleConnectWallet = async () => {
-    if (myDogeMask) {
-      try {
-        const connectRes = await myDogeMask.connect();
-        setConnectedAddress(connectRes.address);
-      } catch (error) {
-        console.error('Failed to connect to MyDoge:', error);
-      }
-    } else {
-      alert('MyDoge wallet extension not found');
+    try {
+      const address = await connectWallet(walletProvider);
+      setConnectedAddress(address);
+    } catch (error) {
+      console.error('Failed to connect to wallet:', error);
+      alert('Failed to connect to wallet. Please try again.');
     }
   };
 
@@ -98,10 +84,7 @@ const DuneForm = () => {
 
         if (connectedAddress) {
           try {
-            const txReqRes = await myDogeMask.requestTransaction({
-              recipientAddress: orderResponse.address,
-              dogeAmount: orderResponse.dogeAmount,
-            });
+            const txReqRes = await sendDoge(walletProvider, orderResponse.address, orderResponse.dogeAmount);
             console.log('Transaction successful:', txReqRes);
           } catch (error) {
             console.error('Transaction failed:', error);
@@ -147,9 +130,19 @@ const DuneForm = () => {
     <form className="dune-form" onSubmit={handleSubmit}>
       <div className="info-note">
         <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>ℹ️</span>
-        <button type="button" onClick={handleConnectWallet} className="connect-wallet-button">
-          {connectedAddress ? `Connected: ${connectedAddress}` : 'Connect Wallet'}
-        </button>
+        <select 
+          name="walletProvider" 
+          value={walletProvider || ''} 
+          onChange={(e) => setWalletProvider(e.target.value)} 
+          className="connect-wallet-button"
+        >
+          <option value="" disabled>Select Wallet</option>
+          <option value={DOGELABS_WALLET}>DogeLabs Wallet</option>
+          <option value={MYDOGE_WALLET}>MyDoge Wallet</option>
+        </select>
+        {connectedAddress && (
+          <p>Connected: {connectedAddress}</p>
+        )}
         {showInfo && (
           <p className={`info-text ${showInfo ? 'visible' : ''}`}>
             Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
