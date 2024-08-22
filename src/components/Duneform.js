@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Trending.css';
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
+
 const DuneForm = () => {
   const [formData, setFormData] = useState({
     operationType: 'deploy',
@@ -20,33 +21,77 @@ const DuneForm = () => {
     optInForFutureProtocolChanges: false,
     mintingAllowed: true,
   });
+
   const [orderInfo, setOrderInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-  const [myDogeMask, setMyDogeMask] = useState(null);
   const [connectedAddress, setConnectedAddress] = useState(null);
+  const [myDogeMask, setMyDogeMask] = useState(null);
+  const [dogeLabs, setDogeLabs] = useState(null);
+  const [selectedWallet, setSelectedWallet] = useState(null); // Track the selected wallet
   const [pollingInterval, setPollingInterval] = useState(null);
+
   useEffect(() => {
     window.addEventListener('doge#initialized', () => {
       setMyDogeMask(window.doge);
     }, { once: true });
+
     if (window.doge?.isMyDoge) {
       setMyDogeMask(window.doge);
     }
+
+    if (window.dogeLabs) {
+      setDogeLabs(window.dogeLabs);
+    }
   }, []);
-  const handleConnectWallet = async () => {
-    if (myDogeMask) {
-      try {
+
+  const handleConnectWallet = async (walletProvider) => {
+    try {
+      if (walletProvider === 'myDoge' && myDogeMask) {
         const connectRes = await myDogeMask.connect();
         setConnectedAddress(connectRes.address);
-      } catch (error) {
-        console.error('Failed to connect to MyDoge:', error);
+        setSelectedWallet('myDoge');
+      } else if (walletProvider === 'dogeLabs' && dogeLabs) {
+        const address = await getDogeLabsWalletAddress();
+        setConnectedAddress(address);
+        setSelectedWallet('dogeLabs');
+      } else {
+        alert('Selected wallet extension not found');
       }
-    } else {
-      alert('MyDoge wallet extension not found');
+    } catch (error) {
+      console.error('Failed to connect to wallet:', error);
     }
   };
+
+  const getDogeLabsWalletAddress = async () => {
+    if (!dogeLabs) {
+      throw new Error('Doge Labs Wallet is not installed');
+    }
+    try {
+      const accounts = await dogeLabs.requestAccounts();
+      if (accounts.length !== 1) {
+        throw new Error(`Invalid number of accounts detected (${accounts.length})`);
+      }
+      return accounts[0];
+    } catch (err) {
+      throw new Error('User did not grant access to Doge Labs');
+    }
+  };
+
+  const sendDoge = async (walletProvider, amount, address) => {
+    if (walletProvider === 'myDoge' && myDogeMask) {
+      return await myDogeMask.requestTransaction({
+        recipientAddress: address,
+        dogeAmount: amount,
+      });
+    } else if (walletProvider === 'dogeLabs' && dogeLabs) {
+      return await dogeLabs.sendBitcoin(address, amount);
+    } else {
+      throw new Error('No wallet connected or invalid wallet provider');
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -54,12 +99,15 @@ const DuneForm = () => {
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
       alert('Number of mints must be between 1 and 12.');
       return;
     }
+
     const timestamp = Date.now();
     const orderData = {
       ...formData,
@@ -75,8 +123,10 @@ const DuneForm = () => {
       optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
       mintingAllowed: formData.mintingAllowed,
     };
+
     try {
       const orderResponse = await submitOrder(orderData);
+
       if (orderResponse && orderResponse.address && orderResponse.dogeAmount) {
         setOrderInfo({
           paymentAddress: orderResponse.address,
@@ -84,12 +134,10 @@ const DuneForm = () => {
           orderIndex: orderResponse.index,
         });
         setOrderStatus('pending');
-        if (connectedAddress) {
+
+        if (connectedAddress && selectedWallet) {
           try {
-            const txReqRes = await myDogeMask.requestTransaction({
-              recipientAddress: orderResponse.address,
-              dogeAmount: orderResponse.dogeAmount,
-            });
+            const txReqRes = await sendDoge(selectedWallet, orderResponse.dogeAmount, orderResponse.address);
             console.log('Transaction successful:', txReqRes);
           } catch (error) {
             console.error('Transaction failed:', error);
@@ -101,20 +149,18 @@ const DuneForm = () => {
         startPolling(orderResponse.index);
       } else {
         throw new Error('Invalid order response');
-
-    
- const DuneForm = () => {
-  
       }
     } catch (error) {
       console.error('Error submitting order:', error);
       alert('There was an error processing your order. Please try again.');
     }
   };
+
   const startPolling = (orderIndex) => {
     if (pollingInterval) {
       clearInterval(pollingInterval);
     }
+
     const interval = setInterval(async () => {
       try {
         const data = await checkOrderStatus(orderIndex);
@@ -129,15 +175,32 @@ const DuneForm = () => {
         console.error('Error polling order status:', error);
       }
     }, 5000);
+
     setPollingInterval(interval);
   };
+
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
       <div className="info-note">
         <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>ℹ️</span>
-        <button type="button" onClick={handleConnectWallet} className="connect-wallet-button">
-          {connectedAddress ? `Connected: ${connectedAddress}` : 'Connect Wallet'}
-        </button>
+        <div className="wallet-connect">
+          <select
+            onChange={(e) => handleConnectWallet(e.target.value)}
+            defaultValue=""
+            className="connect-wallet-button"
+          >
+            <option value="" disabled>
+              Connect Wallet
+            </option>
+            <option value="myDoge">MyDoge Wallet</option>
+            <option value="dogeLabs">DogeLabs Wallet</option>
+          </select>
+          {connectedAddress && (
+            <div>
+              Connected: {connectedAddress} via {selectedWallet === 'myDoge' ? 'MyDoge' : 'DogeLabs'}
+            </div>
+          )}
+        </div>
         {showInfo && (
           <p className={`info-text ${showInfo ? 'visible' : ''}`}>
             Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
@@ -330,8 +393,8 @@ const DuneForm = () => {
         </div>
       )}
       {orderStatus && <div>Order Status: {orderStatus}</div>}
-
     </form>
   );
 };
+
 export default DuneForm;
