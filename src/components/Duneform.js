@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Trending.css';
-import { submitOrder, checkOrderStatus } from '../services/duneApiClient'; // Import the functions
+import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
 
 const DuneForm = () => {
   const [formData, setFormData] = useState({
@@ -22,12 +22,13 @@ const DuneForm = () => {
     mintingAllowed: true,
   });
 
+  const [orderInfo, setOrderInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
-  const [orderInfo, setOrderInfo] = useState(null); // State to store order info for the pop-up
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [myDogeMask, setMyDogeMask] = useState(null);
   const [connectedAddress, setConnectedAddress] = useState(null);
+  const [pollingInterval, setPollingInterval] = useState(null);
 
   useEffect(() => {
     window.addEventListener('doge#initialized', () => {
@@ -85,31 +86,61 @@ const DuneForm = () => {
     };
 
     try {
-      const orderResponse = await submitOrder(orderData); // Use the submitOrder function from duneApiClient.js
+      const orderResponse = await submitOrder(orderData);
 
-      // Set order info to display in the pop-up
-      setOrderInfo({
-        paymentAddress: orderResponse.address,
-        dogeAmount: orderResponse.dogeAmount,
-      });
+      if (orderResponse && orderResponse.address && orderResponse.dogeAmount) {
+        setOrderInfo({
+          paymentAddress: orderResponse.address,
+          dogeAmount: orderResponse.dogeAmount,
+          orderIndex: orderResponse.index,
+        });
+        setOrderStatus('pending');
 
-      if (orderResponse && connectedAddress) {
-        try {
-          const txReqRes = await myDogeMask.requestTransaction({
-            recipientAddress: orderResponse.address,
-            dogeAmount: orderResponse.dogeAmount,
-          });
-          console.log('Transaction successful:', txReqRes);
-          setOrderStatus('Transaction successful.');
-        } catch (error) {
-          console.error('Transaction failed:', error);
-          alert('Transaction failed. Please try again.');
+        if (connectedAddress) {
+          try {
+            const txReqRes = await myDogeMask.requestTransaction({
+              recipientAddress: orderResponse.address,
+              dogeAmount: orderResponse.dogeAmount,
+            });
+            console.log('Transaction successful:', txReqRes);
+          } catch (error) {
+            console.error('Transaction failed:', error);
+            alert('Transaction failed. Please try again.');
+          }
         }
+
+        // Start polling for order status if wallet is not connected
+        startPolling(orderResponse.index);
+      } else {
+        throw new Error('Invalid order response');
       }
     } catch (error) {
       console.error('Error submitting order:', error);
       alert('There was an error processing your order. Please try again.');
     }
+  };
+
+  const startPolling = (orderIndex) => {
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+    }
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await checkOrderStatus(orderIndex);
+        if (data.status === 'complete') {
+          setOrderStatus('complete');
+          clearInterval(interval);
+        } else if (data.status === 'failed') {
+          setOrderStatus('failed');
+          clearInterval(interval);
+        }
+      } catch (error) {
+        console.error('Error polling order status:', error);
+      }
+    }, 5000);
+
+    setPollingInterval(interval);
   };
 
   return (
@@ -297,15 +328,13 @@ const DuneForm = () => {
       )}
       <button type="submit">Submit</button>
       {orderInfo && (
-        <div className="order-info">
-          <p>Please send {orderInfo.dogeAmount} DOGE to the following address:</p>
-          <p>{orderInfo.paymentAddress}</p>
-          <button
-            type="button"
-            onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}
-          >
-            Copy Address
-          </button>
+        <div>
+          <p>
+            Please send {orderInfo.dogeAmount} DOGE to the following address:
+            <br />
+            {orderInfo.paymentAddress}
+          </p>
+          <button onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}>Copy Address</button>
         </div>
       )}
       {orderStatus && <div>Order Status: {orderStatus}</div>}
