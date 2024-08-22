@@ -58,7 +58,7 @@ const DuneForm = ({ onSubmit }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
@@ -83,14 +83,13 @@ const DuneForm = ({ onSubmit }) => {
   };
 
   try {
-    // Assume onSubmit returns the same data as shown in the popup
     const orderResponse = await onSubmit(orderData);
 
-    if (orderResponse && orderResponse.paymentAddress && orderResponse.dogeAmount) {
-      // Update the popup with payment details
-      document.querySelector('.payment-address').textContent = orderResponse.paymentAddress;
-      document.querySelector('.doge-amount').textContent = orderResponse.dogeAmount;
+    // Log the response to debug what's inside it
+    console.log('Order response:', orderResponse);
 
+    // Assuming orderResponse should contain paymentAddress and dogeAmount
+    if (orderResponse && orderResponse.paymentAddress && orderResponse.dogeAmount) {
       if (connectedAddress) {
         try {
           const txReqRes = await myDogeMask.requestTransaction({
@@ -98,7 +97,6 @@ const DuneForm = ({ onSubmit }) => {
             dogeAmount: orderResponse.dogeAmount, // Use the Doge amount provided in the response
           });
           console.log('Transaction successful:', txReqRes);
-          // Optionally update the UI with success information here
         } catch (error) {
           console.error('Transaction failed:', error);
           alert('Transaction failed. Please try again.');
@@ -114,6 +112,7 @@ const DuneForm = ({ onSubmit }) => {
     alert('There was an error processing your order. Please try again.');
   }
 };
+
 
 
   const pollOrderStatus = async (orderIndex) => {
