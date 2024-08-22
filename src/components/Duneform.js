@@ -68,49 +68,49 @@ const DuneForm = ({ onSubmit }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Validation for number of mints
-    if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
-      alert('Number of mints must be between 1 and 12.');
-      return;
-    }
+  // Validation for number of mints
+  if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
+    alert('Number of mints must be between 1 and 12.');
+    return;
+  }
 
-    const timestamp = Date.now();
-    const orderData = {
-      ...formData,
-      timestamp,
-      limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
-      maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
-      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
-      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined,
-      mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
-      mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
-      mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
-      mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
-      optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
-      mintingAllowed: formData.mintingAllowed,
-      paymentAddress: connectedAddress || formData.paymentAddress,
-    };
-
-    const orderResponse = await onSubmit(orderData);
-
-    if (connectedAddress && myDogeMask) {
-      try {
-        const txReqRes = await myDogeMask.requestTransaction({
-          recipientAddress: orderData.paymentAddress,
-          dogeAmount: orderData.mintAmount,
-        });
-        console.log('Transaction successful:', txReqRes);
-      } catch (error) {
-        console.error('Failed to send transaction:', error);
-      }
-    } else {
-      alert(`Please send ${orderData.mintAmount} DOGE to ${orderData.paymentAddress}`);
-    }
-
-    pollOrderStatus(orderResponse.index);
+  const timestamp = Date.now();
+  const orderData = {
+    ...formData,
+    timestamp,
+    limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
+    maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
+    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
+    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined,
+    mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
+    mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
+    mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
+    mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
+    optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
+    mintingAllowed: formData.mintingAllowed,
+    paymentAddress: connectedAddress || formData.paymentAddress,
   };
+
+  const orderResponse = await onSubmit(orderData);
+
+  if (connectedAddress && myDogeMask) {
+    try {
+      const txReqRes = await myDogeMask.requestTransaction({
+        recipientAddress: orderData.paymentAddress, // Ensure this is the correct backend-generated address
+        dogeAmount: 1.712, // Use the amount you need to send
+      });
+      console.log('Transaction successful:', txReqRes);
+    } catch (error) {
+      console.error('Failed to send transaction:', error);
+    }
+  } else {
+    alert(`Please send 1.712 DOGE to ${orderData.paymentAddress}`);
+  }
+
+  pollOrderStatus(orderResponse.index);
+};
 
   const pollOrderStatus = async (orderIndex) => {
     const interval = setInterval(async () => {
