@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Trending.css';
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
-    operationType: 'deploy',
+    operationType: 'deploy', 
     duneName: '',
     symbol: '',
     limitPerMint: '',
