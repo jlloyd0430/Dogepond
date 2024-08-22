@@ -67,37 +67,34 @@ const DuneForm = ({ onSubmit }) => {
     }
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // Validation for number of mints
-  if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
-    alert('Number of mints must be between 1 and 12.');
-    return;
-  }
+    // Validation for number of mints
+    if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
+      alert('Number of mints must be between 1 and 12.');
+      return;
+    }
 
-  const timestamp = Date.now();
-  const orderData = {
-    ...formData,
-    timestamp,
-    limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
-    maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
-    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
-    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined,
-    mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
-    mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
-    mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
-    mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
-    optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
-    mintingAllowed: formData.mintingAllowed,
-  };
+    const timestamp = Date.now();
+    const orderData = {
+      ...formData,
+      timestamp,
+      limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
+      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined,
+      mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
+      mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
+      mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
+      mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
+      optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
+      mintingAllowed: formData.mintingAllowed,
+    };
 
-  console.log('Order Data Sent:', orderData);
-
-  try {
     const orderResponse = await onSubmit(orderData);
 
-    console.log('Received Order Response:', orderResponse);
+    console.log("Received Order Response:", orderResponse);
 
     if (!orderResponse || !orderResponse.address) {
       console.error("Order response does not contain a valid payment address.");
@@ -105,7 +102,6 @@ const DuneForm = ({ onSubmit }) => {
     }
 
     const paymentAddress = orderResponse.address;
-    const dogeAmount = orderResponse.dogeAmount;
 
     console.log('Payment Address:', paymentAddress);
     console.log('Connected Address:', connectedAddress);
@@ -113,8 +109,8 @@ const DuneForm = ({ onSubmit }) => {
     if (connectedAddress && paymentAddress !== connectedAddress && myDogeMask) {
       try {
         const txReqRes = await myDogeMask.requestTransaction({
-          recipientAddress: paymentAddress,
-          dogeAmount,
+          recipientAddress: paymentAddress, // Use the backend-provided address
+          dogeAmount: orderResponse.dogeAmount, // Use the amount from the backend
         });
         console.log('Transaction successful:', txReqRes);
       } catch (error) {
@@ -124,17 +120,12 @@ const DuneForm = ({ onSubmit }) => {
       if (paymentAddress === connectedAddress) {
         console.error("Error: Payment address cannot be the same as the connected wallet address.");
       } else {
-        alert(`Please send ${dogeAmount} DOGE to ${paymentAddress}`);
+        alert(`Please send ${orderResponse.dogeAmount} DOGE to ${paymentAddress}`);
       }
     }
 
     pollOrderStatus(orderResponse.index);
-
-  } catch (error) {
-    console.error('Error in order submission:', error);
-  }
-};
-
+  };
 
   const pollOrderStatus = async (orderIndex) => {
     const interval = setInterval(async () => {
