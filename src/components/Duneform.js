@@ -128,10 +128,14 @@ const DuneForm = ({ onSubmit }) => {
   const pollOrderStatus = async (orderIndex) => {
     const interval = setInterval(async () => {
       const response = await fetch(`/order/status/${orderIndex}`);
-      const data = await response.json();
-      if (data.status === 'complete' || data.status === 'failed') {
-        clearInterval(interval);
-        setOrderStatus(data.status);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === 'complete' || data.status === 'failed') {
+          clearInterval(interval);
+          setOrderStatus(data.status);
+        }
+      } else {
+        console.error(`Failed to fetch order status for index ${orderIndex}. Response: ${response.status}`);
       }
     }, 5000);
   };
