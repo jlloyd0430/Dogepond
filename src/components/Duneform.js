@@ -70,11 +70,28 @@ const DuneForm = ({ onSubmit }) => {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  // Validation for number of mints
-  if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
-    alert('Number of mints must be between 1 and 12.');
-    return;
+  try {
+    const orderResponse = await onSubmit(orderData);
+
+    if (!orderResponse || !orderResponse.address) {
+      console.error("Order response does not contain a valid payment address.");
+      alert("Order creation failed. Please try again.");
+      return;
+    }
+
+    console.log("Received Order Response:", orderResponse);
+
+    const paymentAddress = orderResponse.address;
+    const dogeAmount = orderResponse.dogeAmount;
+
+    // Further processing with paymentAddress and dogeAmount
+    // e.g., using MyDogeMask to send a transaction
+  } catch (error) {
+    console.error("Failed to submit order:", error);
+    alert("An error occurred while submitting the order. Please try again.");
   }
+};
+
 
   const timestamp = Date.now();
   const orderData = {
