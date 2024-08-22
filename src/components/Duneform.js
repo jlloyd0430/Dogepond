@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Trending.css';
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
-import { connectWallet, MYDOGE_WALLET, DOGELABS_WALLET } from '../wallets/wallets';
+import { connectWallet, sendDoge, MYDOGE_WALLET, DOGELABS_WALLET } from '../wallets/wallets'; // Updated import
 
 const DuneForm = () => {
   const [formData, setFormData] = useState({
