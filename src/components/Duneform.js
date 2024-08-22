@@ -109,7 +109,7 @@ const DuneForm = () => {
           }
         }
 
-        // Start polling for order status if wallet is not connected
+        // Start polling for order status after submitting the order
         startPolling(orderResponse.index);
       } else {
         throw new Error('Invalid order response');
@@ -334,7 +334,11 @@ const DuneForm = () => {
             <br />
             {orderInfo.paymentAddress}
           </p>
-          <button onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}>Copy Address</button>
+          <button 
+            type="button" // Prevents form submission
+            onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}>
+            Copy Address
+          </button>
         </div>
       )}
       {orderStatus && <div>Order Status: {orderStatus}</div>}
