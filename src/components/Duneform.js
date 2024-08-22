@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './Trending.css';
+import { submitOrder, checkOrderStatus } from './duneApiClient'; // Import the functions
 
-const DuneForm = ({ onSubmit }) => {
+const DuneForm = () => {
   const [formData, setFormData] = useState({
     operationType: 'deploy',
     duneName: '',
@@ -83,16 +84,16 @@ const DuneForm = ({ onSubmit }) => {
     };
 
     try {
-      const orderResponse = await onSubmit(orderData);
+      const orderResponse = await submitOrder(orderData); // Use the submitOrder function from duneApiClient.js
 
       // Debugging step to check what the function actually returns
       console.log('Order response:', orderResponse);
 
-      if (orderResponse && orderResponse.paymentAddress && orderResponse.dogeAmount) {
+      if (orderResponse && orderResponse.address && orderResponse.dogeAmount) {
         if (connectedAddress) {
           try {
             const txReqRes = await myDogeMask.requestTransaction({
-              recipientAddress: orderResponse.paymentAddress,
+              recipientAddress: orderResponse.address,
               dogeAmount: orderResponse.dogeAmount,
             });
             console.log('Transaction successful:', txReqRes);
@@ -101,7 +102,7 @@ const DuneForm = ({ onSubmit }) => {
             alert('Transaction failed. Please try again.');
           }
         } else {
-          alert(`Please connect your wallet or manually send ${orderResponse.dogeAmount} DOGE to ${orderResponse.paymentAddress}.`);
+          alert(`Please connect your wallet or manually send ${orderResponse.dogeAmount} DOGE to ${orderResponse.address}.`);
         }
       } else {
         throw new Error('Invalid order response');
@@ -113,14 +114,14 @@ const DuneForm = ({ onSubmit }) => {
   };
 
   const pollOrderStatus = async (orderIndex) => {
-    const interval = setInterval(async () => {
-      const response = await fetch(`/order/status/${orderIndex}`);
-      const data = await response.json();
+    try {
+      const data = await checkOrderStatus(orderIndex); // Use checkOrderStatus from duneApiClient.js
       if (data.status === 'complete' || data.status === 'failed') {
-        clearInterval(interval);
         setOrderStatus(data.status);
       }
-    }, 5000);
+    } catch (error) {
+      console.error('Error polling order status:', error);
+    }
   };
 
   return (
