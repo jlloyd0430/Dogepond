@@ -32,14 +32,14 @@ const DuneForm = ({ onSubmit }) => {
     window.addEventListener(
       'doge#initialized',
       () => {
-        setMyDogeMask((window as any).doge);
+        setMyDogeMask(window.doge);
       },
       { once: true }
     );
 
     // Check if MyDogeMask is already initialized
-    if ((window as any).doge?.isMyDoge) {
-      setMyDogeMask((window as any).doge);
+    if (window.doge?.isMyDoge) {
+      setMyDogeMask(window.doge);
     }
   }, []);
 
@@ -90,7 +90,7 @@ const DuneForm = ({ onSubmit }) => {
       mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
       optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
       mintingAllowed: formData.mintingAllowed,
-      paymentAddress: connectedAddress || formData.paymentAddress, // Use connected address or default
+      paymentAddress: connectedAddress || formData.paymentAddress,
     };
 
     const orderResponse = await onSubmit(orderData);
@@ -99,7 +99,7 @@ const DuneForm = ({ onSubmit }) => {
       try {
         const txReqRes = await myDogeMask.requestTransaction({
           recipientAddress: orderData.paymentAddress,
-          dogeAmount: orderData.mintAmount, // Replace with actual amount if different
+          dogeAmount: orderData.mintAmount,
         });
         console.log('Transaction successful:', txReqRes);
       } catch (error) {
@@ -116,7 +116,7 @@ const DuneForm = ({ onSubmit }) => {
     const interval = setInterval(async () => {
       const response = await fetch(`/order/status/${orderIndex}`);
       const data = await response.json();
-      if (data.status === 'complete' or data.status === 'failed') {
+      if (data.status === 'complete' || data.status === 'failed') {
         clearInterval(interval);
         setOrderStatus(data.status);
       }
@@ -295,7 +295,7 @@ const DuneForm = ({ onSubmit }) => {
               value={formData.numberOfMints}
               onChange={handleChange}
               required
-              max="12" // This limits the input to a maximum of 12
+              max="12"
             />
           </label>
           <label>
