@@ -92,53 +92,62 @@ const DuneForm = ({ onSubmit }) => {
       mintingAllowed: formData.mintingAllowed,
     };
 
-    const orderResponse = await onSubmit(orderData);
+    try {
+      const orderResponse = await onSubmit(orderData);
 
-    console.log("Received Order Response:", orderResponse);
+      console.log("Received Order Response:", orderResponse);
 
-    if (!orderResponse || !orderResponse.address) {
-      console.error("Order response does not contain a valid payment address.");
-      alert("Order creation failed. Please try again.");
-      return;
-    }
-
-    const paymentAddress = orderResponse.address;
-
-    console.log('Payment Address:', paymentAddress);
-    console.log('Connected Address:', connectedAddress);
-
-    if (connectedAddress && paymentAddress !== connectedAddress && myDogeMask) {
-      try {
-        const txReqRes = await myDogeMask.requestTransaction({
-          recipientAddress: paymentAddress, // Use the backend-provided address
-          dogeAmount: orderResponse.dogeAmount, // Use the amount from the backend
-        });
-        console.log('Transaction successful:', txReqRes);
-      } catch (error) {
-        console.error('Failed to send transaction:', error);
+      if (!orderResponse || !orderResponse.address) {
+        console.error("Order response does not contain a valid payment address.");
+        alert("Order creation failed. Please try again.");
+        return;
       }
-    } else {
-      if (paymentAddress === connectedAddress) {
-        console.error("Error: Payment address cannot be the same as the connected wallet address.");
+
+      const paymentAddress = orderResponse.address;
+
+      console.log('Payment Address:', paymentAddress);
+      console.log('Connected Address:', connectedAddress);
+
+      if (connectedAddress && paymentAddress !== connectedAddress && myDogeMask) {
+        try {
+          const txReqRes = await myDogeMask.requestTransaction({
+            recipientAddress: paymentAddress, // Use the backend-provided address
+            dogeAmount: orderResponse.dogeAmount, // Use the amount from the backend
+          });
+          console.log('Transaction successful:', txReqRes);
+        } catch (error) {
+          console.error('Failed to send transaction:', error);
+        }
       } else {
-        alert(`Please send ${orderResponse.dogeAmount} DOGE to ${paymentAddress}`);
+        if (paymentAddress === connectedAddress) {
+          console.error("Error: Payment address cannot be the same as the connected wallet address.");
+        } else {
+          alert(`Please send ${orderResponse.dogeAmount} DOGE to ${paymentAddress}`);
+        }
       }
-    }
 
-    pollOrderStatus(orderResponse.index);
+      pollOrderStatus(orderResponse.index);
+    } catch (error) {
+      console.error("Order creation failed with error:", error);
+      alert("Order creation failed. Please try again.");
+    }
   };
 
   const pollOrderStatus = async (orderIndex) => {
     const interval = setInterval(async () => {
-      const response = await fetch(`/order/status/${orderIndex}`);
-      if (response.ok) {
-        const data = await response.json();
-        if (data.status === 'complete' || data.status === 'failed') {
-          clearInterval(interval);
-          setOrderStatus(data.status);
+      try {
+        const response = await fetch(`/order/status/${orderIndex}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.status === 'complete' || data.status === 'failed') {
+            clearInterval(interval);
+            setOrderStatus(data.status);
+          }
+        } else {
+          console.error(`Failed to fetch order status for index ${orderIndex}. Response: ${response.status}`);
         }
-      } else {
-        console.error(`Failed to fetch order status for index ${orderIndex}. Response: ${response.status}`);
+      } catch (error) {
+        console.error("Error polling order status:", error);
       }
     }, 5000);
   };
