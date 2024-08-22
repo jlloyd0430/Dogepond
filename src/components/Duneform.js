@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Trending.css';
 
 const DuneForm = ({ onSubmit }) => {
@@ -23,7 +23,25 @@ const DuneForm = ({ onSubmit }) => {
 
   const [orderStatus, setOrderStatus] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [showInfo, setShowInfo] = useState(false); // State to control the visibility of the info text
+  const [showInfo, setShowInfo] = useState(false);
+  const [myDogeMask, setMyDogeMask] = useState(null);
+  const [connectedAddress, setConnectedAddress] = useState('');
+
+  useEffect(() => {
+    // Listen for MyDogeMask initialization
+    window.addEventListener(
+      'doge#initialized',
+      () => {
+        setMyDogeMask((window as any).doge);
+      },
+      { once: true }
+    );
+
+    // Check if MyDogeMask is already initialized
+    if ((window as any).doge?.isMyDoge) {
+      setMyDogeMask((window as any).doge);
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -31,6 +49,22 @@ const DuneForm = ({ onSubmit }) => {
       ...prevData,
       [name]: type === 'checkbox' ? checked : value,
     }));
+  };
+
+  const handleConnectWallet = async () => {
+    if (myDogeMask) {
+      try {
+        const connectRes = await myDogeMask.connect();
+        if (connectRes.approved) {
+          setConnectedAddress(connectRes.address);
+          console.log('Connected to MyDoge wallet:', connectRes.address);
+        }
+      } catch (error) {
+        console.error('Failed to connect wallet:', error);
+      }
+    } else {
+      console.error('MyDoge wallet is not available');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -56,9 +90,25 @@ const DuneForm = ({ onSubmit }) => {
       mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
       optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
       mintingAllowed: formData.mintingAllowed,
+      paymentAddress: connectedAddress || formData.paymentAddress, // Use connected address or default
     };
 
     const orderResponse = await onSubmit(orderData);
+
+    if (connectedAddress && myDogeMask) {
+      try {
+        const txReqRes = await myDogeMask.requestTransaction({
+          recipientAddress: orderData.paymentAddress,
+          dogeAmount: orderData.mintAmount, // Replace with actual amount if different
+        });
+        console.log('Transaction successful:', txReqRes);
+      } catch (error) {
+        console.error('Failed to send transaction:', error);
+      }
+    } else {
+      alert(`Please send ${orderData.mintAmount} DOGE to ${orderData.paymentAddress}`);
+    }
+
     pollOrderStatus(orderResponse.index);
   };
 
@@ -66,7 +116,7 @@ const DuneForm = ({ onSubmit }) => {
     const interval = setInterval(async () => {
       const response = await fetch(`/order/status/${orderIndex}`);
       const data = await response.json();
-      if (data.status === 'complete' || data.status === 'failed') {
+      if (data.status === 'complete' or data.status === 'failed') {
         clearInterval(interval);
         setOrderStatus(data.status);
       }
@@ -82,6 +132,9 @@ const DuneForm = ({ onSubmit }) => {
             Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
           </p>
         )}
+        <button type="button" onClick={handleConnectWallet}>
+          {connectedAddress ? `Connected: ${connectedAddress}` : 'Connect Wallet'}
+        </button>
       </div>
       <label>
         Operation Type:
