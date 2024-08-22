@@ -98,6 +98,7 @@ const DuneForm = ({ onSubmit }) => {
 
     if (!orderResponse || !orderResponse.address) {
       console.error("Order response does not contain a valid payment address.");
+      alert("Order creation failed. Please try again.");
       return;
     }
 
