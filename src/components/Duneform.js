@@ -59,46 +59,55 @@ const DuneForm = ({ onSubmit }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
-      alert('Number of mints must be between 1 and 12.');
-      return;
-    }
+  if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
+    alert('Number of mints must be between 1 and 12.');
+    return;
+  }
 
-    const timestamp = Date.now();
-    const orderData = {
-      ...formData,
-      timestamp,
-      limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
-      maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
-      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
-      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined,
-      mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
-      mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
-      mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
-      mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
-      optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
-      mintingAllowed: formData.mintingAllowed,
-    };
+  const timestamp = Date.now();
+  const orderData = {
+    ...formData,
+    timestamp,
+    limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
+    maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
+    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
+    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined,
+    mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
+    mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
+    mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
+    mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
+    optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
+    mintingAllowed: formData.mintingAllowed,
+  };
 
+  try {
     const orderResponse = await onSubmit(orderData);
-    pollOrderStatus(orderResponse.index);
-
-    if (connectedAddress) {
-      try {
-        const txReqRes = await myDogeMask.requestTransaction({
-          recipientAddress: orderData.paymentAddress,
-          dogeAmount: 4.2, // Replace with the actual Doge amount needed
-        });
-        console.log('Transaction successful:', txReqRes);
-      } catch (error) {
-        console.error('Transaction failed:', error);
+    if (orderResponse && orderResponse.paymentAddress && orderResponse.dogeAmount) {
+      if (connectedAddress) {
+        try {
+          const txReqRes = await myDogeMask.requestTransaction({
+            recipientAddress: orderResponse.paymentAddress,
+            dogeAmount: orderResponse.dogeAmount, // Use the actual Doge amount provided in the response
+          });
+          console.log('Transaction successful:', txReqRes);
+          // Update order status or show success message here if needed
+        } catch (error) {
+          console.error('Transaction failed:', error);
+          alert('Transaction failed. Please try again.');
+        }
+      } else {
+        alert(`Please connect your wallet or manually send ${orderResponse.dogeAmount} DOGE to ${orderResponse.paymentAddress}.`);
       }
     } else {
-      alert('Please connect your wallet or manually send the payment.');
+      throw new Error('Invalid order response');
     }
-  };
+  } catch (error) {
+    console.error('Error submitting order:', error);
+    alert('There was an error processing your order. Please try again.');
+  }
+};
 
   const pollOrderStatus = async (orderIndex) => {
     const interval = setInterval(async () => {
