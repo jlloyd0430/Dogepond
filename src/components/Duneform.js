@@ -23,6 +23,7 @@ const DuneForm = () => {
   });
 
   const [orderStatus, setOrderStatus] = useState(null);
+  const [orderInfo, setOrderInfo] = useState(null); // State to store order info for the pop-up
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [myDogeMask, setMyDogeMask] = useState(null);
@@ -86,41 +87,28 @@ const DuneForm = () => {
     try {
       const orderResponse = await submitOrder(orderData); // Use the submitOrder function from duneApiClient.js
 
-      // Debugging step to check what the function actually returns
-      console.log('Order response:', orderResponse);
+      // Set order info to display in the pop-up
+      setOrderInfo({
+        paymentAddress: orderResponse.address,
+        dogeAmount: orderResponse.dogeAmount,
+      });
 
-      if (orderResponse && orderResponse.address && orderResponse.dogeAmount) {
-        if (connectedAddress) {
-          try {
-            const txReqRes = await myDogeMask.requestTransaction({
-              recipientAddress: orderResponse.address,
-              dogeAmount: orderResponse.dogeAmount,
-            });
-            console.log('Transaction successful:', txReqRes);
-          } catch (error) {
-            console.error('Transaction failed:', error);
-            alert('Transaction failed. Please try again.');
-          }
-        } else {
-          alert(`Please connect your wallet or manually send ${orderResponse.dogeAmount} DOGE to ${orderResponse.address}.`);
+      if (orderResponse && connectedAddress) {
+        try {
+          const txReqRes = await myDogeMask.requestTransaction({
+            recipientAddress: orderResponse.address,
+            dogeAmount: orderResponse.dogeAmount,
+          });
+          console.log('Transaction successful:', txReqRes);
+          setOrderStatus('Transaction successful.');
+        } catch (error) {
+          console.error('Transaction failed:', error);
+          alert('Transaction failed. Please try again.');
         }
-      } else {
-        throw new Error('Invalid order response');
       }
     } catch (error) {
       console.error('Error submitting order:', error);
       alert('There was an error processing your order. Please try again.');
-    }
-  };
-
-  const pollOrderStatus = async (orderIndex) => {
-    try {
-      const data = await checkOrderStatus(orderIndex); // Use checkOrderStatus from duneApiClient.js
-      if (data.status === 'complete' || data.status === 'failed') {
-        setOrderStatus(data.status);
-      }
-    } catch (error) {
-      console.error('Error polling order status:', error);
     }
   };
 
@@ -308,6 +296,18 @@ const DuneForm = () => {
         </>
       )}
       <button type="submit">Submit</button>
+      {orderInfo && (
+        <div className="order-info">
+          <p>Please send {orderInfo.dogeAmount} DOGE to the following address:</p>
+          <p>{orderInfo.paymentAddress}</p>
+          <button
+            type="button"
+            onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}
+          >
+            Copy Address
+          </button>
+        </div>
+      )}
       {orderStatus && <div>Order Status: {orderStatus}</div>}
     </form>
   );
