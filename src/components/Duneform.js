@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Trending.css';
-
 const DuneForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
     operationType: 'deploy',
@@ -20,29 +19,9 @@ const DuneForm = ({ onSubmit }) => {
     optInForFutureProtocolChanges: false,
     mintingAllowed: true,
   });
-
   const [orderStatus, setOrderStatus] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
-  const [myDogeMask, setMyDogeMask] = useState(null);
-  const [connectedAddress, setConnectedAddress] = useState('');
-
-  useEffect(() => {
-    // Listen for MyDogeMask initialization
-    window.addEventListener(
-      'doge#initialized',
-      () => {
-        setMyDogeMask(window.doge);
-      },
-      { once: true }
-    );
-
-    // Check if MyDogeMask is already initialized
-    if (window.doge?.isMyDoge) {
-      setMyDogeMask(window.doge);
-    }
-  }, []);
-
+  const [showInfo, setShowInfo] = useState(false); // State to control the visibility of the info text
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -51,121 +30,46 @@ const DuneForm = ({ onSubmit }) => {
     }));
   };
 
-  const handleConnectWallet = async () => {
-    if (myDogeMask) {
-      try {
-        const connectRes = await myDogeMask.connect();
-        if (connectRes.approved) {
-          setConnectedAddress(connectRes.address);
-          console.log('Connected to MyDoge wallet:', connectRes.address);
-        }
-      } catch (error) {
-        console.error('Failed to connect wallet:', error);
-      }
-    } else {
-      console.error('MyDoge wallet is not available');
-    }
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    const orderResponse = await onSubmit(orderData);
-
-    if (!orderResponse || !orderResponse.address) {
-      console.error("Order response does not contain a valid payment address.");
-      alert("Order creation failed. Please try again.");
+    // Validation for number of mints
+    if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
+      alert('Number of mints must be between 1 and 12.');
       return;
     }
 
-    console.log("Received Order Response:", orderResponse);
+    const timestamp = Date.now();
+    const orderData = {
+      ...formData,
 
-    const paymentAddress = orderResponse.address;
-    const dogeAmount = orderResponse.dogeAmount;
-
-    // Further processing with paymentAddress and dogeAmount
-    // e.g., using MyDogeMask to send a transaction
-  } catch (error) {
-    console.error("Failed to submit order:", error);
-    alert("An error occurred while submitting the order. Please try again.");
-  }
-};
-
-
-
-  const timestamp = Date.now();
-  const orderData = {
-    ...formData,
-    timestamp,
-    limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
-    maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
-    mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
-    numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined,
-    mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
-    mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
-    mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
-    mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
-    optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
-    mintingAllowed: formData.mintingAllowed,
-  };
-
-  try {
+    const DuneForm = ({ onSubmit }) => {
+  
+      timestamp,
+      limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
+      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined,
+      mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
+      mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
+      mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
+      mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
+      optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
+      mintingAllowed: formData.mintingAllowed,
+    };
     const orderResponse = await onSubmit(orderData);
-
-    console.log("Received Order Response:", orderResponse);
-
-    if (!orderResponse || !orderResponse.address) {
-      console.error("Order response does not contain a valid payment address.");
-      alert("Order creation failed. Please try again.");
-      return;
-    }
-
-    const paymentAddress = orderResponse.address;
-
-    console.log('Payment Address:', paymentAddress);
-    console.log('Connected Address:', connectedAddress);
-
-    if (connectedAddress && paymentAddress !== connectedAddress && myDogeMask) {
-      try {
-        const txReqRes = await myDogeMask.requestTransaction({
-          recipientAddress: paymentAddress, // Use the backend-provided address
-          dogeAmount: orderResponse.dogeAmount, // Use the amount from the backend
-        });
-        console.log('Transaction successful:', txReqRes);
-      } catch (error) {
-        console.error('Failed to send transaction:', error);
-      }
-    } else {
-      if (paymentAddress === connectedAddress) {
-        console.error("Error: Payment address cannot be the same as the connected wallet address.");
-      } else {
-        alert(`Please send ${orderResponse.dogeAmount} DOGE to ${paymentAddress}`);
-      }
-    }
-
     pollOrderStatus(orderResponse.index);
-  } catch (error) {
-    console.error("Failed to submit order:", error);
-    alert("An error occurred while submitting the order. Please try again.");
-  }
-};
-
+  };
   const pollOrderStatus = async (orderIndex) => {
     const interval = setInterval(async () => {
       const response = await fetch(`/order/status/${orderIndex}`);
-      if (response.ok) {
-        const data = await response.json();
-        if (data.status === 'complete' || data.status === 'failed') {
-          clearInterval(interval);
-          setOrderStatus(data.status);
-        }
-      } else {
-        console.error(`Failed to fetch order status for index ${orderIndex}. Response: ${response.status}`);
+      const data = await response.json();
+      if (data.status === 'complete' || data.status === 'failed') {
+        clearInterval(interval);
+        setOrderStatus(data.status);
       }
     }, 5000);
   };
-
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
       <div className="info-note">
@@ -175,9 +79,6 @@ const handleSubmit = async (e) => {
             Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
           </p>
         )}
-        <button type="button" onClick={handleConnectWallet}>
-          {connectedAddress ? `Connected: ${connectedAddress}` : 'Connect Wallet'}
-        </button>
       </div>
       <label>
         Operation Type:
@@ -235,7 +136,6 @@ const handleSubmit = async (e) => {
               required
             />
           </label>
-
           {/* Advanced options toggle */}
           <label>
             <input
@@ -246,7 +146,6 @@ const handleSubmit = async (e) => {
             />
             Show Advanced Options
           </label>
-
           {/* Advanced options fields */}
           {showAdvanced && (
             <div className="advanced-options">
@@ -338,11 +237,11 @@ const handleSubmit = async (e) => {
               value={formData.numberOfMints}
               onChange={handleChange}
               required
-              max="12"
+              max="12" // This limits the input to a maximum of 12
             />
           </label>
           <label>
-            To Address:
+             To Address:
             <input
               type="text"
               name="mintToAddress"
@@ -353,11 +252,9 @@ const handleSubmit = async (e) => {
           </label>
         </>
       )}
-
       <button type="submit">Submit</button>
       {orderStatus && <div>Order Status: {orderStatus}</div>}
     </form>
   );
 };
-
 export default DuneForm;
