@@ -92,7 +92,9 @@ const DuneForm = ({ onSubmit }) => {
       mintingAllowed: formData.mintingAllowed,
     };
 
+    console.log('Order Data Sent:', orderData);
     const orderResponse = await onSubmit(orderData);
+    console.log('Received Order Response:', orderResponse);
 
     if (!orderResponse || !orderResponse.address) {
       console.error("Order response does not contain a valid payment address.");
