@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import ProfileDropdown from './ProfileDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import './Header.css';
 
 const Header = () => {
@@ -20,17 +20,20 @@ const Header = () => {
         <h1>DogePond</h1>
       </Link>
       <nav className="nav">
-        <FontAwesomeIcon
-          icon={faBars}
-          className="mobile-menu-icon"
-          onClick={toggleMobileMenu}
-        />
+        {!auth.isAuthenticated && (
+          <FontAwesomeIcon
+            icon={faBars}
+            className="mobile-menu-icon"
+            onClick={toggleMobileMenu}
+          />
+        )}
         <div className={`nav-links ${isMobileMenuOpen ? 'open' : ''}`}>
           {auth.isAuthenticated ? (
             <>
               <Link className="nav-link" to="/post">Post</Link>
               <Link className="nav-link" to="/proposals">Vote</Link>
               <Link className="nav-link" to="/mint">Mint</Link>
+              <ProfileDropdown />
             </>
           ) : (
             <>
@@ -41,7 +44,13 @@ const Header = () => {
             </>
           )}
         </div>
-        <ProfileDropdown />
+        {auth.isAuthenticated && (
+          <FontAwesomeIcon
+            icon={faUserCircle}
+            className="profile-icon"
+            onClick={toggleMobileMenu}
+          />
+        )}
       </nav>
     </header>
   );
