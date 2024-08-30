@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import ProfileDropdown from './ProfileDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import './Header.css';
 
 const Header = () => {
@@ -31,6 +31,7 @@ const Header = () => {
               <Link className="nav-link" to="/post">Post</Link>
               <Link className="nav-link" to="/proposals">Vote</Link>
               <Link className="nav-link" to="/mint">Mint</Link>
+              <ProfileDropdown /> {/* Show the Profile Dropdown when logged in */}
             </>
           ) : (
             <>
@@ -41,7 +42,13 @@ const Header = () => {
             </>
           )}
         </div>
-        <ProfileDropdown />
+        {auth.isAuthenticated && (
+          <FontAwesomeIcon
+            icon={faUserCircle}
+            className="profile-icon"
+            onClick={toggleMobileMenu}
+          />
+        )}
       </nav>
     </header>
   );
