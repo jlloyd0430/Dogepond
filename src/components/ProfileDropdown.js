@@ -25,7 +25,8 @@ const ProfileDropdown = () => {
       {isOpen && (
         <div className="dropdown-menu">
           <Link to="/profile" className="dropdown-item">Profile</Link>
-          <Link to="/packages" className="dropdown-item">Services</Link>
+          <Link to="/packages" className="dropdown-item">Services</Link> {/* Ensure Services link is included */}
+          <Link to="/mint" className="dropdown-item">Mint</Link> {/* Add Mint page link */}
           <Link to="/settings" className="dropdown-item">Settings</Link>
           {auth.user && auth.user.role === 'admin' && (
             <Link to="/dashboard" className="dropdown-item">Dashboard</Link>
