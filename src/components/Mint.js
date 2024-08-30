@@ -13,10 +13,10 @@ const Mint = () => {
       <div className="mint-section">
         <MintCard
           image="/peng.webp" // Image from the public folder
-         title="Doginal Pengz"
-          description="Doginal Pengz is a collection of 4200 penguins on DOGE 2100 supply is minting woth dogepond"
+          title="Doginal Pengz"
+          description="Doginal Pengz is a collection of 4200 penguins on DOGE 2100 supply is minting with dogepond"
           Supply="2100"
-          WLPrice= "10 Doge"
+          WLPrice="10 Doge"
           Price="15 Doge"
           buttonText="Mint Now"
           buttonAction={() => window.location.href = "https://doginalpengzmint.vercel.app/"}
@@ -31,15 +31,16 @@ const Mint = () => {
   );
 };
 
-const MintCard = ({ image, title, description, buttonText, buttonAction }) => {
+const MintCard = ({ image, title, description, Supply, WLPrice, Price, buttonText, buttonAction }) => {
   return (
     <div className="mint-card">
       <img src={image} alt={title} className="mint-card-image" />
       <div className="mint-card-info">
         <h3>{title}</h3>
         <p>{description}</p>
-        <p>{Supply}</p>
-        <p>{WLPrice}</p>
+        <p><strong>Supply:</strong> {Supply}</p>
+        <p><strong>WL Price:</strong> {WLPrice}</p>
+        <p><strong>Price:</strong> {Price}</p>
         <button className="mint-button" onClick={buttonAction}>
           {buttonText}
         </button>
