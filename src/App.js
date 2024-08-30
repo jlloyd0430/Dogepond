@@ -20,7 +20,8 @@ import "./App.css";
 import "./components/NFTCard.css";
 import "./components/Footer.css";
 import Proposals from "./components/Proposals";
-import Info from "./components/info";
+import Info from "./components/Info";
+import Mint from "./components/Mint"; // Import the Mint component
 
 const App = () => {
   return (
@@ -88,6 +89,7 @@ const AppContent = () => {
           <Route path="/info" element={<PrivateRoute />}>
             <Route index element={<Info />} />
           </Route>
+          <Route path="/mint" element={<Mint />} /> {/* Add this route */}
         </Routes>
       </div>
       <Footer />
