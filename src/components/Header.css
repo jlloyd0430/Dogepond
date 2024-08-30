@@ -58,9 +58,10 @@
 
 /* Profile Icon */
 .profile-icon {
-  display: none;
+  display: block; /* Always visible when logged in */
   font-size: 24px;
   cursor: pointer;
+  margin-left: 10px;
 }
 
 /* Responsive Design for Smaller Screens */
@@ -86,11 +87,6 @@
     display: block;
   }
 
-  .profile-icon {
-    display: block;
-    margin-left: 15px; /* Adjust for spacing */
-  }
-
   .nav-link {
     margin: 10px 0;
     padding: 10px 20px;
@@ -104,5 +100,10 @@
   .title {
     font-size: 1.2em;
     margin-bottom: 10px;
+  }
+
+  .profile-icon {
+    display: block; /* Ensures the profile icon is visible on mobile as well */
+    margin-left: auto;
   }
 }
