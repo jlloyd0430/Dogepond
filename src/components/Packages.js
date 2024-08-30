@@ -11,32 +11,36 @@ const Packages = () => {
       <p className="packages-description">
         DogePond offers a variety of different Services for individuals and Projects alike.
       </p>
-    <div className="services">
       <div className="package">
-        <h2 className="package-title">Rarity site</h2>
-        <p className="package-description">
-          We will build you a webpage for your project to check the rarity of your traits & individual inscriptions in your collection.
-        </p>
-        {/* Pass specific URL to the function */}
-        <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLScr3IFJQ3IjA55QKVUXcCXwvAlOJW2uHGVW25XKsxfnDhWHrg/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
-      </div>
-      <div className="package">
-        <h2 className="package-title">Launchpad Services</h2>
+        <h2 className="package-title">Node/Asset Services</h2>
         <div className="package-description">
-          A full minting resource for your project from start to finish
-          Offering, truly automated minting experiences.
+          A full backend resource for your project from start to finish
+          Offering full access to our node and more, we work with large file sizes,compression/sizing/generation, nd more!
           <ul>
-            <li>minting page</li>
-            <li>Inscription services</li>
+            <li>Inscribing Collections</li>
+            <li>Deploying tokens</li>
             <li>Resizing/Compression</li>
-            <li>Etching Dunes</li>
-            <li>Large file sizes</li>
             <li>Collection generation</li>
             <li>All Marketplace Metadata</li>
           </ul>
           {/* Pass another specific URL to the function */}
           <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLSeZTbkLO_8_nD2ZciRj0TccZwbzjBEwmbcIqdggGD5CFOnfRQ/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
         </div>
+      </div>
+    <div className="services">
+      <div className="package">
+        <h2 className="package-title">Web development</h2>
+        <p className="package-description">
+          We will build you a custom webpage for your Doge project wich includes
+        </p>
+          <ul>
+            <li>Custom web services</li>
+            <li>multiple pages</li>
+            <li>wallet connect functionality</li>
+            <li>Rarity checker</li>
+          </ul>
+        {/* Pass specific URL to the function */}
+        <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLScr3IFJQ3IjA55QKVUXcCXwvAlOJW2uHGVW25XKsxfnDhWHrg/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
       </div>
       <div className="package">
         <h2 className="package-title">Advertising/Marketing</h2>
@@ -48,6 +52,9 @@ const Packages = () => {
           <h3>Promotions</h3>
           <p>
             We offer collaboration and engagement opportunities for projects looking for social media clout and growth.
+          </p>
+           <p>
+            Need help building hype for mint day? we will host a schedueld pump space day of mint with the community.
           </p>
           {/* And yet another URL */}
           <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLSfv5WILBl9pXQjYDzDbKeE_eg0kOpdY3852gnZkUs82UxBGZQ/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
@@ -70,12 +77,14 @@ const Packages = () => {
           <h3>   Offering </h3>
           <ul>
             <li>Dogepond Bot</li>
+            <li>Dunes Bot</li>
             <li>General Tools bot</li>
             <li>Doginal WL bot</li>
             <li>OW Sales bot</li>
             <li>DM Sales bot</li>
-            <li>DING wallet tracking</li>
-            <li>Trending24 Alpha Bot</li>
+            <li>DINGbot wallet tracker</li>
+            <li>Dingbot Pro (holders only)</li>
+            <li>Trending Volume 24 Alpha Bot</li>
             <li>Wallet Verification bot</li>
             <li>Custom bots at your request</li>  
           </ul>
