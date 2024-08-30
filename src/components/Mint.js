@@ -6,7 +6,16 @@ const Mint = () => {
     <div className="mint-container">
       <h2 className="section-title">Upcoming Mints</h2>
       <div className="mint-section">
-        {/* No cards for this section currently */}
+        <MintCard
+          image="/doginalduck.webp" // Image from the public folder
+          title="Doginal Ducks"
+          description="Dingin Ducks is an upcoming collection of 3333 Ducks by Doginal ducks, created in an effort to expand exclusive access to our unique applications, tooling and community."
+          Supply="3333"
+          WLPrice="33 Doge"
+          Price="40 Doge"
+          buttonText="Learn More"
+          buttonAction={() => alert("More details coming soon!")}
+        />
       </div>
 
       <h2 className="section-title">Minting Live</h2>
