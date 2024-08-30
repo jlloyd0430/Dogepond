@@ -7,9 +7,6 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import './Header.css';
 
 const Header = () => {
-
-    
-const Header = () => {
   
   const { auth } = useContext(AuthContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
