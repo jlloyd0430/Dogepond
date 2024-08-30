@@ -11,7 +11,8 @@ const Packages = () => {
       <p className="packages-description">
         DogePond offers a variety of different Services for individuals and Projects alike.
       </p>
-      <div className="package">
+    <div className="services">
+     <div className="package">
         <h2 className="package-title">Node/Asset Services</h2>
         <div className="package-description">
           A full backend resource for your project from start to finish
@@ -27,7 +28,21 @@ const Packages = () => {
           <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLSeZTbkLO_8_nD2ZciRj0TccZwbzjBEwmbcIqdggGD5CFOnfRQ/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
         </div>
       </div>
-    <div className="services">
+   <div className="package">
+        <h2 className="package-title">Dogepond Launchpad</h2>
+        <div className="package-description">
+          We are excited to offer our launchpad / minting services to the doginal community! no more inscribing and listing on the market when u can have a complete customizable mint page! here are the mint service our launchpad has to offer, all versions are mobile compatible! 
+          <ul>
+            <li>pre-inscribed, mintpad (assets sent in batches)</li>
+            <li>Auto inscriber mints (inscribed directly to buyer)</li>
+            <li>Native Token mints (pay with Drc-20)</li>
+            <li>Custom mint page design</li>
+            <li>Marketing boost</li>
+          </ul>
+          {/* Pass another specific URL to the function */}
+          <button onClick={() => handleButtonClick('https://docs.google.com/forms/d/e/1FAIpQLSeZTbkLO_8_nD2ZciRj0TccZwbzjBEwmbcIqdggGD5CFOnfRQ/viewform?usp=sf_link')} className="enquire-button">Enquire</button>
+        </div>
+      </div>
       <div className="package">
         <h2 className="package-title">Web development</h2>
         <p className="package-description">
