@@ -20,7 +20,7 @@ import "./App.css";
 import "./components/NFTCard.css";
 import "./components/Footer.css";
 import Proposals from "./components/Proposals";
-import Info from "./components/Info";
+import Info from "./components/info";
 import Mint from "./components/Mint"; // Import the Mint component
 
 const App = () => {
