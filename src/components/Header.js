@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import ProfileDropdown from './ProfileDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 import './Header.css';
 
 const Header = () => {
@@ -27,9 +27,6 @@ const Header = () => {
             onClick={toggleMobileMenu}
           />
         )}
-        {auth.isAuthenticated && (
-          <ProfileDropdown />
-        )}
         <div className={`nav-links ${isMobileMenuOpen ? 'open' : ''}`}>
           {auth.isAuthenticated ? (
             <>
@@ -46,6 +43,9 @@ const Header = () => {
             </>
           )}
         </div>
+        {auth.isAuthenticated && (
+          <ProfileDropdown /> /* Always visible when logged in */
+        )}
       </nav>
     </header>
   );
