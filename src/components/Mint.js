@@ -6,13 +6,7 @@ const Mint = () => {
     <div className="mint-container">
       <h2 className="section-title">Upcoming Mints</h2>
       <div className="mint-section">
-        <MintCard
-          image="path_to_upcoming_image"
-          title="Upcoming Project"
-          description="Some details about the upcoming mint"
-          buttonText="Learn More"
-          buttonAction={() => alert("Learn more about Upcoming Project")}
-        />
+        {/* No cards for this section currently */}
       </div>
 
       <h2 className="section-title">Minting Live</h2>
@@ -28,13 +22,7 @@ const Mint = () => {
 
       <h2 className="section-title">Past Mints</h2>
       <div className="mint-section">
-        <MintCard
-          image="path_to_past_mint_image"
-          title="Past Mint Project"
-          description="158/2100 assets minted"
-          buttonText="View"
-          buttonAction={() => alert("Viewing Past Mint Project")}
-        />
+        {/* No cards for this section currently */}
       </div>
     </div>
   );
