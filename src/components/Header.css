@@ -22,6 +22,7 @@
 .nav-links {
   display: flex;
   align-items: center;
+  flex-direction: row; /* Ensure links are in a row by default */
 }
 
 .nav-link {
@@ -55,6 +56,13 @@
   cursor: pointer;
 }
 
+/* Profile Icon */
+.profile-icon {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
 /* Responsive Design for Smaller Screens */
 @media (max-width: 600px) {
   .nav-links {
@@ -78,6 +86,11 @@
     display: block;
   }
 
+  .profile-icon {
+    display: block;
+    margin-left: 15px; /* Adjust for spacing */
+  }
+
   .nav-link {
     margin: 10px 0;
     padding: 10px 20px;
@@ -91,9 +104,5 @@
   .title {
     font-size: 1.2em;
     margin-bottom: 10px;
-  }
-
-  .profile-icon {
-    margin-left: 15px; /* Adjust for spacing */
   }
 }
