@@ -12,7 +12,7 @@ const Mint = () => {
       <h2 className="section-title">Minting Live</h2>
       <div className="mint-section">
         <MintCard
-          image="../../public/peng.webp" // Image from the public folder
+          image="/peng.webp" // Image from the public folder
           title="Doginal Pengz"
           description="Doginal Pengz is a collection of 4200 penguins on DOGE 2100 supply is minting with dogepond"
           Supply="2100"
