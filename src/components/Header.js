@@ -27,13 +27,15 @@ const Header = () => {
             onClick={toggleMobileMenu}
           />
         )}
+        {auth.isAuthenticated && (
+          <ProfileDropdown />
+        )}
         <div className={`nav-links ${isMobileMenuOpen ? 'open' : ''}`}>
           {auth.isAuthenticated ? (
             <>
               <Link className="nav-link" to="/post">Post</Link>
               <Link className="nav-link" to="/proposals">Vote</Link>
               <Link className="nav-link" to="/mint">Mint</Link>
-              <ProfileDropdown />
             </>
           ) : (
             <>
@@ -44,13 +46,6 @@ const Header = () => {
             </>
           )}
         </div>
-        {auth.isAuthenticated && (
-          <FontAwesomeIcon
-            icon={faUserCircle}
-            className="profile-icon"
-            onClick={toggleMobileMenu}
-          />
-        )}
       </nav>
     </header>
   );
