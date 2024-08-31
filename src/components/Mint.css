@@ -33,16 +33,19 @@
 .mint-card-info {
   padding: 20px;
   text-align: center;
+  color: black; /* Ensure card info text stays black */
 }
 
 .mint-card-info h3 {
   font-size: 20px;
   margin-bottom: 10px;
+  color: black; /* Ensure card title stays black */
 }
 
 .mint-card-info p {
   font-size: 16px;
   margin-bottom: 20px;
+  color: black; /* Ensure paragraph text stays black */
 }
 
 .mint-button {
