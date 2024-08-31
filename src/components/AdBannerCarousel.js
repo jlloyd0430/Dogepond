@@ -5,7 +5,7 @@ import './AdBannerCarousel.css';
 import catsbanner from "./uploads/catsbanner.jpg";
 import novalabs from "./uploads/novabanner.jpg";
 import rpc from "./uploads/rpc.webp";
-import add from "./uploads/antidogedogs.webp";
+import nekko from "./uploads/jrnekko.webp";
 import dwarves from "./uploads/dwarves.webp";
 import bot from "./uploads/botservices.webp";
 
@@ -29,7 +29,7 @@ const AdBannerCarousel = () => {
         {/* <p className="legend">Ad Banner 5</p> */}
       </div>
        <div>
-        <img src={add} alt="Ad Banner 5" />
+        <img src={nekko} alt="Ad Banner 5" />
         {/* <p className="legend">Ad Banner 6/p> */}
       </div>
       <div>
