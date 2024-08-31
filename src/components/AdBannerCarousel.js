@@ -5,7 +5,7 @@ import './AdBannerCarousel.css';
 import catsbanner from "./uploads/catsbanner.jpg";
 import novalabs from "./uploads/novabanner.jpg";
 import rpc from "./uploads/rpc.webp";
-import nekko from "./uploads/jrnekko.webp";
+import nekko from "./uploads/jrnekkos.webp";
 import dwarves from "./uploads/dwarves.webp";
 import bot from "./uploads/botservices.webp";
 
