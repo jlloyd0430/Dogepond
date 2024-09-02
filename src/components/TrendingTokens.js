@@ -6,6 +6,7 @@ const TrendingTokens = () => {
   const [tokens, setTokens] = useState([]);
   const [error, setError] = useState("");
   const [selectedToken, setSelectedToken] = useState(null);
+  const [timeframe, setTimeframe] = useState('5'); // Default to 5-minute chart
 
   useEffect(() => {
     const fetchTrendingTokens = async () => {
@@ -25,12 +26,12 @@ const TrendingTokens = () => {
       // Clear any existing chart before rendering a new one
       document.getElementById("tradingview_chart").innerHTML = "";
 
-      // Load TradingView widget for the selected token
+      // Load TradingView widget for the selected token with the selected timeframe
       new TradingView.widget({
         "container_id": "tradingview_chart",
         "autosize": true,
         "symbol": selectedToken.tick, // This should match the symbol used by your data provider
-        "interval": "D",
+        "interval": timeframe,
         "timezone": "Etc/UTC",
         "theme": "light",
         "style": "1",
@@ -45,7 +46,7 @@ const TrendingTokens = () => {
         "hideideas": true
       });
     }
-  }, [selectedToken]);
+  }, [selectedToken, timeframe]);
 
   const formatVolume = (volume) => {
     return volume ? (volume / 1e8).toFixed(2) : "0.00"; // Convert satoshis to DOGE and format to 2 decimals
@@ -76,8 +77,22 @@ const TrendingTokens = () => {
         ))}
       </div>
       {selectedToken && (
-        <div id="tradingview_chart" style={{ width: "100%", height: "500px", marginTop: "20px" }}>
-          {/* TradingView chart will be rendered here */}
+        <div>
+          <div className="timeframe-selector">
+            <button onClick={() => setTimeframe('5')}>5m</button>
+            <button onClick={() => setTimeframe('15')}>15m</button>
+            <button onClick={() => setTimeframe('30')}>30m</button>
+            <button onClick={() => setTimeframe('60')}>1H</button>
+            <button onClick={() => setTimeframe('120')}>2H</button>
+            <button onClick={() => setTimeframe('240')}>4H</button>
+            <button onClick={() => setTimeframe('720')}>12H</button>
+            <button onClick={() => setTimeframe('D')}>1D</button>
+            <button onClick={() => setTimeframe('W')}>1W</button>
+            <button onClick={() => setTimeframe('M')}>1M</button>
+          </div>
+          <div id="tradingview_chart" style={{ width: "100%", height: "500px", marginTop: "20px" }}>
+            {/* TradingView chart will be rendered here */}
+          </div>
         </div>
       )}
     </div>
