@@ -8,7 +8,7 @@ const Mint = () => {
       <div className="mint-section">
         <MintCard
           image="/doginalduck.webp" // Image from the public folder
-          title="Doginal Ducks"
+          title="Dingin Ducks"
           description="Dingin Ducks is an upcoming collection of 3333 Ducks by Doginal ducks, created in an effort to expand exclusive access to our unique applications, tooling and community."
           Supply="3333"
           WLPrice="33 Doge"
