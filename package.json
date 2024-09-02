@@ -24,7 +24,7 @@
     "reactstrap": "^9.1.1",
     "bootstrap": "^5.3.0",
     "web-vitals": "^2.1.4",
-    "mongodb": "^5.6.0"  // Add this line
+    "mongodb": "^5.6.0"
   },
   "scripts": {
     "start": "react-scripts start",
