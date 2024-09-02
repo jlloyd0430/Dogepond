@@ -5,22 +5,30 @@ const cron = require('node-cron');
 const uri = 'mongodb+srv://jesselloyd:jesse@cluster0.bhqo1qb.mongodb.net/drc20charts?retryWrites=true&w=majority&appName=Cluster0';
 const client = new MongoClient(uri);
 
-const logTokenData = async () => {
+const fetchTokenData = async () => {
   try {
-    console.log("Connecting to MongoDB...");
     await client.connect();
-    console.log("Connected to MongoDB");
-
     const db = client.db('drc20charts');
     const collection = db.collection('tokenData');
 
-    console.log("Fetching token data from API...");
+    console.log("Fetching trending tokens from external API...");
     const response = await axios.get('https://api.doggy.market/token/trending?period=all&offset=0&limit=100&sortBy=volume24h&sortOrder=desc');
     const tokens = response.data.data;
 
-    console.log("Token data fetched. Updating MongoDB...");
+    console.log("Fetched tokens from API:", tokens);
+
+    if (tokens.length === 0) {
+      console.warn("No tokens found in the API response.");
+      return;
+    }
+
     for (const token of tokens) {
-      console.log(`Updating token: ${token.tick}`);
+      console.log(`Fetching individual sales data for token: ${token.tick}`);
+      const salesResponse = await axios.get(`https://api.doggy.market/listings/tick/${token.tick}?sortBy=pricePerToken&sortOrder=asc&offset=0&limit=1000`);
+      const salesData = salesResponse.data.data;
+
+      console.log(`Fetched sales data for ${token.tick}:`, salesData);
+
       await collection.updateOne(
         { tick: token.tick },
         {
@@ -55,6 +63,7 @@ const logTokenData = async () => {
               trades7d: token.trades7d,
               change24h: token.change24h,
               change7d: token.change7d,
+              salesData: salesData // Include sales data for detailed analysis
             }
           }
         },
@@ -62,68 +71,46 @@ const logTokenData = async () => {
       );
     }
 
-    console.log("Token data update completed.");
+    console.log("Token data logged successfully.");
   } catch (error) {
     console.error('Error logging token data:', error);
   } finally {
-    console.log("Closing MongoDB connection...");
     await client.close();
-    console.log("MongoDB connection closed.");
   }
 };
 
 // Schedule jobs to log data at different intervals
 
-// Every 5 minutes
-cron.schedule('*/5 * * * *', logTokenData);
-
-// Every 15 minutes
-cron.schedule('*/15 * * * *', logTokenData);
-
-// Every 30 minutes
-cron.schedule('*/30 * * * *', logTokenData);
-
-// Every hour
-cron.schedule('0 * * * *', logTokenData);
-
-// Every 2 hours
-cron.schedule('0 */2 * * *', logTokenData);
-
-// Every 4 hours
-cron.schedule('0 */4 * * *', logTokenData);
-
-// Every 12 hours
-cron.schedule('0 */12 * * *', logTokenData);
-
-// Every day
-cron.schedule('0 0 * * *', logTokenData);
-
-// Every week (on Sunday at midnight)
-cron.schedule('0 0 * * 0', logTokenData);
-
-// Every month (on the 1st at midnight)
-cron.schedule('0 0 1 * *', logTokenData);
+cron.schedule('*/5 * * * *', fetchTokenData);  // Every 5 minutes
+cron.schedule('*/15 * * * *', fetchTokenData); // Every 15 minutes
+cron.schedule('*/30 * * * *', fetchTokenData); // Every 30 minutes
+cron.schedule('0 * * * *', fetchTokenData);    // Every hour
+cron.schedule('0 */2 * * *', fetchTokenData);  // Every 2 hours
+cron.schedule('0 */4 * * *', fetchTokenData);  // Every 4 hours
+cron.schedule('0 */12 * * *', fetchTokenData); // Every 12 hours
+cron.schedule('0 0 * * *', fetchTokenData);    // Every day
+cron.schedule('0 0 * * 0', fetchTokenData);    // Every week (Sunday at midnight)
+cron.schedule('0 0 1 * *', fetchTokenData);    // Every month (1st at midnight)
 
 module.exports = async (req, res) => {
   try {
-    console.log("Connecting to MongoDB for API request...");
     await client.connect();
-    console.log("Connected to MongoDB");
-
     const db = client.db('drc20charts');
     const collection = db.collection('tokenData');
 
-    console.log("Fetching tokens from MongoDB...");
+    console.log("Fetching tokens from the database...");
     const tokens = await collection.find({}).toArray();
-    console.log("Tokens fetched from MongoDB:", tokens);
+    console.log("Tokens fetched from database:", tokens);
+
+    if (tokens.length === 0) {
+      console.warn("No tokens found in the database.");
+    }
 
     res.status(200).json(tokens);
   } catch (error) {
-    console.error('Error fetching trending tokens:', error);
+    console.error('Error fetching trending tokens from database:', error);
     res.status(500).json({ error: 'Failed to fetch trending tokens. Please try again later.' });
   } finally {
-    console.log("Closing MongoDB connection...");
     await client.close();
-    console.log("MongoDB connection closed.");
   }
 };
