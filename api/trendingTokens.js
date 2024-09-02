@@ -7,14 +7,20 @@ const client = new MongoClient(uri);
 
 const logTokenData = async () => {
   try {
+    console.log("Connecting to MongoDB...");
     await client.connect();
+    console.log("Connected to MongoDB");
+
     const db = client.db('drc20charts');
     const collection = db.collection('tokenData');
 
+    console.log("Fetching token data from API...");
     const response = await axios.get('https://api.doggy.market/token/trending?period=all&offset=0&limit=100&sortBy=volume24h&sortOrder=desc');
     const tokens = response.data.data;
 
+    console.log("Token data fetched. Updating MongoDB...");
     for (const token of tokens) {
+      console.log(`Updating token: ${token.tick}`);
       await collection.updateOne(
         { tick: token.tick },
         {
@@ -55,10 +61,14 @@ const logTokenData = async () => {
         { upsert: true }
       );
     }
+
+    console.log("Token data update completed.");
   } catch (error) {
     console.error('Error logging token data:', error);
   } finally {
+    console.log("Closing MongoDB connection...");
     await client.close();
+    console.log("MongoDB connection closed.");
   }
 };
 
@@ -96,16 +106,24 @@ cron.schedule('0 0 1 * *', logTokenData);
 
 module.exports = async (req, res) => {
   try {
+    console.log("Connecting to MongoDB for API request...");
     await client.connect();
+    console.log("Connected to MongoDB");
+
     const db = client.db('drc20charts');
     const collection = db.collection('tokenData');
 
+    console.log("Fetching tokens from MongoDB...");
     const tokens = await collection.find({}).toArray();
+    console.log("Tokens fetched from MongoDB:", tokens);
+
     res.status(200).json(tokens);
   } catch (error) {
     console.error('Error fetching trending tokens:', error);
     res.status(500).json({ error: 'Failed to fetch trending tokens. Please try again later.' });
   } finally {
+    console.log("Closing MongoDB connection...");
     await client.close();
+    console.log("MongoDB connection closed.");
   }
 };
