@@ -22,12 +22,12 @@ const TrendingTokens = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedToken) {
+    if (selectedToken && window.TradingView) {
       // Clear any existing chart before rendering a new one
       document.getElementById("tradingview_chart").innerHTML = "";
 
       // Load TradingView widget for the selected token with the selected timeframe
-      new TradingView.widget({
+      new window.TradingView.widget({
         "container_id": "tradingview_chart",
         "autosize": true,
         "symbol": selectedToken.tick, // This should match the symbol used by your data provider
