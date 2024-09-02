@@ -11,7 +11,9 @@ const TrendingTokens = () => {
   useEffect(() => {
     const fetchTrendingTokens = async () => {
       try {
+        console.log("Fetching trending tokens...");
         const response = await axios.get('/api/trendingTokens');
+        console.log("Trending tokens fetched:", response.data);
         setTokens(response.data);
       } catch (error) {
         console.error("Error fetching trending tokens:", error);
@@ -23,6 +25,7 @@ const TrendingTokens = () => {
 
   useEffect(() => {
     if (selectedToken && window.TradingView) {
+      console.log("Rendering TradingView widget for token:", selectedToken.tick, "with timeframe:", timeframe);
       // Clear any existing chart before rendering a new one
       document.getElementById("tradingview_chart").innerHTML = "";
 
