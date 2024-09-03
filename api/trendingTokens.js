@@ -5,6 +5,14 @@ const cron = require('node-cron');
 const uri = 'mongodb+srv://jesselloyd:jesse@cluster0.bhqo1qb.mongodb.net/drc20charts?retryWrites=true&w=majority&appName=Cluster0';
 const client = new MongoClient(uri);
 
+// List of tickers to track
+const tickersToTrack = [
+  'DOGI', 'DBIT', 'DCEX', '$HUB', 'WUFI', 'DUBI', 'BM2K', 'DOSU',
+  '$WEN', 'UNWA', '$RAR', 'SIBS', 'WIWW', 'DDEX', 'MMAP', 'RBAI',
+  'DFAT', 'DNLD', 'X1X2', 'DPAY', 'HTMP', 'DWAN', 'WUUW', 'SATS',
+  'ROBO', '$WIF'
+];
+
 const fetchTokenData = async () => {
   try {
     await client.connect();
@@ -23,52 +31,55 @@ const fetchTokenData = async () => {
     }
 
     for (const token of tokens) {
-      console.log(`Fetching individual sales data for token: ${token.tick}`);
-      const salesResponse = await axios.get(`https://api.doggy.market/listings/tick/${token.tick}?sortBy=pricePerToken&sortOrder=asc&offset=0&limit=1000`);
-      const salesData = salesResponse.data.data;
+      // Check if the token is in the top 20 list to be tracked
+      if (tickersToTrack.includes(token.tick.toUpperCase())) {
+        console.log(`Fetching individual sales data for token: ${token.tick}`);
+        const salesResponse = await axios.get(`https://api.doggy.market/listings/tick/${token.tick}?sortBy=pricePerToken&sortOrder=asc&offset=0&limit=1000`);
+        const salesData = salesResponse.data.data;
 
-      console.log(`Fetched sales data for ${token.tick}:`, salesData);
+        console.log(`Fetched sales data for ${token.tick}:`, salesData);
 
-      await collection.updateOne(
-        { tick: token.tick },
-        {
-          $set: {
-            inscriptionId: token.inscriptionId,
-            tick: token.tick,
-            pic: token.pic,
-            twitterUrl: token.twitterUrl,
-            websiteUrl: token.websiteUrl,
-            max: token.max,
-            lim: token.lim,
-            dec: token.dec,
-            holders: token.holders,
-            mints: token.mints,
-            transfers: token.transfers,
-            deployedAt: token.deployedAt,
-            deployedBlockHeight: token.deployedBlockHeight,
-            deployerAddress: token.deployerAddress,
-            mintedAmt: token.mintedAmt,
-            firstPrice: token.firstPrice,
-            lastPrice: token.lastPrice,
-            marketcap: token.marketcap,
-            floorPrice: token.floorPrice,
-            listings: token.listings,
-          },
-          $push: {
-            historicalData: {
-              timestamp: new Date(),
-              volume24h: token.volume24h,
-              volume7d: token.volume7d,
-              trades24h: token.trades24h,
-              trades7d: token.trades7d,
-              change24h: token.change24h,
-              change7d: token.change7d,
-              salesData: salesData // Include sales data for detailed analysis
+        await collection.updateOne(
+          { tick: token.tick },
+          {
+            $set: {
+              inscriptionId: token.inscriptionId,
+              tick: token.tick,
+              pic: token.pic,
+              twitterUrl: token.twitterUrl,
+              websiteUrl: token.websiteUrl,
+              max: token.max,
+              lim: token.lim,
+              dec: token.dec,
+              holders: token.holders,
+              mints: token.mints,
+              transfers: token.transfers,
+              deployedAt: token.deployedAt,
+              deployedBlockHeight: token.deployedBlockHeight,
+              deployerAddress: token.deployerAddress,
+              mintedAmt: token.mintedAmt,
+              firstPrice: token.firstPrice,
+              lastPrice: token.lastPrice,
+              marketcap: token.marketcap,
+              floorPrice: token.floorPrice,
+              listings: token.listings,
+            },
+            $push: {
+              historicalData: {
+                timestamp: new Date(),
+                volume24h: token.volume24h,
+                volume7d: token.volume7d,
+                trades24h: token.trades24h,
+                trades7d: token.trades7d,
+                change24h: token.change24h,
+                change7d: token.change7d,
+                salesData: salesData // Include sales data for detailed analysis
+              }
             }
-          }
-        },
-        { upsert: true }
-      );
+          },
+          { upsert: true }
+        );
+      }
     }
 
     console.log("Token data logged successfully.");
