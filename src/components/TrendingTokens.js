@@ -28,16 +28,7 @@ const TrendingTokens = () => {
 
   return (
 
-    
-          
-            
-    
 
-          
-          Expand Down
-    
-    
-  
     <div className="trending-container">
       <h1 className="trending-ttitle">Trending Tokens</h1>
       {error && <p className="trending-error">{error}</p>}
