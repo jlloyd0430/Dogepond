@@ -24,7 +24,11 @@ const TrendingTokens = () => {
   };
 
   const formatFloorPrice = (floorPrice) => {
-    return floorPrice ? (floorPrice / 1e8).toFixed(2) : "N/A"; // Convert satoshis to DOGE
+    if (!floorPrice) return "N/A"; 
+    const priceInDOGE = floorPrice / 1e8;
+
+    // Show up to 8 decimal places for very small prices
+    return priceInDOGE < 0.01 ? priceInDOGE.toFixed(8) : priceInDOGE.toFixed(2);
   };
 
   const renderChange = (change) => {
@@ -46,7 +50,7 @@ const TrendingTokens = () => {
                 <p>24h Volume: {formatVolume(token.volume24h)} DOGE</p>
                 <p>24h Trades: {token.trades24h}</p>
                 <p>24h Change: {renderChange(token.change24h)}</p>
-                <p>Owners: {token.owners !== undefined ? token.owners : "N/A"}</p>
+                <p>Holders: {token.holders !== undefined ? token.holders : "N/A"}</p> {/* Changed from owners to holders */}
                 <p>Floor Price: {formatFloorPrice(token.floorPrice)} DOGE</p>
               </div>
             </div>
