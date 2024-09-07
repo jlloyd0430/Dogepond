@@ -50,6 +50,13 @@ const TrendingNFTs = () => {
             <p>24h Change: {renderChange(nft.change24h)}</p>
             <p>Owners: {nft.owners !== undefined ? nft.owners : "N/A"}</p>
             <p>Floor Price: {formatFloorPrice(nft.floorPrice)} DOGE</p>
+            {/* Add Buy Button */}
+            <button
+              className="buy-button"
+              onClick={() => window.location.href = `https://doggy.market/nfts/${nft.collection?.collectionId}`}
+            >
+              Buy {nft.collection?.name}
+            </button>
           </div>
         ))}
       </div>
