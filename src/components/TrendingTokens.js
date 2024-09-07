@@ -50,8 +50,15 @@ const TrendingTokens = () => {
                 <p>24h Volume: {formatVolume(token.volume24h)} DOGE</p>
                 <p>24h Trades: {token.trades24h}</p>
                 <p>24h Change: {renderChange(token.change24h)}</p>
-                <p>Holders: {token.holders !== undefined ? token.holders : "N/A"}</p> {/* Changed from owners to holders */}
+                <p>Holders: {token.holders !== undefined ? token.holders : "N/A"}</p>
                 <p>Floor Price: {formatFloorPrice(token.floorPrice)} DOGE</p>
+                {/* Button to buy the token */}
+                <button
+                  className="buy-button"
+                  onClick={() => window.location.href = `https://doggy.market/${token.tick}`}
+                >
+                  Buy {token.tick}
+                </button>
               </div>
             </div>
           </div>
