@@ -23,6 +23,10 @@ const TrendingNFTs = () => {
     return volume !== undefined && volume !== null ? (volume / 1e8).toFixed(2) : "0.00"; // Convert satoshis to DOGE and format to 2 decimals
   };
 
+  const formatFloorPrice = (floorPrice) => {
+    return floorPrice !== undefined && floorPrice !== null ? (floorPrice / 1e8).toFixed(2) : "N/A"; // Convert satoshis to DOGE
+  };
+
   const renderChange = (change) => {
     if (change === undefined || change === null) {
       return <span>-</span>;
@@ -33,7 +37,7 @@ const TrendingNFTs = () => {
 
   return (
     <div className="trending-container">
-      <h1 className="trending-ttitle">Trending NFTs</h1>
+      <h1 className="trending-title">Trending NFTs</h1>
       {error && <p className="trending-error">{error}</p>}
       <div className="trending-nft-list">
         {nfts.map((nft, index) => (
@@ -44,6 +48,8 @@ const TrendingNFTs = () => {
             <p>24h Volume: {formatVolume(nft.volume24h)} DOGE</p>
             <p>24h Trades: {nft.trades24h !== undefined ? nft.trades24h : "-"}</p>
             <p>24h Change: {renderChange(nft.change24h)}</p>
+            <p>Owners: {nft.owners !== undefined ? nft.owners : "N/A"}</p>
+            <p>Floor Price: {formatFloorPrice(nft.floorPrice)} DOGE</p>
           </div>
         ))}
       </div>
