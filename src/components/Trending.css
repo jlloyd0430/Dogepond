@@ -326,6 +326,12 @@
     flex-direction: column;
     align-items: center;
   }
+
+  .trending-drci {
+  flex-direction: column;
+  align-items: center;
+}
+  
   trending-container {
     width: 400px;
     padding: 20px;
