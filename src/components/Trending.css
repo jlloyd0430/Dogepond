@@ -35,16 +35,16 @@
   background-color: #4CAF50; /* Green */
   border: none;
   color: white;
-  padding: 10px 20px;
+  padding: 8px 12px; /* Smaller padding for a more compact button */
   text-align: center;
   text-decoration: none;
-  font-size: 16px;
-  margin: 10px auto; /* Center the button horizontally */
+  font-size: 14px; /* Slightly smaller font size */
+  margin: 10px auto; /* Center the button */
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.3s;
-  width: 150px; /* Set a fixed width for uniform size */
-  display: block; /* Ensure block-level element to maintain alignment */
+  width: auto; /* Make sure the button is not too wide */
+  display: inline-block; /* Ensures proper inline-block behavior */
 }
 
 .buy-button:hover {
