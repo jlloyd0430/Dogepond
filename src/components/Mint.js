@@ -20,6 +20,11 @@ const Mint = () => {
 
       <h2 className="section-title">Minting Live</h2>
       <div className="mint-section">
+        {/* No cards for this section currently */}
+      </div>
+
+      <h2 className="section-title">Past Mints</h2>
+      <div className="mint-section">
         <MintCard
           image="/peng.webp" // Image from the public folder
           title="Doginal Pengz"
@@ -27,14 +32,9 @@ const Mint = () => {
           Supply="2100"
           WLPrice="10 Doge"
           Price="15 Doge"
-          buttonText="Mint Now"
-          buttonAction={() => window.location.href = "https://doginalpengzmint.vercel.app/"}
+          buttonText="View Details"
+          buttonAction={() => alert("Details about this past mint coming soon!")}
         />
-      </div>
-
-      <h2 className="section-title">Past Mints</h2>
-      <div className="mint-section">
-        {/* No cards for this section currently */}
       </div>
     </div>
   );
