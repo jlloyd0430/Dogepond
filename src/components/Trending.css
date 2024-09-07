@@ -38,17 +38,19 @@
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
   font-size: 16px;
-  margin: 10px 0;
+  margin: 10px auto; /* Center the button horizontally */
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.3s;
+  width: 150px; /* Set a fixed width for uniform size */
+  display: block; /* Ensure block-level element to maintain alignment */
 }
 
 .buy-button:hover {
   background-color: #45a049;
 }
+
 
 
 
