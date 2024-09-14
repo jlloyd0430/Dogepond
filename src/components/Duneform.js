@@ -148,10 +148,10 @@ const DuneForm = () => {
       <div className="info-note">
         <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>ℹ️</span>
         <button type="button" onClick={handleConnectWallet} className="connect-wallet-button">
-          {connectedAddress ? Connected: ${connectedAddress} : 'Connect Wallet'}
+          {connectedAddress ? `Connected: ${connectedAddress}` : 'Connect Wallet'}
         </button>
         {showInfo && (
-          <p className={info-text ${showInfo ? 'visible' : ''}}>
+          <p className={`info-text ${showInfo ? 'visible' : ''}`}>
             Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
           </p>
         )}
@@ -346,4 +346,4 @@ const DuneForm = () => {
   );
 };
 
-export default DuneForm; 
+export default DuneForm;
