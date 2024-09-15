@@ -121,22 +121,26 @@ const Home = () => {
   };
 
   // Snapshot functions
-  const fetchSnapshot = async () => {
-    try {
-      const response = await fetch(`https://dogeturbo.ordinalswallet.com/collection/${collectionSlug}/snapshot`);
-      const snapshotText = await response.text();
-      const parsedData = snapshotText.split('\n').filter(line => line).map(line => [line.trim()]);
+const fetchSnapshot = async () => {
+  try {
+    setLoading(true);
+    const response = await axios.get(`/api/snapshot?slug=${collectionSlug}`);
+    const snapshotData = response.data;
 
-      const snapshotCount = parsedData.reduce((acc, [address]) => {
-        acc[address] = (acc[address] || 0) + 1;
-        return acc;
-      }, {});
+    // Assume the response contains an array of holders with 'owner' and 'items' properties
+    const snapshotCount = snapshotData.reduce((acc, holder) => {
+      acc[holder.owner] = holder.items;
+      return acc;
+    }, {});
 
-      setSnapshotData(Object.entries(snapshotCount).map(([address, count]) => ({ address, count })));
-    } catch (error) {
-      console.error('Failed to fetch snapshot data:', error);
-    }
-  };
+    setSnapshotData(Object.entries(snapshotCount).map(([address, count]) => ({ address, count })));
+    setLoading(false);
+  } catch (error) {
+    console.error('Failed to fetch snapshot data:', error);
+    setLoading(false);
+  }
+};
+
 
   const exportToTXT = () => {
     const txt = snapshotData.map(({ address, count }) => `${address}: ${count}`).join('\n');
