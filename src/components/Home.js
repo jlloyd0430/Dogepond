@@ -124,10 +124,19 @@ const Home = () => {
 const fetchSnapshot = async () => {
   try {
     setLoading(true);
-    const response = await axios.get(`/api/snapshot?slug=${collectionSlug}`);
+    
+    // Call directly to the Doggy Market API
+    const response = await axios.get(`https://api.doggy.market/nfts/${collectionSlug}/holders`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+        'Accept': 'application/json',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+      },
+    });
+
     const snapshotData = response.data;
 
-    // Assume the response contains an array of holders with 'owner' and 'items' properties
     const snapshotCount = snapshotData.reduce((acc, holder) => {
       acc[holder.owner] = holder.items;
       return acc;
@@ -140,6 +149,7 @@ const fetchSnapshot = async () => {
     setLoading(false);
   }
 };
+
 
 
   const exportToTXT = () => {
