@@ -121,28 +121,16 @@ const Home = () => {
   };
 
   // Snapshot functions
-const fetchSnapshot = async () => {
-  try {
-    setLoading(true);
+ const fetchSnapshot = async () => {
+    try {
+      const response = await fetch(`https://dogeturbo.ordinalswallet.com/collection/${collectionSlug}/snapshot`);
+      const snapshotText = await response.text();
+      const parsedData = snapshotText.split('\n').filter(line => line).map(line => [line.trim()]);
 
-    // Call your local API route, which will proxy the request to doggy.market
-    const response = await axios.get(`/api/snapshot?slug=${collectionSlug}`);
-
-    const snapshotData = response.data;
-
-    const snapshotCount = snapshotData.reduce((acc, holder) => {
-      acc[holder.owner] = holder.items;
-      return acc;
-    }, {});
-
-    setSnapshotData(Object.entries(snapshotCount).map(([address, count]) => ({ address, count })));
-    setLoading(false);
-  } catch (error) {
-    console.error('Failed to fetch snapshot data:', error);
-    setLoading(false);
-  }
-};
-
+      const snapshotCount = parsedData.reduce((acc, [address]) => {
+        acc[address] = (acc[address] || 0) + 1;
+        return acc;
+      }, {});
 
 
 
