@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Trending.css';
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
-
 const DuneForm = () => {
   const [formData, setFormData] = useState({
     operationType: 'deploy',
@@ -21,7 +20,6 @@ const DuneForm = () => {
     optInForFutureProtocolChanges: false,
     mintingAllowed: true,
   });
-
   const [orderInfo, setOrderInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -29,16 +27,27 @@ const DuneForm = () => {
   const [myDogeMask, setMyDogeMask] = useState(null);
   const [connectedAddress, setConnectedAddress] = useState(null);
   const [pollingInterval, setPollingInterval] = useState(null);
+  const [password, setPassword] = useState('');
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const correctPassword = 'doginalsaredead';
 
   useEffect(() => {
     window.addEventListener('doge#initialized', () => {
       setMyDogeMask(window.doge);
     }, { once: true });
-
     if (window.doge?.isMyDoge) {
       setMyDogeMask(window.doge);
     }
   }, []);
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (password === correctPassword) {
+      setIsAuthorized(true);
+    } else {
+      alert('Incorrect password');
+    }
+  };
 
   const handleConnectWallet = async () => {
     if (myDogeMask) {
@@ -52,7 +61,6 @@ const DuneForm = () => {
       alert('MyDoge wallet extension not found');
     }
   };
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -60,15 +68,12 @@ const DuneForm = () => {
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
       alert('Number of mints must be between 1 and 12.');
       return;
     }
-
     const timestamp = Date.now();
     const orderData = {
       ...formData,
@@ -84,10 +89,8 @@ const DuneForm = () => {
       optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
       mintingAllowed: formData.mintingAllowed,
     };
-
     try {
       const orderResponse = await submitOrder(orderData);
-
       if (orderResponse && orderResponse.address && orderResponse.dogeAmount) {
         setOrderInfo({
           paymentAddress: orderResponse.address,
@@ -95,7 +98,6 @@ const DuneForm = () => {
           orderIndex: orderResponse.index,
         });
         setOrderStatus('pending');
-
         if (connectedAddress) {
           try {
             const txReqRes = await myDogeMask.requestTransaction({
@@ -108,7 +110,6 @@ const DuneForm = () => {
             alert('Transaction failed. Please try again.');
           }
         }
-
         // Start polling for order status after submitting the order
         startPolling(orderResponse.index);
       } else {
@@ -119,12 +120,10 @@ const DuneForm = () => {
       alert('There was an error processing your order. Please try again.');
     }
   };
-
   const startPolling = (orderIndex) => {
     if (pollingInterval) {
       clearInterval(pollingInterval);
     }
-
     const interval = setInterval(async () => {
       try {
         const data = await checkOrderStatus(orderIndex);
@@ -139,19 +138,21 @@ const DuneForm = () => {
         console.error('Error polling order status:', error);
       }
     }, 5000);
-
     setPollingInterval(interval);
   };
 
   return (
+    <>
+      {!isAuthorized ? (
+        <form onSubmit={handlePasswordSubmit}>
     <form className="dune-form" onSubmit={handleSubmit}>
       <div className="info-note">
         <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>ℹ️</span>
         <button type="button" onClick={handleConnectWallet} className="connect-wallet-button">
-          {connectedAddress ? `Connected: ${connectedAddress}` : 'Connect Wallet'}
+          {connectedAddress ? Connected: ${connectedAddress} : 'Connect Wallet'}
         </button>
         {showInfo && (
-          <p className={`info-text ${showInfo ? 'visible' : ''}`}>
+          <p className={info-text ${showInfo ? 'visible' : ''}}>
             Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
           </p>
         )}
@@ -166,8 +167,12 @@ const DuneForm = () => {
       {formData.operationType === 'deploy' && (
         <>
           <label>
+            Enter Password:
             Dune Name:
             <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               type="text"
               name="duneName"
               value={formData.duneName}
@@ -182,7 +187,27 @@ const DuneForm = () => {
               required
             />
           </label>
+          <button type="submit">Submit</button>
+        </form>
+      ) : (
+        <form className="dune-form" onSubmit={handleSubmit}>
+          <div className="info-note">
+            <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>ℹ️</span>
+            <button type="button" onClick={handleConnectWallet} className="connect-wallet-button">
+              {connectedAddress ? `Connected: ${connectedAddress}` : 'Connect Wallet'}
+            </button>
+            {showInfo && (
+              <p className={`info-text ${showInfo ? 'visible' : ''}`}>
+                Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
+              </p>
+            )}
+          </div>
           <label>
+            Operation Type:
+            <select name="operationType" value={formData.operationType} onChange={handleChange}>
+              <option value="deploy">Deploy</option>
+              <option value="mint">Mint</option>
+            </select>
             Symbol:
             <input
               type="text"
@@ -192,6 +217,35 @@ const DuneForm = () => {
               required
             />
           </label>
+          {formData.operationType === 'deploy' && (
+            <>
+              <label>
+                Dune Name:
+                <input
+                  type="text"
+                  name="duneName"
+                  value={formData.duneName}
+                  onChange={(e) =>
+                    handleChange({
+                      target: {
+                        name: 'duneName',
+                        value: e.target.value.toUpperCase().replace(/ /g, '•'),
+                      },
+                    })
+                  }
+                  required
+                />
+              </label>
+              <label>
+                Symbol:
+                <input
+                  type="text"
+                  name="symbol"
+                  value={formData.symbol}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
           <label>
             Limit Per Mint:
             <input
@@ -224,61 +278,177 @@ const DuneForm = () => {
           {showAdvanced && (
             <div className="advanced-options">
               <label>
+                Limit Per Mint:
                 Mint Absolute Start Block Height:
                 <input
                   type="number"
+                  name="limitPerMint"
+                  value={formData.limitPerMint}
                   name="mintAbsoluteStartBlockHeight"
                   value={formData.mintAbsoluteStartBlockHeight}
                   onChange={handleChange}
+                  required
                 />
               </label>
               <label>
+                Max Number of Mints:
                 Mint Absolute Stop Block Height:
                 <input
                   type="number"
+                  name="maxNrOfMints"
+                  value={formData.maxNrOfMints}
                   name="mintAbsoluteStopBlockHeight"
                   value={formData.mintAbsoluteStopBlockHeight}
                   onChange={handleChange}
+                  required
                 />
               </label>
               <label>
+                <input
+                  type="checkbox"
+                  name="showAdvanced"
+                  checked={showAdvanced}
+                  onChange={() => setShowAdvanced(!showAdvanced)}
+                />
+                Show Advanced Options
+              </label>
+              {showAdvanced && (
+                <div className="advanced-options">
+                  <label>
+                    Mint Absolute Start Block Height:
+                    <input
+                      type="number"
+                      name="mintAbsoluteStartBlockHeight"
+                      value={formData.mintAbsoluteStartBlockHeight}
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label>
+                    Mint Absolute Stop Block Height:
+                    <input
+                      type="number"
+                      name="mintAbsoluteStopBlockHeight"
+                      value={formData.mintAbsoluteStopBlockHeight}
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label>
+                    Mint Relative Start Block Height:
+                    <input
+                      type="number"
+                      name="mintRelativeStartBlockHeight"
+                      value={formData.mintRelativeStartBlockHeight}
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label>
+                    Mint Relative End Block Height:
+                    <input
+                      type="number"
+                      name="mintRelativeEndBlockHeight"
+                      value={formData.mintRelativeEndBlockHeight}
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label>
+                    Opt-In for Future Protocol Changes:
+                    <input
+                      type="checkbox"
+                      name="optInForFutureProtocolChanges"
+                      checked={formData.optInForFutureProtocolChanges}
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label>
+                    Minting Allowed:
+                    <input
+                      type="checkbox"
+                      name="mintingAllowed"
+                      checked={formData.mintingAllowed}
+                      onChange={handleChange}
+                    />
+                  </label>
+                </div>
+              )}
+            </>
+          )}
+          {formData.operationType === 'mint' && (
+            <>
+              <label>
+                Mint ID:
                 Mint Relative Start Block Height:
                 <input
+                  type="text"
+                  name="mintId"
+                  value={formData.mintId}
                   type="number"
                   name="mintRelativeStartBlockHeight"
                   value={formData.mintRelativeStartBlockHeight}
                   onChange={handleChange}
+                  required
                 />
               </label>
               <label>
+                Amount to Mint:
                 Mint Relative End Block Height:
                 <input
                   type="number"
+                  name="mintAmount"
+                  value={formData.mintAmount}
                   name="mintRelativeEndBlockHeight"
                   value={formData.mintRelativeEndBlockHeight}
                   onChange={handleChange}
+                  required
                 />
               </label>
               <label>
+                Number of Mints:
                 Opt-In for Future Protocol Changes:
                 <input
+                  type="number"
+                  name="numberOfMints"
+                  value={formData.numberOfMints}
                   type="checkbox"
                   name="optInForFutureProtocolChanges"
                   checked={formData.optInForFutureProtocolChanges}
                   onChange={handleChange}
+                  required
+                  max="12"
                 />
               </label>
               <label>
+                To Address:
                 Minting Allowed:
                 <input
+                  type="text"
+                  name="mintToAddress"
+                  value={formData.mintToAddress}
                   type="checkbox"
                   name="mintingAllowed"
                   checked={formData.mintingAllowed}
                   onChange={handleChange}
+                  required
                 />
               </label>
+            </>
+          )}
+          <button type="submit">Submit</button>
+          {orderInfo && (
+            <div>
+              <p>
+                Please send {orderInfo.dogeAmount} DOGE to the following address:
+                <br />
+                {orderInfo.paymentAddress}
+              </p>
+              <button 
+                type="button" // Prevents form submission
+                onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}>
+                Copy Address
+              </button>
             </div>
           )}
+          {orderStatus && <div>Order Status: {orderStatus}</div>}
+        </form>
         </>
       )}
       {formData.operationType === 'mint' && (
@@ -341,9 +511,11 @@ const DuneForm = () => {
           </button>
         </div>
       )}
+    </>
       {orderStatus && <div>Order Status: {orderStatus}</div>}
     </form>
   );
 };
 
 export default DuneForm;
+export default DuneForm; 
