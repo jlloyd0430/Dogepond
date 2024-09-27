@@ -427,7 +427,7 @@ const exportDuneToJSON = () => {
               <div className="snapshot-results">
                 <button onClick={exportDuneToTXT}>Export to TXT</button>
                 <button onClick={exportDuneToJSON}>Export to JSON</button>
-                <h4>Snapshot Results (Total UTXOs: {duneSnapshotData.length})</h4>
+                <h4>Snapshot Results (holders: {duneSnapshotData.length})</h4>
                 <ul>
                   {duneSnapshotData.map(({ address, totalAmount }) => (
                     <li key={address}>{address}: {totalAmount.toFixed(8)}</li>
