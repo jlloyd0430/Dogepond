@@ -121,23 +121,37 @@ const Home = () => {
   };
 
   // Snapshot functions
- const fetchSnapshot = async () => {
+  const fetchSnapshot = async () => {
     try {
-      const response = await fetch(`https://dogeturbo.ordinalswallet.com/collection/${collectionSlug}/snapshot`);
+      const response = await fetch(
+        `https://dogeturbo.ordinalswallet.com/collection/${collectionSlug}/snapshot`
+      );
       const snapshotText = await response.text();
-      const parsedData = snapshotText.split('\n').filter(line => line).map(line => [line.trim()]);
+      const parsedData = snapshotText
+        .split("\n")
+        .filter((line) => line)
+        .map((line) => [line.trim()]);
 
       const snapshotCount = parsedData.reduce((acc, [address]) => {
         acc[address] = (acc[address] || 0) + 1;
         return acc;
       }, {});
 
+      const snapshotData = Object.entries(snapshotCount).map(([address, count]) => ({
+        address,
+        count,
+      }));
 
+      setSnapshotData(snapshotData);
+    } catch (error) {
+      console.error("Failed to fetch snapshot data:", error.message);
+    }
+  };
 
   const exportToTXT = () => {
-    const txt = snapshotData.map(({ address, count }) => `${address}: ${count}`).join('\n');
-    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
-    const link = document.createElement('a');
+    const txt = snapshotData.map(({ address, count }) => `${address}: ${count}`).join("\n");
+    const blob = new Blob([txt], { type: "text/plain;charset=utf-8;" });
+    const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `${collectionSlug}_snapshot.txt`;
     link.click();
@@ -145,8 +159,8 @@ const Home = () => {
 
   const exportToJSON = () => {
     const json = JSON.stringify(snapshotData, null, 2);
-    const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
-    const link = document.createElement('a');
+    const blob = new Blob([json], { type: "application/json;charset=utf-8;" });
+    const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `${collectionSlug}_snapshot.json`;
     link.click();
@@ -167,7 +181,7 @@ const Home = () => {
           {
             method: "GET",
             headers: {
-              "Accept": "application/json",
+              Accept: "application/json",
               "api-key": process.env.REACT_APP_API_KEY,
             },
           }
@@ -182,65 +196,67 @@ const Home = () => {
       setDrc20Holders(allHolders);
       setDrc20Loading(false);
     } catch (error) {
-      console.error("Failed to fetch DRC-20 holders:", error);
+      console.error("Failed to fetch DRC-20 holders:", error.message);
       setDrc20Loading(false);
     }
   };
 
   const exportDrc20ToTXT = () => {
-    const txt = drc20Holders.map(({ address, balance }) => `${address}: ${balance}`).join('\n');
-    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
-    const link = document.createElement('a');
+    const txt = drc20Holders.map(({ address, balance }) => `${address}: ${balance}`).join("\n");
+    const blob = new Blob([txt], { type: "text/plain;charset=utf-8;" });
+    const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `${ticker}_drc20_snapshot.txt`;
     link.click();
   };
 
   // Dune Snapshot functions
-  // Dune Snapshot functions
-const fetchDuneSnapshot = async () => {
-  try {
-    setDuneLoading(true);
-    
-    // Fetching dune holders using the new API
-    const holdersResponse = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/holders`, {
-      headers: {
-        "Accept": "application/json",
-        "api-key": process.env.REACT_APP_API_KEY,
-      },
-    });
+  const fetchDuneSnapshot = async () => {
+    try {
+      setDuneLoading(true);
 
-    const duneAmounts = holdersResponse.data.data.map(holder => ({
-      address: holder.address,
-      totalAmount: parseFloat(holder.balance) // Assuming balance is in a string format, convert it to float
-    }));
+      const holdersResponse = await axios.get(
+        `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/holders`,
+        {
+          headers: {
+            Accept: "application/json",
+            "api-key": process.env.REACT_APP_API_KEY,
+          },
+        }
+      );
 
-    setDuneSnapshotData(duneAmounts);
-    setDuneLoading(false);
-  } catch (error) {
-    console.error("Failed to fetch Dune snapshot data:", error.response ? error.response.data : error.message);
-    setDuneLoading(false);
-  }
-};
+      const duneAmounts = holdersResponse.data.data.map((holder) => ({
+        address: holder.address,
+        totalAmount: parseFloat(holder.balance), // Convert balance to float
+      }));
 
-const exportDuneToTXT = () => {
-  const txt = duneSnapshotData.map(({ address, totalAmount }) => `${address}: ${totalAmount.toFixed(8)}`).join('\n');
-  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `${duneId}_dune_snapshot.txt`;
-  link.click();
-};
+      setDuneSnapshotData(duneAmounts);
+      setDuneLoading(false);
+    } catch (error) {
+      console.error("Failed to fetch Dune snapshot data:", error.message);
+      setDuneLoading(false);
+    }
+  };
 
-const exportDuneToJSON = () => {
-  const json = JSON.stringify(duneSnapshotData, null, 2);
-  const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `${duneId}_dune_snapshot.json`;
-  link.click();
-};
+  const exportDuneToTXT = () => {
+    const txt = duneSnapshotData
+      .map(({ address, totalAmount }) => `${address}: ${totalAmount.toFixed(8)}`)
+      .join("\n");
+    const blob = new Blob([txt], { type: "text/plain;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${duneId}_dune_snapshot.txt`;
+    link.click();
+  };
 
+  const exportDuneToJSON = () => {
+    const json = JSON.stringify(duneSnapshotData, null, 2);
+    const blob = new Blob([json], { type: "application/json;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${duneId}_dune_snapshot.json`;
+    link.click();
+  };
 
   return (
     <div>
