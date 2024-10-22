@@ -21,6 +21,7 @@ const DuneForm = () => {
     optInForFutureProtocolChanges: false,
     mintingAllowed: true,
   });
+
   const [orderInfo, setOrderInfo] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -28,31 +29,16 @@ const DuneForm = () => {
   const [myDogeMask, setMyDogeMask] = useState(null);
   const [connectedAddress, setConnectedAddress] = useState(null);
   const [pollingInterval, setPollingInterval] = useState(null);
-  const [password, setPassword] = useState('');
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const correctPassword = 'doginalsaredead';
 
   useEffect(() => {
-    window.addEventListener(
-      'doge#initialized',
-      () => {
-        setMyDogeMask(window.doge);
-      },
-      { once: true }
-    );
+    window.addEventListener('doge#initialized', () => {
+      setMyDogeMask(window.doge);
+    }, { once: true });
+
     if (window.doge?.isMyDoge) {
       setMyDogeMask(window.doge);
     }
   }, []);
-
-  const handlePasswordSubmit = (e) => {
-    e.preventDefault();
-    if (password === correctPassword) {
-      setIsAuthorized(true);
-    } else {
-      alert('Incorrect password');
-    }
-  };
 
   const handleConnectWallet = async () => {
     if (myDogeMask) {
@@ -77,40 +63,31 @@ const DuneForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      formData.operationType === 'mint' &&
-      (formData.numberOfMints > 12 || formData.numberOfMints < 1)
-    ) {
+
+    if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
       alert('Number of mints must be between 1 and 12.');
       return;
     }
+
     const timestamp = Date.now();
     const orderData = {
       ...formData,
       timestamp,
       limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
       maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
-      mintAmount:
-        formData.operationType === 'mint'
-          ? parseInt(formData.mintAmount, 10) || 0
-          : undefined,
-      numberOfMints:
-        formData.operationType === 'mint'
-          ? parseInt(formData.numberOfMints, 10) || 0
-          : undefined,
-      mintAbsoluteStartBlockHeight:
-        parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
-      mintAbsoluteStopBlockHeight:
-        parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
-      mintRelativeStartBlockHeight:
-        parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
-      mintRelativeEndBlockHeight:
-        parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
+      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined,
+      mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
+      mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
+      mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
+      mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
       optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
       mintingAllowed: formData.mintingAllowed,
     };
+
     try {
       const orderResponse = await submitOrder(orderData);
+
       if (orderResponse && orderResponse.address && orderResponse.dogeAmount) {
         setOrderInfo({
           paymentAddress: orderResponse.address,
@@ -118,6 +95,7 @@ const DuneForm = () => {
           orderIndex: orderResponse.index,
         });
         setOrderStatus('pending');
+
         if (connectedAddress) {
           try {
             const txReqRes = await myDogeMask.requestTransaction({
@@ -130,6 +108,8 @@ const DuneForm = () => {
             alert('Transaction failed. Please try again.');
           }
         }
+
+        // Start polling for order status after submitting the order
         startPolling(orderResponse.index);
       } else {
         throw new Error('Invalid order response');
@@ -144,6 +124,7 @@ const DuneForm = () => {
     if (pollingInterval) {
       clearInterval(pollingInterval);
     }
+
     const interval = setInterval(async () => {
       try {
         const data = await checkOrderStatus(orderIndex);
@@ -158,61 +139,32 @@ const DuneForm = () => {
         console.error('Error polling order status:', error);
       }
     }, 5000);
+
     setPollingInterval(interval);
   };
 
   return (
-    <>
-      {!isAuthorized ? (
-        <form onSubmit={handlePasswordSubmit}>
-          <label>
-            Enter Password:
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </label>
-          <button type="submit">Submit</button>
-        </form>
-      ) : (
-        <form className="dune-form" onSubmit={handleSubmit}>
-          <div className="info-note">
-            <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>
-              ℹ️
-            </span>
-            <button
-              type="button"
-              onClick={handleConnectWallet}
-              className="connect-wallet-button"
-            >
-              {connectedAddress
-                ? `Connected: ${connectedAddress}`
-                : 'Connect Wallet'}
-            </button>
-            {showInfo && (
-              <p className={`info-text ${showInfo ? 'visible' : ''}`}>
-                Etcher v1 is in beta. Not all dunes are available to
-                etch/deploy due to issues around block height or if they have
-                already been deployed. If your dune already exists or if there
-                are block height issues, it will not be deployed, and you will
-                lose your DOGE. You can check if a dune exists before deploying
-                by searching for the dune in "All Dunes".
-              </p>
-            )}
-          </div>
-          <label>
-            Operation Type:
-            <select
-              name="operationType"
-              value={formData.operationType}
-              onChange={handleChange}
-            >
-              <option value="deploy">Deploy</option>
-              <option value="mint">Mint</option>
-            </select>
-          </label>
+    <form className="dune-form" onSubmit={handleSubmit}>
+      <div className="info-note">
+        <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>ℹ️</span>
+        <button type="button" onClick={handleConnectWallet} className="connect-wallet-button">
+          {connectedAddress ? `Connected: ${connectedAddress}` : 'Connect Wallet'}
+        </button>
+        {showInfo && (
+          <p className={`info-text ${showInfo ? 'visible' : ''}`}>
+            Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
+          </p>
+        )}
+      </div>
+      <label>
+        Operation Type:
+        <select name="operationType" value={formData.operationType} onChange={handleChange}>
+          <option value="deploy">Deploy</option>
+          <option value="mint">Mint</option>
+        </select>
+      </label>
+      {formData.operationType === 'deploy' && (
+        <>
           <label>
             Dune Name:
             <input
@@ -327,73 +279,70 @@ const DuneForm = () => {
               </label>
             </div>
           )}
-          {formData.operationType === 'mint' && (
-            <>
-              <label>
-                Mint ID:
-                <input
-                  type="text"
-                  name="mintId"
-                  value={formData.mintId}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-              <label>
-                Amount to Mint:
-                <input
-                  type="number"
-                  name="mintAmount"
-                  value={formData.mintAmount}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-              <label>
-                Number of Mints:
-                <input
-                  type="number"
-                  name="numberOfMints"
-                  value={formData.numberOfMints}
-                  onChange={handleChange}
-                  required
-                  max="12"
-                />
-              </label>
-              <label>
-                To Address:
-                <input
-                  type="text"
-                  name="mintToAddress"
-                  value={formData.mintToAddress}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-            </>
-          )}
-          <button type="submit">Submit</button>
-          {orderInfo && (
-            <div>
-              <p>
-                Please send {orderInfo.dogeAmount} DOGE to the following address:
-                <br />
-                {orderInfo.paymentAddress}
-              </p>
-              <button
-                type="button"
-                onClick={() =>
-                  navigator.clipboard.writeText(orderInfo.paymentAddress)
-                }
-              >
-                Copy Address
-              </button>
-            </div>
-          )}
-          {orderStatus && <div>Order Status: {orderStatus}</div>}
-        </form>
+        </>
       )}
-    </>
+      {formData.operationType === 'mint' && (
+        <>
+          <label>
+            Mint ID:
+            <input
+              type="text"
+              name="mintId"
+              value={formData.mintId}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Amount to Mint:
+            <input
+              type="number"
+              name="mintAmount"
+              value={formData.mintAmount}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Number of Mints:
+            <input
+              type="number"
+              name="numberOfMints"
+              value={formData.numberOfMints}
+              onChange={handleChange}
+              required
+              max="12"
+            />
+          </label>
+          <label>
+            To Address:
+            <input
+              type="text"
+              name="mintToAddress"
+              value={formData.mintToAddress}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        </>
+      )}
+      <button type="submit">Submit</button>
+      {orderInfo && (
+        <div>
+          <p>
+            Please send {orderInfo.dogeAmount} DOGE to the following address:
+            <br />
+            {orderInfo.paymentAddress}
+          </p>
+          <button 
+            type="button" // Prevents form submission
+            onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}>
+            Copy Address
+          </button>
+        </div>
+      )}
+      {orderStatus && <div>Order Status: {orderStatus}</div>}
+    </form>
   );
 };
 
