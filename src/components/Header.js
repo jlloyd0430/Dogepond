@@ -20,13 +20,11 @@ const Header = () => {
         <h1>DogePond</h1>
       </Link>
       <nav className="nav">
-        {!auth.isAuthenticated && (
-          <FontAwesomeIcon
-            icon={faBars}
-            className="mobile-menu-icon"
-            onClick={toggleMobileMenu}
-          />
-        )}
+        <FontAwesomeIcon
+          icon={faBars}
+          className="mobile-menu-icon"
+          onClick={toggleMobileMenu}
+        />
         <div className={`nav-links ${isMobileMenuOpen ? 'open' : ''}`}>
           {auth.isAuthenticated ? (
             <>
@@ -40,6 +38,7 @@ const Header = () => {
               <Link className="nav-link" to="/signup">Signup</Link>
               <Link className="nav-link" to="/packages">Services</Link>
               <Link className="nav-link" to="/mint">Mint</Link>
+              <Link className="nav-link" to="/raffles">Raffles</Link> {/* Add this line */}
             </>
           )}
         </div>
