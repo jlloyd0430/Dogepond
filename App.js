@@ -16,6 +16,7 @@ import Fish from "./components/Fish";
 import Footer from "./components/Footer";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import { ThemeProvider, ThemeContext } from "./context/ThemeContext";
+import Raffles from './components/Raffles';
 import "./App.css";
 import "./components/NFTCard.css";
 import "./components/Footer.css";
@@ -64,6 +65,7 @@ const AppContent = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/packages" element={<Packages />} />
+          <Route path="/raffles" element={<Raffles />} />
           <Route path="/profile" element={
             <PrivateRoute isAuthenticated={auth.isAuthenticated}>
               <Profile />
