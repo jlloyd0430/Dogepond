@@ -64,8 +64,8 @@ const DuneForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.operationType === 'mint' && (formData.numberOfMints > 12 || formData.numberOfMints < 1)) {
-      alert('Number of mints must be between 1 and 12.');
+    if (formData.operationType === 'mint' && (formData.numberOfMints > 25 || formData.numberOfMints < 1)) {
+      alert('Number of mints must be between 1 and 25.');
       return;
     }
 
