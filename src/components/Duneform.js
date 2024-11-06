@@ -3,6 +3,8 @@ import './Trending.css';
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
 
 const DuneForm = () => {
+  const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [formData, setFormData] = useState({
     operationType: 'deploy',
     duneName: '',
@@ -39,6 +41,15 @@ const DuneForm = () => {
       setMyDogeMask(window.doge);
     }
   }, []);
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (password === 'doginalsaredead') {
+      setIsAuthenticated(true);
+    } else {
+      alert('Incorrect password');
+    }
+  };
 
   const handleConnectWallet = async () => {
     if (myDogeMask) {
@@ -142,6 +153,24 @@ const DuneForm = () => {
 
     setPollingInterval(interval);
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="password-protect">
+        <form onSubmit={handlePasswordSubmit}>
+          <label>
+            we are updating dunes etcher be back shortly! password required
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
@@ -335,7 +364,7 @@ const DuneForm = () => {
             {orderInfo.paymentAddress}
           </p>
           <button 
-            type="button" // Prevents form submission
+            type="button"
             onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}>
             Copy Address
           </button>
