@@ -311,7 +311,7 @@ const DuneForm = () => {
               value={formData.numberOfMints}
               onChange={handleChange}
               required
-              max="12"
+              max="25"
             />
           </label>
           <label>
