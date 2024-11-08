@@ -120,42 +120,42 @@ const DuneForm = () => {
     }
   };
 
-const startPolling = (orderIndex) => {
-  if (pollingInterval) {
-    clearInterval(pollingInterval);
-  }
-
-  const interval = setInterval(async () => {
-    try {
-      const data = await checkOrderStatus(orderIndex);
-      console.log(`Polling status for order ${orderIndex}: ${data.status}`); // Log status
-
-      if (data.status === 'complete') {
-        setOrderStatus('complete');
-        clearInterval(interval); // Stop polling once completed
-      } else if (data.status === 'failed') {
-        setOrderStatus('failed');
-        clearInterval(interval); // Stop polling if it fails
-      } else {
-        setOrderStatus(data.status); // Update status if still pending
-      }
-    } catch (error) {
-      console.error('Error polling order status:', error);
+  const startPolling = (orderIndex) => {
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
     }
-  }, 5000);
 
-  setPollingInterval(interval);
-};
+    const interval = setInterval(async () => {
+      try {
+        const data = await checkOrderStatus(orderIndex);
+        console.log(`Polling status for order ${orderIndex}: ${data.status}`); // Log status
+
+        if (data.status === 'complete') {
+          setOrderStatus('complete');
+          clearInterval(interval); // Stop polling once completed
+        } else if (data.status === 'failed') {
+          setOrderStatus('failed');
+          clearInterval(interval); // Stop polling if it fails
+        } else {
+          setOrderStatus(data.status); // Update status if still pending
+        }
+      } catch (error) {
+        console.error('Error polling order status:', error);
+      }
+    }, 5000);
+
+    setPollingInterval(interval);
+  };
 
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
       <div className="info-note">
         <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>ℹ️</span>
         <button type="button" onClick={handleConnectWallet} className="connect-wallet-button">
-          {connectedAddress ? Connected: ${connectedAddress} : 'Connect Wallet'}
+          {connectedAddress ? `Connected: ${connectedAddress}` : 'Connect Wallet'}
         </button>
         {showInfo && (
-          <p className={info-text ${showInfo ? 'visible' : ''}}>
+          <p className={`info-text ${showInfo ? 'visible' : ''}`}>
             Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
           </p>
         )}
@@ -339,7 +339,7 @@ const startPolling = (orderIndex) => {
             {orderInfo.paymentAddress}
           </p>
           <button 
-            type="button" // Prevents form submission
+            type="button"
             onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}>
             Copy Address
           </button>
