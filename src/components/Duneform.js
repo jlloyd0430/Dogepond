@@ -3,6 +3,8 @@ import './Trending.css';
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
 
 const DuneForm = () => {
+  const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [formData, setFormData] = useState({
     operationType: 'deploy',
     duneName: '',
@@ -40,6 +42,14 @@ const DuneForm = () => {
     }
   }, []);
 
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (password === 'doginalsaredead') {
+      setIsAuthenticated(true);
+    } else {
+      alert('Incorrect password');
+    }
+  };
   const handleConnectWallet = async () => {
     if (myDogeMask) {
       try {
@@ -128,16 +138,12 @@ const DuneForm = () => {
     const interval = setInterval(async () => {
       try {
         const data = await checkOrderStatus(orderIndex);
-        console.log(`Polling status for order ${orderIndex}: ${data.status}`); // Log status
-
         if (data.status === 'complete') {
           setOrderStatus('complete');
-          clearInterval(interval); // Stop polling once completed
+          clearInterval(interval);
         } else if (data.status === 'failed') {
           setOrderStatus('failed');
-          clearInterval(interval); // Stop polling if it fails
-        } else {
-          setOrderStatus(data.status); // Update status if still pending
+          clearInterval(interval);
         }
       } catch (error) {
         console.error('Error polling order status:', error);
@@ -147,6 +153,23 @@ const DuneForm = () => {
     setPollingInterval(interval);
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="password-protect">
+        <form onSubmit={handlePasswordSubmit}>
+          <label>
+            Enter Password:
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    );
+  }
   return (
     <form className="dune-form" onSubmit={handleSubmit}>
       <div className="info-note">
