@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Trending.css';
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
+import axios from 'axios';
 
 const DuneForm = () => {
   const [formData, setFormData] = useState({
@@ -31,14 +32,42 @@ const DuneForm = () => {
   const [pollingInterval, setPollingInterval] = useState(null);
 
   useEffect(() => {
-    window.addEventListener('doge#initialized', () => {
-      setMyDogeMask(window.doge);
-    }, { once: true });
+    window.addEventListener(
+      'doge#initialized',
+      () => {
+        setMyDogeMask(window.doge);
+      },
+      { once: true }
+    );
 
     if (window.doge?.isMyDoge) {
       setMyDogeMask(window.doge);
     }
   }, []);
+
+  const fetchDuneData = async (duneID) => {
+    try {
+      const response = await axios.get(
+        `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneID}`,
+        {
+          headers: {
+            Accept: 'application/json',
+            'api-key': process.env.REACT_APP_API_KEY,
+          }
+        }
+      );
+
+      // Extract amount_per_mint and update the formData state
+      const amountPerMint = response.data.data.terms.amount_per_mint;
+      setFormData((prevData) => ({
+        ...prevData,
+        mintAmount: amountPerMint,
+      }));
+    } catch (error) {
+      console.error('Error fetching dune details:', error);
+      alert('Failed to fetch Dune details. Please check the Dune ID.');
+    }
+  };
 
   const handleConnectWallet = async () => {
     if (myDogeMask) {
@@ -55,10 +84,16 @@ const DuneForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: type === 'checkbox' ? checked : value,
     }));
+
+    // Automatically fetch Dune details when the mintId field is updated
+    if (name === 'mintId' && value) {
+      fetchDuneData(value);
+    }
   };
 
   const handleSubmit = async (e) => {
