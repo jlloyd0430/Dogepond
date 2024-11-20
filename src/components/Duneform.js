@@ -7,10 +7,10 @@ const DuneForm = () => {
   const [formData, setFormData] = useState({
     operationType: 'deploy',
     duneName: '',
-    duneId: '', // For storing the Dune ID fetched from the API
     symbol: '',
     limitPerMint: '',
     maxNrOfMints: '',
+    mintId: '',
     mintAmount: '',
     numberOfMints: '',
     mintToAddress: '',
@@ -45,27 +45,27 @@ const DuneForm = () => {
     }
   }, []);
 
-  const fetchDuneDataByName = async (duneName) => {
+  const fetchDuneData = async (duneID) => {
     try {
       const response = await axios.get(
-        `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes?name=${duneName}`,
+        `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneID}`,
         {
           headers: {
             Accept: 'application/json',
             'api-key': process.env.REACT_APP_API_KEY,
-          },
+          }
         }
       );
 
-      const duneData = response.data.data[0]; // Assume the first match is correct
+      // Extract amount_per_mint and update the formData state
+      const amountPerMint = response.data.data.terms.amount_per_mint;
       setFormData((prevData) => ({
         ...prevData,
-        duneId: duneData.id, // Store the fetched Dune ID
-        mintAmount: duneData.terms.amount_per_mint, // Store the amount per mint
+        mintAmount: amountPerMint,
       }));
     } catch (error) {
-      console.error('Error fetching Dune details by name:', error);
-      alert('Failed to fetch Dune details. Please check the Dune name.');
+      console.error('Error fetching dune details:', error);
+      alert('Failed to fetch Dune details. Please check the Dune ID.');
     }
   };
 
@@ -83,24 +83,17 @@ const DuneForm = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === 'duneName') {
-      // Convert spaces to `•` and force uppercase
-      const formattedValue = value.toUpperCase().replace(/ /g, '•');
-      setFormData((prevData) => ({ ...prevData, duneName: formattedValue }));
-
-      // Fetch Dune data when the name changes
-      if (formattedValue) {
-        fetchDuneDataByName(formattedValue);
-      }
-      return;
-    }
+    const { name, value, type, checked } = e.target;
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
+
+    // Automatically fetch Dune details when the mintId field is updated
+    if (name === 'mintId' && value) {
+      fetchDuneData(value);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -111,12 +104,20 @@ const DuneForm = () => {
       return;
     }
 
+    const timestamp = Date.now();
     const orderData = {
-      operationType: formData.operationType,
-      duneId: formData.duneId, // Send the Dune ID to the backend
-      mintAmount: parseInt(formData.mintAmount, 10),
-      numberOfMints: parseInt(formData.numberOfMints, 10),
-      mintToAddress: formData.mintToAddress,
+      ...formData,
+      timestamp,
+      limitPerMint: parseInt(formData.limitPerMint, 10) || 0,
+      maxNrOfMints: parseInt(formData.maxNrOfMints, 10) || 0,
+      mintAmount: formData.operationType === 'mint' ? parseInt(formData.mintAmount, 10) || 0 : undefined,
+      numberOfMints: formData.operationType === 'mint' ? parseInt(formData.numberOfMints, 10) || 0 : undefined,
+      mintAbsoluteStartBlockHeight: parseInt(formData.mintAbsoluteStartBlockHeight, 10) || null,
+      mintAbsoluteStopBlockHeight: parseInt(formData.mintAbsoluteStopBlockHeight, 10) || null,
+      mintRelativeStartBlockHeight: parseInt(formData.mintRelativeStartBlockHeight, 10) || null,
+      mintRelativeEndBlockHeight: parseInt(formData.mintRelativeEndBlockHeight, 10) || null,
+      optInForFutureProtocolChanges: formData.optInForFutureProtocolChanges,
+      mintingAllowed: formData.mintingAllowed,
     };
 
     try {
@@ -162,14 +163,15 @@ const DuneForm = () => {
     const interval = setInterval(async () => {
       try {
         const data = await checkOrderStatus(orderIndex);
+        console.log(`Polling status for order ${orderIndex}: ${data.status}`); // Log status
         if (data.status === 'complete') {
           setOrderStatus('complete');
-          clearInterval(interval);
+          clearInterval(interval); // Stop polling once completed
         } else if (data.status === 'failed') {
           setOrderStatus('failed');
-          clearInterval(interval);
+          clearInterval(interval); // Stop polling if it fails
         } else {
-          setOrderStatus(data.status);
+          setOrderStatus(data.status); // Update status if still pending
         }
       } catch (error) {
         console.error('Error polling order status:', error);
@@ -207,8 +209,14 @@ const DuneForm = () => {
               type="text"
               name="duneName"
               value={formData.duneName}
-              onChange={handleChange}
-              placeholder="Enter Dune Name"
+              onChange={(e) =>
+                handleChange({
+                  target: {
+                    name: 'duneName',
+                    value: e.target.value.toUpperCase().replace(/ /g, '•'),
+                  },
+                })
+              }
               required
             />
           </label>
@@ -314,13 +322,12 @@ const DuneForm = () => {
       {formData.operationType === 'mint' && (
         <>
           <label>
-            Dune Name:
+            Mint ID:
             <input
               type="text"
-              name="duneName"
-              value={formData.duneName}
+              name="mintId"
+              value={formData.mintId}
               onChange={handleChange}
-              placeholder="Enter Dune Name"
               required
             />
           </label>
@@ -330,7 +337,8 @@ const DuneForm = () => {
               type="number"
               name="mintAmount"
               value={formData.mintAmount}
-              readOnly
+              onChange={handleChange}
+              required
             />
           </label>
           <label>
@@ -364,10 +372,9 @@ const DuneForm = () => {
             <br />
             {orderInfo.paymentAddress}
           </p>
-          <button
+          <button 
             type="button"
-            onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}
-          >
+            onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}>
             Copy Address
           </button>
         </div>
