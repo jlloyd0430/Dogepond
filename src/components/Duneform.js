@@ -45,29 +45,32 @@ const DuneForm = () => {
     }
   }, []);
 
-  const fetchDuneData = async (duneID) => {
-    try {
-      const response = await axios.get(
-        `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneID}`,
-        {
-          headers: {
-            Accept: 'application/json',
-            'api-key': process.env.REACT_APP_API_KEY,
-          }
-        }
-      );
+ const fetchDuneDataByName = async (duneName) => {
+  try {
+    const formattedName = duneName.toUpperCase().replace(/ /g, '•');
+    const response = await axios.get(
+      `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes?name=${formattedName}`,
+      {
+        headers: {
+          Accept: 'application/json',
+          'api-key': process.env.REACT_APP_API_KEY,
+        },
+      }
+    );
 
-      // Extract amount_per_mint and update the formData state
-      const amountPerMint = response.data.data.terms.amount_per_mint;
-      setFormData((prevData) => ({
-        ...prevData,
-        mintAmount: amountPerMint,
-      }));
-    } catch (error) {
-      console.error('Error fetching dune details:', error);
-      alert('Failed to fetch Dune details. Please check the Dune ID.');
-    }
-  };
+    const duneData = response.data.data;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      mintId: duneData.id, // Set dune ID
+      mintAmount: duneData.terms.amount_per_mint, // Set amount per mint
+    }));
+  } catch (error) {
+    console.error('Error fetching dune data by name:', error);
+    alert('Could not find Dune. Please check the name and try again.');
+  }
+};
+
 
   const handleConnectWallet = async () => {
     if (myDogeMask) {
@@ -82,19 +85,21 @@ const DuneForm = () => {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+ const handleChange = (e) => {
+  const { name, value, type, checked } = e.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+  setFormData((prevData) => ({
+    ...prevData,
+    [name]: type === 'checkbox' ? checked : value,
+  }));
 
-    // Automatically fetch Dune details when the mintId field is updated
-    if (name === 'mintId' && value) {
-      fetchDuneData(value);
-    }
-  };
+  // Automatically fetch dune details when the duneName field is updated
+ if (name === 'duneName') {
+  const formattedName = value.toUpperCase().replace(/ /g, '•');
+  fetchDuneDataByName(formattedName);
+}
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -319,51 +324,58 @@ const DuneForm = () => {
           )}
         </>
       )}
-      {formData.operationType === 'mint' && (
-        <>
-          <label>
-            Mint ID:
-            <input
-              type="text"
-              name="mintId"
-              value={formData.mintId}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            Amount to Mint:
-            <input
-              type="number"
-              name="mintAmount"
-              value={formData.mintAmount}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            Number of Mints:
-            <input
-              type="number"
-              name="numberOfMints"
-              value={formData.numberOfMints}
-              onChange={handleChange}
-              required
-              max="25"
-            />
-          </label>
-          <label>
-            To Address:
-            <input
-              type="text"
-              name="mintToAddress"
-              value={formData.mintToAddress}
-              onChange={handleChange}
-              required
-            />
-          </label>
-        </>
-      )}
+{formData.operationType === 'mint' && (
+  <>
+    <label>
+      Dune Name:
+      <input
+        type="text"
+        name="duneName"
+        value={formData.duneName}
+        onChange={(e) =>
+          handleChange({
+            target: {
+              name: 'duneName',
+              value: e.target.value.toUpperCase().replace(/ /g, '•'),
+            },
+          })
+        }
+        placeholder="Enter Dune Name"
+        required
+      />
+    </label>
+    <label>
+      Amount to Mint:
+      <input
+        type="text"
+        name="mintAmount"
+        value={formData.mintAmount}
+        readOnly
+      />
+    </label>
+    <label>
+      Number of Mints:
+      <input
+        type="number"
+        name="numberOfMints"
+        value={formData.numberOfMints}
+        onChange={handleChange}
+        required
+        max="25"
+      />
+    </label>
+    <label>
+      To Address:
+      <input
+        type="text"
+        name="mintToAddress"
+        value={formData.mintToAddress}
+        onChange={handleChange}
+        required
+      />
+    </label>
+  </>
+)}
       <button type="submit">Submit</button>
       {orderInfo && (
         <div>
