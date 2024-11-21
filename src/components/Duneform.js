@@ -1,7 +1,24 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Trending.css';
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
 import axios from 'axios';
+
+
+// Inside DuneForm component
+const debounceRef = useRef(null);
+
+const handleDebouncedFetch = (duneName) => {
+  if (debounceRef.current) {
+    clearTimeout(debounceRef.current);
+  }
+
+  debounceRef.current = setTimeout(() => {
+    if (duneName) {
+      fetchDuneDataByName(duneName);
+    }
+  }, 500); // Adjust debounce delay as needed
+};
+
 
 const DuneForm = () => {
   const [formData, setFormData] = useState({
@@ -30,9 +47,8 @@ const DuneForm = () => {
   const [myDogeMask, setMyDogeMask] = useState(null);
   const [connectedAddress, setConnectedAddress] = useState(null);
   const [pollingInterval, setPollingInterval] = useState(null);
-  const [debounceTimeout, setDebounceTimeout] = useState(null);
-
-  useEffect(() => {
+  
+ useEffect(() => {
     window.addEventListener(
       'doge#initialized',
       () => {
@@ -44,62 +60,75 @@ const DuneForm = () => {
     if (window.doge?.isMyDoge) {
       setMyDogeMask(window.doge);
     }
+
+    // Cleanup debounce timeout on unmount
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
   }, []);
 
-  const fetchDuneDataByName = async (duneName) => {
-    try {
-      const formattedName = duneName.toUpperCase().replace(/ /g, '•');
-      const response = await axios.get(
-        `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${formattedName}`,
-        {
-          headers: {
-            Accept: 'application/json',
-            'api-key': process.env.REACT_APP_API_KEY,
-          },
-        }
-      );
 
-      const duneData = response.data?.data;
-
-      if (!duneData || !duneData.terms) {
-        throw new Error('Dune data or terms missing.');
+ const fetchDuneDataByName = async (duneName) => {
+  try {
+    // Format the dune name as expected by the API
+    const formattedName = duneName.toUpperCase().replace(/ /g, '•');
+    const response = await axios.get(
+      `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${formattedName}`,
+      {
+        headers: {
+          Accept: 'application/json',
+          'api-key': process.env.REACT_APP_API_KEY,
+        },
       }
+    );
 
-      setFormData((prevData) => ({
-        ...prevData,
-        mintId: duneData.id,
-        mintAmount: duneData.terms.amount_per_mint,
-      }));
-    } catch (error) {
-      console.error('Error fetching dune data by name:', error);
-      alert('Could not find Dune. Please check the name and try again.');
-    }
-  };
-
-  const debounceFetch = useCallback((value) => {
-    if (debounceTimeout) {
-      clearTimeout(debounceTimeout);
+    const duneData = response.data?.data;
+    if (!duneData || !duneData.terms) {
+      throw new Error('Dune data or terms missing.');
     }
 
-    const timeout = setTimeout(() => {
-      fetchDuneDataByName(value);
-    }, 500); // Adjust delay as needed (e.g., 500ms)
-
-    setDebounceTimeout(timeout);
-  }, [debounceTimeout]);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
+    // Update form data with dune details
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
+      mintId: duneData.id, // Set dune ID
+      mintAmount: duneData.terms.amount_per_mint, // Set amount per mint
     }));
+  } catch (error) {
+    console.error('Error fetching dune data by name:', error);
+    alert('Could not find Dune. Please check the name and try again.');
+  }
+};
 
-    if (name === 'duneName' && value) {
-      debounceFetch(value);
+
+  const handleConnectWallet = async () => {
+    if (myDogeMask) {
+      try {
+        const connectRes = await myDogeMask.connect();
+        setConnectedAddress(connectRes.address);
+      } catch (error) {
+        console.error('Failed to connect to MyDoge:', error);
+      }
+    } else {
+      alert('MyDoge wallet extension not found');
     }
   };
+
+const handleChange = (e) => {
+  const { name, value, type, checked } = e.target;
+
+  setFormData((prevData) => ({
+    ...prevData,
+    [name]: type === 'checkbox' ? checked : value,
+  }));
+
+  if (name === 'duneName') {
+    handleDebouncedFetch(value);
+  }
+};
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -149,6 +178,7 @@ const DuneForm = () => {
           }
         }
 
+        // Start polling for order status after submitting the order
         startPolling(orderResponse.index);
       } else {
         throw new Error('Invalid order response');
@@ -158,6 +188,12 @@ const DuneForm = () => {
       alert('There was an error processing your order. Please try again.');
     }
   };
+
+  const startPolling = (orderIndex) => {
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+    }
+
     const interval = setInterval(async () => {
       try {
         const data = await checkOrderStatus(orderIndex);
