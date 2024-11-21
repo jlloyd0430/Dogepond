@@ -45,29 +45,34 @@ const DuneForm = () => {
     }
   }, []);
 
-  const fetchDuneDataByName = async (duneName) => {
-    try {
-      const response = await axios.get(
-        `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes?name=${duneName}`,
-        {
-          headers: {
-            Accept: 'application/json',
-            'api-key': process.env.REACT_APP_API_KEY,
-          },
-        }
-      );
+const fetchDuneDataByName = async (duneName) => {
+  try {
+    const response = await axios.get(
+      `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes?name=${duneName}`,
+      {
+        headers: {
+          Accept: 'application/json',
+          'api-key': process.env.REACT_APP_API_KEY,
+        },
+      }
+    );
 
-      const duneData = response.data.data[0]; // Assume the first match is correct
-      setFormData((prevData) => ({
-        ...prevData,
-        duneId: duneData.id, // Store the fetched Dune ID
-        mintAmount: duneData.terms.amount_per_mint, // Store the amount per mint
-      }));
-    } catch (error) {
-      console.error('Error fetching Dune details by name:', error);
-      alert('Failed to fetch Dune details. Please check the Dune name.');
+    const duneData = response.data?.data[0]; // Get the first match from the response
+    if (!duneData) {
+      throw new Error('Dune not found');
     }
-  };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      duneId: duneData.id || '', // Store the fetched Dune ID
+      mintAmount: duneData.terms?.amount_per_mint || 0, // Store the amount per mint or default to 0
+    }));
+  } catch (error) {
+    console.error('Error fetching Dune details by name:', error);
+    alert('Failed to fetch Dune details. Please check the Dune name.');
+  }
+};
+
 
   const handleConnectWallet = async () => {
     if (myDogeMask) {
