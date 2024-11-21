@@ -30,9 +30,21 @@ const DuneForm = () => {
   const [myDogeMask, setMyDogeMask] = useState(null);
   const [connectedAddress, setConnectedAddress] = useState(null);
   const [pollingInterval, setPollingInterval] = useState(null);
-  
   const debounceRef = useRef(null); // Move useRef inside the component
+  const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (password === 'doginalsaredead') {
+      setIsAuthenticated(true);
+      setErrorMessage('');
+    } else {
+      setErrorMessage('Incorrect password. Please try again.');
+    }
+  };
+  
   useEffect(() => {
     window.addEventListener(
       'doge#initialized',
@@ -211,213 +223,253 @@ const DuneForm = () => {
   };
 
   return (
-    <form className="dune-form" onSubmit={handleSubmit}>
-      <div className="info-note">
-        <span className="info-icon" onClick={() => setShowInfo(!showInfo)}>ℹ️</span>
-        <button type="button" onClick={handleConnectWallet} className="connect-wallet-button">
-          {connectedAddress ? `Connected: ${connectedAddress}` : 'Connect Wallet'}
-        </button>
-        {showInfo && (
-          <p className={`info-text ${showInfo ? 'visible' : ''}`}>
-            Etcher v1 is in beta. Not all dunes are available to etch/deploy due to issues around blockheight or if they have already been deployed. If your dune already exists or if there are blockheight issues, it will not be deployed, and you will lose your DOGE. You can check if a dune exists before deploying by searching for the dune in "All Dunes".
-          </p>
-        )}
-      </div>
-      <label>
-        Operation Type:
-        <select name="operationType" value={formData.operationType} onChange={handleChange}>
-          <option value="deploy">Deploy</option>
-          <option value="mint">Mint</option>
-        </select>
-      </label>
-      {formData.operationType === 'deploy' && (
-        <>
-          <label>
-            Dune Name:
-            <input
-              type="text"
-              name="duneName"
-              value={formData.duneName}
-              onChange={(e) =>
-                handleChange({
-                  target: {
-                    name: 'duneName',
-                    value: e.target.value.toUpperCase().replace(/ /g, '•'),
-                  },
-                })
-              }
-              required
-            />
-          </label>
-          <label>
-            Symbol:
-            <input
-              type="text"
-              name="symbol"
-              value={formData.symbol}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            Limit Per Mint:
-            <input
-              type="number"
-              name="limitPerMint"
-              value={formData.limitPerMint}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            Max Number of Mints:
-            <input
-              type="number"
-              name="maxNrOfMints"
-              value={formData.maxNrOfMints}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              name="showAdvanced"
-              checked={showAdvanced}
-              onChange={() => setShowAdvanced(!showAdvanced)}
-            />
-            Show Advanced Options
-          </label>
-          {showAdvanced && (
-            <div className="advanced-options">
-              <label>
-                Mint Absolute Start Block Height:
-                <input
-                  type="number"
-                  name="mintAbsoluteStartBlockHeight"
-                  value={formData.mintAbsoluteStartBlockHeight}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Mint Absolute Stop Block Height:
-                <input
-                  type="number"
-                  name="mintAbsoluteStopBlockHeight"
-                  value={formData.mintAbsoluteStopBlockHeight}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Mint Relative Start Block Height:
-                <input
-                  type="number"
-                  name="mintRelativeStartBlockHeight"
-                  value={formData.mintRelativeStartBlockHeight}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Mint Relative End Block Height:
-                <input
-                  type="number"
-                  name="mintRelativeEndBlockHeight"
-                  value={formData.mintRelativeEndBlockHeight}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Opt-In for Future Protocol Changes:
-                <input
-                  type="checkbox"
-                  name="optInForFutureProtocolChanges"
-                  checked={formData.optInForFutureProtocolChanges}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Minting Allowed:
-                <input
-                  type="checkbox"
-                  name="mintingAllowed"
-                  checked={formData.mintingAllowed}
-                  onChange={handleChange}
-                />
-              </label>
-            </div>
-          )}
-        </>
-      )}
-{formData.operationType === 'mint' && (
   <>
-  <label>
-  Dune Name:
-  <input
-    type="text"
-    name="duneName"
-    value={formData.duneName}
-    onChange={(e) =>
-      handleChange({
-        target: {
-          name: 'duneName',
-          value: e.target.value.toUpperCase().replace(/ /g, '•'),
-        },
-      })
-    }
-    placeholder="Enter Dune Name"
-    required
-  />
-</label>
-    <label>
-      Amount to Mint:
-      <input
-        type="text"
-        name="mintAmount"
-        value={formData.mintAmount}
-        readOnly
-      />
-    </label>
-    <label>
-      Number of Mints:
-      <input
-        type="number"
-        name="numberOfMints"
-        value={formData.numberOfMints}
-        onChange={handleChange}
-        required
-        max="25"
-      />
-    </label>
-    <label>
-      To Address:
-      <input
-        type="text"
-        name="mintToAddress"
-        value={formData.mintToAddress}
-        onChange={handleChange}
-        required
-      />
-    </label>
-  </>
-)}
-      <button type="submit">Submit</button>
-      {orderInfo && (
-        <div>
-          <p>
-            Please send {orderInfo.dogeAmount} DOGE to the following address:
-            <br />
-            {orderInfo.paymentAddress}
-          </p>
-          <button 
+    {!isAuthenticated ? (
+      <div className="password-lock">
+        <h1>Upgrade Incoming</h1>
+        <form onSubmit={handlePasswordSubmit} className="password-form">
+          <label>
+            Enter Password:
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
+          <button type="submit">Submit</button>
+        </form>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+      </div>
+    ) : (
+      <form className="dune-form" onSubmit={handleSubmit}>
+        <div className="info-note">
+          <span
+            className="info-icon"
+            onClick={() => setShowInfo(!showInfo)}
+          >
+            ℹ️
+          </span>
+          <button
             type="button"
-            onClick={() => navigator.clipboard.writeText(orderInfo.paymentAddress)}>
-            Copy Address
+            onClick={handleConnectWallet}
+            className="connect-wallet-button"
+          >
+            {connectedAddress
+              ? `Connected: ${connectedAddress}`
+              : "Connect Wallet"}
           </button>
+          {showInfo && (
+            <p className={`info-text ${showInfo ? "visible" : ""}`}>
+              Etcher v1 is in beta. Not all dunes are available to
+              etch/deploy due to issues around blockheight or if they have
+              already been deployed. If your dune already exists or if
+              there are blockheight issues, it will not be deployed, and
+              you will lose your DOGE. You can check if a dune exists
+              before deploying by searching for the dune in "All Dunes".
+            </p>
+          )}
         </div>
-      )}
-      {orderStatus && <div>Order Status: {orderStatus}</div>}
-    </form>
-  );
-};
+        <label>
+          Operation Type:
+          <select name="operationType" value={formData.operationType} onChange={handleChange}>
+            <option value="deploy">Deploy</option>
+            <option value="mint">Mint</option>
+          </select>
+        </label>
+        {formData.operationType === 'deploy' && (
+          <>
+            <label>
+              Dune Name:
+              <input
+                type="text"
+                name="duneName"
+                value={formData.duneName}
+                onChange={(e) =>
+                  handleChange({
+                    target: {
+                      name: 'duneName',
+                      value: e.target.value.toUpperCase().replace(/ /g, '•'),
+                    },
+                  })
+                }
+                required
+              />
+            </label>
+            <label>
+              Symbol:
+              <input
+                type="text"
+                name="symbol"
+                value={formData.symbol}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <label>
+              Limit Per Mint:
+              <input
+                type="number"
+                name="limitPerMint"
+                value={formData.limitPerMint}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <label>
+              Max Number of Mints:
+              <input
+                type="number"
+                name="maxNrOfMints"
+                value={formData.maxNrOfMints}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="showAdvanced"
+                checked={showAdvanced}
+                onChange={() => setShowAdvanced(!showAdvanced)}
+              />
+              Show Advanced Options
+            </label>
+            {showAdvanced && (
+              <div className="advanced-options">
+                <label>
+                  Mint Absolute Start Block Height:
+                  <input
+                    type="number"
+                    name="mintAbsoluteStartBlockHeight"
+                    value={formData.mintAbsoluteStartBlockHeight}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  Mint Absolute Stop Block Height:
+                  <input
+                    type="number"
+                    name="mintAbsoluteStopBlockHeight"
+                    value={formData.mintAbsoluteStopBlockHeight}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  Mint Relative Start Block Height:
+                  <input
+                    type="number"
+                    name="mintRelativeStartBlockHeight"
+                    value={formData.mintRelativeStartBlockHeight}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  Mint Relative End Block Height:
+                  <input
+                    type="number"
+                    name="mintRelativeEndBlockHeight"
+                    value={formData.mintRelativeEndBlockHeight}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  Opt-In for Future Protocol Changes:
+                  <input
+                    type="checkbox"
+                    name="optInForFutureProtocolChanges"
+                    checked={formData.optInForFutureProtocolChanges}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  Minting Allowed:
+                  <input
+                    type="checkbox"
+                    name="mintingAllowed"
+                    checked={formData.mintingAllowed}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+            )}
+          </>
+        )}
+        {formData.operationType === 'mint' && (
+          <>
+            <label>
+              Dune Name:
+              <input
+                type="text"
+                name="duneName"
+                value={formData.duneName}
+                onChange={(e) =>
+                  handleChange({
+                    target: {
+                      name: 'duneName',
+                      value: e.target.value.toUpperCase().replace(/ /g, '•'),
+                    },
+                  })
+                }
+                placeholder="Enter Dune Name"
+                required
+              />
+            </label>
+            <label>
+              Amount to Mint:
+              <input
+                type="text"
+                name="mintAmount"
+                value={formData.mintAmount}
+                readOnly
+              />
+            </label>
+            <label>
+              Number of Mints:
+              <input
+                type="number"
+                name="numberOfMints"
+                value={formData.numberOfMints}
+                onChange={handleChange}
+                required
+                max="25"
+              />
+            </label>
+            <label>
+              To Address:
+              <input
+                type="text"
+                name="mintToAddress"
+                value={formData.mintToAddress}
+                onChange={handleChange}
+                required
+              />
+            </label>
+          </>
+        )}
+        <button type="submit">Submit</button>
+        {orderInfo && (
+          <div>
+            <p>
+              Please send {orderInfo.dogeAmount} DOGE to the following address:
+              <br />
+              {orderInfo.paymentAddress}
+            </p>
+            <button
+              type="button"
+              onClick={() =>
+                navigator.clipboard.writeText(orderInfo.paymentAddress)
+              }
+            >
+              Copy Address
+            </button>
+          </div>
+        )}
+        {orderStatus && <div>Order Status: {orderStatus}</div>}
+      </form>
+    )}
+  </>
+);
+
 
 export default DuneForm;
