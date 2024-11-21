@@ -77,6 +77,13 @@ const DuneForm = () => {
   }
 };
 
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
 
 
 
@@ -93,6 +100,8 @@ const DuneForm = () => {
     }
   };
 
+const debouncedFetchDuneDataByName = debounce(fetchDuneDataByName, 500);
+
 const handleChange = (e) => {
   const { name, value, type, checked } = e.target;
 
@@ -102,9 +111,10 @@ const handleChange = (e) => {
   }));
 
   if (name === 'duneName' && value) {
-    fetchDuneDataByName(value);
+    debouncedFetchDuneDataByName(value);
   }
 };
+
 
 
 
