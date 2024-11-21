@@ -16,7 +16,7 @@ const handleDebouncedFetch = (duneName) => {
     if (duneName) {
       fetchDuneDataByName(duneName);
     }
-  }, 500); // Adjust debounce delay as needed
+  }, 1000); // Adjust debounce delay as needed
 };
 
 
