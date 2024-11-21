@@ -30,7 +30,8 @@ const DuneForm = () => {
   const [myDogeMask, setMyDogeMask] = useState(null);
   const [connectedAddress, setConnectedAddress] = useState(null);
   const [pollingInterval, setPollingInterval] = useState(null);
-
+  const [finalizedDuneName, setFinalizedDuneName] = useState('');
+  
   useEffect(() => {
     window.addEventListener(
       'doge#initialized',
@@ -78,12 +79,12 @@ const DuneForm = () => {
 };
 
 function debounce(func, wait) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), wait);
-  };
-}
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
 
 
 
@@ -100,31 +101,46 @@ function debounce(func, wait) {
     }
   };
 
+
 const debouncedFetchDuneDataByName = debounce(fetchDuneDataByName, 500);
 
-const handleChange = (e) => {
-  const { name, value, type, checked } = e.target;
+ const debouncedUpdateFinalizedDuneName = debounce((value) => {
+    setFinalizedDuneName(value);
+  }, 500);
 
-  setFormData((prevData) => ({
-    ...prevData,
-    [name]: type === 'checkbox' ? checked : value,
-  }));
-
-  if (name === 'duneName' && value) {
-    debouncedFetchDuneDataByName(value);
-  }
-};
+  useEffect(() => {
+    if (finalizedDuneName) {
+      fetchDuneDataByName(finalizedDuneName);
+    }
+  }, [finalizedDuneName]);
 
 
+ const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+
+    if (name === 'duneName' && value) {
+      const formattedValue = value.toUpperCase().replace(/ /g, '•');
+      setFormData((prevData) => ({ ...prevData, duneName: formattedValue }));
+      debouncedUpdateFinalizedDuneName(formattedValue);
+    }
+  };
 
 
-  const handleSubmit = async (e) => {
+
+
+   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.operationType === 'mint' && (formData.numberOfMints > 25 || formData.numberOfMints < 1)) {
       alert('Number of mints must be between 1 and 25.');
       return;
     }
+
 
     const timestamp = Date.now();
     const orderData = {
