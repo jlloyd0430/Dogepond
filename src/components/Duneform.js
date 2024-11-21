@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Trending.css';
 import { submitOrder, checkOrderStatus } from '../services/duneApiClient';
 import axios from 'axios';
@@ -30,6 +30,7 @@ const DuneForm = () => {
   const [myDogeMask, setMyDogeMask] = useState(null);
   const [connectedAddress, setConnectedAddress] = useState(null);
   const [pollingInterval, setPollingInterval] = useState(null);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
 
   useEffect(() => {
     window.addEventListener(
@@ -45,66 +46,60 @@ const DuneForm = () => {
     }
   }, []);
 
- const fetchDuneDataByName = async (duneName) => {
-  try {
-    // Format the dune name as expected by the API
-    const formattedName = duneName.toUpperCase().replace(/ /g, '•');
-    const response = await axios.get(
-      `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${formattedName}`,
-      {
-        headers: {
-          Accept: 'application/json',
-          'api-key': process.env.REACT_APP_API_KEY,
-        },
+  const fetchDuneDataByName = async (duneName) => {
+    try {
+      const formattedName = duneName.toUpperCase().replace(/ /g, '•');
+      const response = await axios.get(
+        `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${formattedName}`,
+        {
+          headers: {
+            Accept: 'application/json',
+            'api-key': process.env.REACT_APP_API_KEY,
+          },
+        }
+      );
+
+      const duneData = response.data?.data;
+
+      if (!duneData || !duneData.terms) {
+        throw new Error('Dune data or terms missing.');
       }
-    );
 
-    const duneData = response.data?.data;
-
-    if (!duneData || !duneData.terms) {
-      throw new Error('Dune data or terms missing.');
-    }
-
-    // Update form data with dune details
-    setFormData((prevData) => ({
-      ...prevData,
-      mintId: duneData.id, // Set dune ID
-      mintAmount: duneData.terms.amount_per_mint, // Set amount per mint
-    }));
-  } catch (error) {
-    console.error('Error fetching dune data by name:', error);
-    alert('Could not find Dune. Please check the name and try again.');
-  }
-};
-
-
-
-  const handleConnectWallet = async () => {
-    if (myDogeMask) {
-      try {
-        const connectRes = await myDogeMask.connect();
-        setConnectedAddress(connectRes.address);
-      } catch (error) {
-        console.error('Failed to connect to MyDoge:', error);
-      }
-    } else {
-      alert('MyDoge wallet extension not found');
+      setFormData((prevData) => ({
+        ...prevData,
+        mintId: duneData.id,
+        mintAmount: duneData.terms.amount_per_mint,
+      }));
+    } catch (error) {
+      console.error('Error fetching dune data by name:', error);
+      alert('Could not find Dune. Please check the name and try again.');
     }
   };
 
-const handleChange = (e) => {
-  const { name, value, type, checked } = e.target;
+  const debounceFetch = useCallback((value) => {
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
 
-  setFormData((prevData) => ({
-    ...prevData,
-    [name]: type === 'checkbox' ? checked : value,
-  }));
+    const timeout = setTimeout(() => {
+      fetchDuneDataByName(value);
+    }, 500); // Adjust delay as needed (e.g., 500ms)
 
-  if (name === 'duneName' && value) {
-    fetchDuneDataByName(value);
-  }
-};
+    setDebounceTimeout(timeout);
+  }, [debounceTimeout]);
 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+
+    if (name === 'duneName' && value) {
+      debounceFetch(value);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -154,7 +149,6 @@ const handleChange = (e) => {
           }
         }
 
-        // Start polling for order status after submitting the order
         startPolling(orderResponse.index);
       } else {
         throw new Error('Invalid order response');
@@ -164,12 +158,6 @@ const handleChange = (e) => {
       alert('There was an error processing your order. Please try again.');
     }
   };
-
-  const startPolling = (orderIndex) => {
-    if (pollingInterval) {
-      clearInterval(pollingInterval);
-    }
-
     const interval = setInterval(async () => {
       try {
         const data = await checkOrderStatus(orderIndex);
