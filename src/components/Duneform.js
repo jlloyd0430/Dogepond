@@ -46,39 +46,42 @@ const DuneForm = () => {
     }
   }, []);
 
- const fetchDuneDataByName = async (duneName) => {
-  try {
-    // Format the dune name as expected by the API
-    const formattedName = duneName.toUpperCase().replace(/ /g, '•');
-    const response = await axios.get(
-      `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${formattedName}`,
-      {
-        headers: {
-          Accept: 'application/json',
-          'api-key': process.env.REACT_APP_API_KEY,
-        },
+   const fetchDuneDataByName = async (duneName) => {
+    try {
+      setSearching(true); // Show a loading indicator
+      const formattedName = duneName.toUpperCase().replace(/ /g, '•');
+      const response = await axios.get(
+        `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${formattedName}`,
+        {
+          headers: {
+            Accept: 'application/json',
+            'api-key': process.env.REACT_APP_API_KEY,
+          },
+        }
+      );
+
+      const duneData = response.data?.data;
+
+      if (!duneData || !duneData.terms) {
+        throw new Error('Dune data or terms missing.');
       }
-    );
 
-    const duneData = response.data?.data;
-
-    if (!duneData || !duneData.terms) {
-      throw new Error('Dune data or terms missing.');
+      setFormData((prevData) => ({
+        ...prevData,
+        mintId: duneData.id,
+        mintAmount: duneData.terms.amount_per_mint,
+      }));
+    } catch (error) {
+      console.error('Error fetching dune data by name:', error);
+      if (duneName.trim().length > 0) {
+        alert('Could not find Dune. Please check the name and try again.');
+      }
+    } finally {
+      setSearching(false); // Stop the loading indicator
     }
+  };
 
-    // Update form data with dune details
-    setFormData((prevData) => ({
-      ...prevData,
-      mintId: duneData.id, // Set dune ID
-      mintAmount: duneData.terms.amount_per_mint, // Set amount per mint
-    }));
-  } catch (error) {
-    console.error('Error fetching dune data by name:', error);
-    alert('Could not find Dune. Please check the name and try again.');
-  }
-};
-
-function debounce(func, wait) {
+  function debounce(func, wait) {
     let timeout;
     return function (...args) {
       clearTimeout(timeout);
@@ -86,7 +89,7 @@ function debounce(func, wait) {
     };
   }
 
-
+  const debouncedFetchDuneDataByName = debounce(fetchDuneDataByName, 500);
 
   const handleConnectWallet = async () => {
     if (myDogeMask) {
@@ -101,21 +104,7 @@ function debounce(func, wait) {
     }
   };
 
-
-const debouncedFetchDuneDataByName = debounce(fetchDuneDataByName, 500);
-
- const debouncedUpdateFinalizedDuneName = debounce((value) => {
-    setFinalizedDuneName(value);
-  }, 500);
-
-  useEffect(() => {
-    if (finalizedDuneName) {
-      fetchDuneDataByName(finalizedDuneName);
-    }
-  }, [finalizedDuneName]);
-
-
- const handleChange = (e) => {
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
     setFormData((prevData) => ({
@@ -126,7 +115,7 @@ const debouncedFetchDuneDataByName = debounce(fetchDuneDataByName, 500);
     if (name === 'duneName' && value) {
       const formattedValue = value.toUpperCase().replace(/ /g, '•');
       setFormData((prevData) => ({ ...prevData, duneName: formattedValue }));
-      debouncedUpdateFinalizedDuneName(formattedValue);
+      debouncedFetchDuneDataByName(formattedValue);
     }
   };
 
