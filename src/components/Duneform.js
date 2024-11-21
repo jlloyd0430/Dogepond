@@ -47,7 +47,7 @@ const DuneForm = () => {
 
  const fetchDuneDataByName = async (duneName) => {
   try {
-    const formattedName = duneName.toUpperCase().replace(/ /g, '•');
+    const formattedName = duneName.toUpperCase().replace(/ /g, '•'); // Format the input name
     const response = await axios.get(
       `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes?name=${formattedName}`,
       {
@@ -58,7 +58,11 @@ const DuneForm = () => {
       }
     );
 
-    const duneData = response.data.data;
+    const duneData = response.data?.data;
+
+    if (!duneData || duneData.spaced_name !== formattedName) {
+      throw new Error('Dune not found or name mismatch.');
+    }
 
     setFormData((prevData) => ({
       ...prevData,
@@ -70,6 +74,7 @@ const DuneForm = () => {
     alert('Could not find Dune. Please check the name and try again.');
   }
 };
+
 
 
   const handleConnectWallet = async () => {
@@ -326,24 +331,24 @@ const DuneForm = () => {
       )}
 {formData.operationType === 'mint' && (
   <>
-    <label>
-      Dune Name:
-      <input
-        type="text"
-        name="duneName"
-        value={formData.duneName}
-        onChange={(e) =>
-          handleChange({
-            target: {
-              name: 'duneName',
-              value: e.target.value.toUpperCase().replace(/ /g, '•'),
-            },
-          })
-        }
-        placeholder="Enter Dune Name"
-        required
-      />
-    </label>
+   <label>
+  Dune Name:
+  <input
+    type="text"
+    name="duneName"
+    value={formData.duneName}
+    onChange={(e) =>
+      handleChange({
+        target: {
+          name: 'duneName',
+          value: e.target.value.toUpperCase().replace(/ /g, '•'),
+        },
+      })
+    }
+    placeholder="Enter Dune Name"
+    required
+  />
+</label>
     <label>
       Amount to Mint:
       <input
