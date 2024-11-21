@@ -47,9 +47,10 @@ const DuneForm = () => {
 
  const fetchDuneDataByName = async (duneName) => {
   try {
-    const formattedName = duneName.toUpperCase().replace(/ /g, '•'); // Format the input name
+    // Format the dune name as expected by the API
+    const formattedName = duneName.toUpperCase().replace(/ /g, '•');
     const response = await axios.get(
-      `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes?name=${formattedName}`,
+      `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${formattedName}`,
       {
         headers: {
           Accept: 'application/json',
@@ -60,10 +61,11 @@ const DuneForm = () => {
 
     const duneData = response.data?.data;
 
-    if (!duneData || duneData.spaced_name !== formattedName) {
-      throw new Error('Dune not found or name mismatch.');
+    if (!duneData || !duneData.terms) {
+      throw new Error('Dune data or terms missing.');
     }
 
+    // Update form data with dune details
     setFormData((prevData) => ({
       ...prevData,
       mintId: duneData.id, // Set dune ID
@@ -74,6 +76,7 @@ const DuneForm = () => {
     alert('Could not find Dune. Please check the name and try again.');
   }
 };
+
 
 
 
@@ -90,7 +93,7 @@ const DuneForm = () => {
     }
   };
 
- const handleChange = (e) => {
+const handleChange = (e) => {
   const { name, value, type, checked } = e.target;
 
   setFormData((prevData) => ({
@@ -98,12 +101,11 @@ const DuneForm = () => {
     [name]: type === 'checkbox' ? checked : value,
   }));
 
-  // Automatically fetch dune details when the duneName field is updated
- if (name === 'duneName') {
-  const formattedName = value.toUpperCase().replace(/ /g, '•');
-  fetchDuneDataByName(formattedName);
-}
+  if (name === 'duneName' && value) {
+    fetchDuneDataByName(value);
+  }
 };
+
 
 
   const handleSubmit = async (e) => {
@@ -331,7 +333,7 @@ const DuneForm = () => {
       )}
 {formData.operationType === 'mint' && (
   <>
-   <label>
+  <label>
   Dune Name:
   <input
     type="text"
