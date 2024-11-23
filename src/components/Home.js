@@ -167,50 +167,39 @@ const Home = () => {
   };
 
   // DRC-20 Snapshot functions
-  
-   const fetchDuneSnapshot = async () => {
-  try {
-    setDuneLoading(true);
-    let allHolders = []; // Array to store all holders
-    let cursor = null; // Initialize cursor for pagination
+  const fetchDrc20Snapshot = async () => {
+    try {
+      setDrc20Loading(true);
+      let allHolders = [];
+      let cursor = null;
 
-    do {
-      // Fetch data with pagination
-      const response = await axios.get(
-        `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/holders${
-          cursor ? `?cursor=${cursor}` : ""
-        }`,
-        {
-          headers: {
-            Accept: "application/json",
-            "api-key": process.env.REACT_APP_API_KEY, // Use your API key here
-          },
-        }
-      );
+      do {
+        const response = await fetch(
+          `https://xdg-mainnet.gomaestro-api.org/v0/assets/drc20/${ticker}/holders${
+            cursor ? `?cursor=${cursor}` : ""
+          }`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+              "api-key": process.env.REACT_APP_API_KEY,
+            },
+          }
+        );
 
-      const data = response.data;
+        const data = await response.json();
+        allHolders = [...allHolders, ...data.data];
 
-      // Add fetched holders to the array
-      allHolders = [...allHolders, ...data.data];
+        cursor = data.next_cursor;
+      } while (cursor);
 
-      // Update the cursor for the next page, if available
-      cursor = data.next_cursor;
-    } while (cursor); // Continue fetching as long as there is a next_cursor
-
-    // Map holders data to include address and total amount
-    const duneAmounts = allHolders.map((holder) => ({
-      address: holder.address,
-      totalAmount: parseFloat(holder.balance), // Convert balance to float
-    }));
-
-    setDuneSnapshotData(duneAmounts); // Set the complete snapshot data
-    setDuneLoading(false); // End loading state
-  } catch (error) {
-    console.error("Failed to fetch Dune snapshot data:", error.message);
-    setDuneLoading(false); // End loading state in case of error
-  }
-};
-
+      setDrc20Holders(allHolders);
+      setDrc20Loading(false);
+    } catch (error) {
+      console.error("Failed to fetch DRC-20 holders:", error.message);
+      setDrc20Loading(false);
+    }
+  };
 
   const exportDrc20ToTXT = () => {
     const txt = drc20Holders.map(({ address, balance }) => `${address}: ${balance}`).join("\n");
@@ -222,6 +211,33 @@ const Home = () => {
   };
 
 // Dune Snapshot functions
+const fetchDuneSnapshot = async () => {
+  try {
+    setDuneLoading(true);
+
+    const holdersResponse = await axios.get(
+      `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/holders`,
+      {
+        headers: {
+          Accept: "application/json",
+          "api-key": process.env.REACT_APP_API_KEY, // Use your API key here
+        },
+      }
+    );
+
+    // Extracting the address and balance from the response data
+    const duneAmounts = holdersResponse.data.data.map((holder) => ({
+      address: holder.address,
+      totalAmount: parseFloat(holder.balance), // Convert balance to float
+    }));
+
+    setDuneSnapshotData(duneAmounts); // Set the snapshot data for display
+    setDuneLoading(false); // End loading state
+  } catch (error) {
+    console.error("Failed to fetch Dune snapshot data:", error.message);
+    setDuneLoading(false); // End loading state in case of error
+  }
+};
 
 const exportDuneToTXT = () => {
   const txt = duneSnapshotData
