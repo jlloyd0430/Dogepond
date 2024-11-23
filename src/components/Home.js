@@ -214,24 +214,39 @@ const Home = () => {
 const fetchDuneSnapshot = async () => {
   try {
     setDuneLoading(true);
+    let allHolders = []; // Array to store all holders
+    let cursor = null; // Initialize cursor for pagination
 
-    const holdersResponse = await axios.get(
-      `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/holders`,
-      {
-        headers: {
-          Accept: "application/json",
-          "api-key": process.env.REACT_APP_API_KEY, // Use your API key here
-        },
-      }
-    );
+    do {
+      // Fetch data with pagination
+      const response = await axios.get(
+        `https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneId}/holders${
+          cursor ? `?cursor=${cursor}` : ""
+        }`,
+        {
+          headers: {
+            Accept: "application/json",
+            "api-key": process.env.REACT_APP_API_KEY, // Use your API key here
+          },
+        }
+      );
 
-    // Extracting the address and balance from the response data
-    const duneAmounts = holdersResponse.data.data.map((holder) => ({
+      const data = response.data;
+
+      // Add fetched holders to the array
+      allHolders = [...allHolders, ...data.data];
+
+      // Update the cursor for the next page, if available
+      cursor = data.next_cursor;
+    } while (cursor); // Continue fetching as long as there is a next_cursor
+
+    // Map holders data to include address and total amount
+    const duneAmounts = allHolders.map((holder) => ({
       address: holder.address,
       totalAmount: parseFloat(holder.balance), // Convert balance to float
     }));
 
-    setDuneSnapshotData(duneAmounts); // Set the snapshot data for display
+    setDuneSnapshotData(duneAmounts); // Set the complete snapshot data
     setDuneLoading(false); // End loading state
   } catch (error) {
     console.error("Failed to fetch Dune snapshot data:", error.message);
@@ -239,25 +254,6 @@ const fetchDuneSnapshot = async () => {
   }
 };
 
-const exportDuneToTXT = () => {
-  const txt = duneSnapshotData
-    .map(({ address, totalAmount }) => `${address}: ${totalAmount.toFixed(8)}`)
-    .join("\n");
-  const blob = new Blob([txt], { type: "text/plain;charset=utf-8;" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `${duneId}_dune_snapshot.txt`;
-  link.click();
-};
-
-const exportDuneToJSON = () => {
-  const json = JSON.stringify(duneSnapshotData, null, 2);
-  const blob = new Blob([json], { type: "application/json;charset=utf-8;" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `${duneId}_dune_snapshot.json`;
-  link.click();
-};
 
   return (
     <div>
