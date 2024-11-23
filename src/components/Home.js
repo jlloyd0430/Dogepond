@@ -254,6 +254,25 @@ const fetchDuneSnapshot = async () => {
   }
 };
 
+  const exportDuneToTXT = () => {
+  const txt = duneSnapshotData
+    .map(({ address, totalAmount }) => `${address}: ${totalAmount.toFixed(8)}`)
+    .join("\n");
+  const blob = new Blob([txt], { type: "text/plain;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${duneId}_dune_snapshot.txt`;
+  link.click();
+};
+const exportDuneToJSON = () => {
+  const json = JSON.stringify(duneSnapshotData, null, 2);
+  const blob = new Blob([json], { type: "application/json;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${duneId}_dune_snapshot.json`;
+  link.click();
+};
+
 
   return (
     <div>
