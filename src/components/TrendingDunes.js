@@ -32,7 +32,7 @@ const TrendingDunes = () => {
         const $ = cheerio.load(htmlData);
 
         const fetchDuneDetails = async (duneName, duneLink) => {
-          const duneUrl = `https://ord.dunesprotocol.com${duneLink}`;
+          const duneUrl = `https://wonky-ord-v2.dogeord.io${duneLink}`;
           const duneResponse = await axios.get(duneUrl);
           const dunePage = cheerio.load(duneResponse.data);
           const duneID = dunePage('dt:contains("id") + dd').text().trim();
