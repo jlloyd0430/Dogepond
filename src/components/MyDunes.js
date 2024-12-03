@@ -14,7 +14,7 @@ const MyDunes = () => {
       return;
     }
     try {
-      const response = await axios.get(`https://wonky-ord.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
+      const response = await axios.get(`https://wonky-ord-v2.dogeord.io/dunes/balance/${walletAddress}?show_all=true`);
       setWalletDunes(response.data.dunes);
       setBalanceError("");
     } catch (error) {
