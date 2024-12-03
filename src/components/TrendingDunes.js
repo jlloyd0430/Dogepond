@@ -27,7 +27,7 @@ const TrendingDunes = () => {
   useEffect(() => {
     const fetchTrendingDunes = async () => {
       try {
-        const response = await axios.get("https://ord.dunesprotocol.com/dunes");
+        const response = await axios.get("https://wonky-ord-v2.dogeord.io/dunes");
         const htmlData = response.data;
         const $ = cheerio.load(htmlData);
 
