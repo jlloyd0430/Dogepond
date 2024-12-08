@@ -50,15 +50,15 @@ const TrendingDunes = () => {
 
   const fetchDuneDetails = async (dune) => {
     try {
-      const duneUrl = `https://wonky-ord-v2.dogeord.io${dune.link}`;
-      const response = await axios.get(duneUrl);
-      const $ = cheerio.load(response.data);
+      const duneID = dune.duneID || dune.name.replace(/\s+/g, '-').toLowerCase();
+      const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneID}`, {
+        headers: {
+          'Accept': 'application/json',
+          'api-key': process.env.REACT_APP_API_KEY,
+        }
+      });
 
-      const duneID = $('dt:contains("id") + dd').text().trim();
-      const mintable = $('dt:contains("mintable") + dd').text().trim() === 'true';
-      const mints = parseInt($('dt:contains("mints") + dd').text().trim(), 10);
-
-      setDuneDetails({ ...dune, duneID, mintable, mints });
+      setDuneDetails(response.data);
     } catch (error) {
       console.error("Error fetching dune details:", error);
       setError("Failed to fetch dune details. Please try again later.");
@@ -159,9 +159,21 @@ const TrendingDunes = () => {
                   <h2>{dune.name}</h2>
                   {selectedDune && selectedDune.name === dune.name && duneDetails && (
                     <div className="dune-details">
-                      <p>Dune ID: {duneDetails.duneID}</p>
-                      <p>Mintable: {duneDetails.mintable ? "Yes" : "No"}</p>
-                      <p>Mints: {duneDetails.mints}</p>
+                      <p>Dune ID: {duneDetails?.duneID}</p>
+                      <p>Mintable: {duneDetails?.mintable ? "Yes" : "No"}</p>
+                      <p>Mints: {duneDetails?.mints}</p>
+                      <p>Etching Transaction: {duneDetails?.etching_tx}</p>
+                      <p>Etching Height: {duneDetails?.etching_height}</p>
+                      <p>Max Supply: {duneDetails?.max_supply}</p>
+                      <p>Unique Holders: {duneDetails?.unique_holders}</p>
+                      <p>Total UTXOs: {duneDetails?.total_utxos}</p>
+                      <p>Symbol: {duneDetails?.symbol}</p>
+                      <p>Divisibility: {duneDetails?.divisibility}</p>
+                      <p>Mint TXs Cap: {duneDetails?.terms?.mint_txs_cap}</p>
+                      <p>Amount per Mint: {duneDetails?.terms?.amount_per_mint}</p>
+                      <p>Start Height: {duneDetails?.terms?.start_height}</p>
+                      <p>End Height: {duneDetails?.terms?.end_height}</p>
+                      <button onClick={() => navigator.clipboard.writeText(duneDetails?.duneID)}>Copy ID</button>
                     </div>
                   )}
                 </div>
