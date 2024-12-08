@@ -208,7 +208,19 @@ const TrendingDunes = () => {
             </div>
           </>
         )}
-        {view === "etcher" && <DuneForm onSubmit={handleSubmit} />}
+ {view === "etcher" && (
+          <div className="trending-form-container">
+            <DuneForm onSubmit={handleSubmit} />
+            {paymentInfo && (
+              <div className="trending-payment-popup">
+                <p>Please send {paymentInfo.dogeAmount} DOGE to the following address:</p>
+                <p>{paymentInfo.address}</p>
+                <button onClick={() => navigator.clipboard.writeText(paymentInfo.address)}>Copy Address</button>
+                {orderStatus && <p>Order Status: {orderStatus}</p>}
+              </div>
+            )}
+          </div>
+        )}
         {view === "myDunes" && <MyDunes />}
       </div>
     </ErrorBoundary>
