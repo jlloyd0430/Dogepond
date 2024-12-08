@@ -52,38 +52,41 @@ const TrendingDunes = () => {
     return name.toUpperCase().replace(/\s+/g, '%E2%80%A2');
   };
 
-  const fetchDuneDetails = async (dune) => {
-    try {
-      const formattedName = formatDuneNameForUrl(dune.name);
-      const response = await axios.get(`https://wonky-ord-v2.dogeord.io/dune/${formattedName}`);
-      const data = response.data;
-      const details = {
-        id: data.id,
-        etchingBlock: data["etching block"],
-        etchingTx: data["etching transaction"],
-        mintStart: data.mint?.start || "none",
-        mintEnd: data.mint?.end || "none",
-        mintAmount: data.mint?.amount || "0",
-        mints: data.mints,
-        cap: data.cap || "none",
-        remaining: data.remaining || "unlimited",
-        mintable: data.mintable,
-        supply: data.supply,
-        premine: data.premine,
-        preminePercentage: data["premine percentage"],
-        burned: data.burned,
-        divisibility: data.divisibility,
-        symbol: data.symbol,
-        turbo: data.turbo,
-        etching: data.etching
-      };
+ const fetchDuneDetails = async (dune) => {
+  try {
+    const formattedName = formatDuneNameForUrl(dune.name);
+    const response = await axios.get(`https://wonky-ord-v2.dogeord.io/dune/${formattedName}`);
+    const htmlData = response.data;
+    const $ = cheerio.load(htmlData);
 
-      setDuneDetails(details);
-    } catch (error) {
-      console.error("Error fetching dune details:", error);
-      setError("Failed to fetch dune details. Please try again later.");
-    }
-  };
+    const details = {
+      id: $('dt:contains("id") + dd').text().trim() || "N/A",
+      etchingBlock: $('dt:contains("etching block") + dd').text().trim() || "N/A",
+      etchingTx: $('dt:contains("etching transaction") + dd').text().trim() || "N/A",
+      mintStart: $('dt:contains("start") + dd').text().trim() || "none",
+      mintEnd: $('dt:contains("end") + dd').text().trim() || "none",
+      mintAmount: $('dt:contains("amount") + dd').text().trim() || "0",
+      mints: $('dt:contains("mints") + dd').text().trim() || "N/A",
+      cap: $('dt:contains("cap") + dd').text().trim() || "none",
+      remaining: $('dt:contains("remaining") + dd').text().trim() || "unlimited",
+      mintable: $('dt:contains("mintable") + dd').text().trim() === "true",
+      supply: $('dt:contains("supply") + dd').text().trim() || "N/A",
+      premine: $('dt:contains("premine") + dd').text().trim() || "N/A",
+      preminePercentage: $('dt:contains("premine percentage") + dd').text().trim() || "N/A",
+      burned: $('dt:contains("burned") + dd').text().trim() || "N/A",
+      divisibility: $('dt:contains("divisibility") + dd').text().trim() || "N/A",
+      symbol: $('dt:contains("symbol") + dd').text().trim() || "N/A",
+      turbo: $('dt:contains("turbo") + dd').text().trim() === "true",
+      etching: $('dt:contains("etching") + dd').text().trim() || "N/A",
+    };
+
+    setDuneDetails(details);
+  } catch (error) {
+    console.error("Error fetching dune details:", error);
+    setError("Failed to fetch dune details. Please try again later.");
+  }
+};
+
 
   const handleDuneClick = (dune) => {
     if (selectedDune && selectedDune.name === dune.name) {
