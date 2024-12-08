@@ -48,17 +48,37 @@ const TrendingDunes = () => {
     fetchTrendingDunes();
   }, []);
 
+  const formatDuneNameForUrl = (name) => {
+    return name.toUpperCase().replace(/\s+/g, '%E2%80%A2');
+  };
+
   const fetchDuneDetails = async (dune) => {
     try {
-      const duneID = dune.duneID || dune.name.replace(/\s+/g, '-').toLowerCase();
-      const response = await axios.get(`https://xdg-mainnet.gomaestro-api.org/v0/assets/dunes/${duneID}`, {
-        headers: {
-          'Accept': 'application/json',
-          'api-key': process.env.REACT_APP_API_KEY,
-        }
-      });
+      const formattedName = formatDuneNameForUrl(dune.name);
+      const response = await axios.get(`https://wonky-ord-v2.dogeord.io/dune/${formattedName}`);
+      const data = response.data;
+      const details = {
+        id: data.id,
+        etchingBlock: data["etching block"],
+        etchingTx: data["etching transaction"],
+        mintStart: data.mint?.start || "none",
+        mintEnd: data.mint?.end || "none",
+        mintAmount: data.mint?.amount || "0",
+        mints: data.mints,
+        cap: data.cap || "none",
+        remaining: data.remaining || "unlimited",
+        mintable: data.mintable,
+        supply: data.supply,
+        premine: data.premine,
+        preminePercentage: data["premine percentage"],
+        burned: data.burned,
+        divisibility: data.divisibility,
+        symbol: data.symbol,
+        turbo: data.turbo,
+        etching: data.etching
+      };
 
-      setDuneDetails(response.data);
+      setDuneDetails(details);
     } catch (error) {
       console.error("Error fetching dune details:", error);
       setError("Failed to fetch dune details. Please try again later.");
@@ -159,21 +179,25 @@ const TrendingDunes = () => {
                   <h2>{dune.name}</h2>
                   {selectedDune && selectedDune.name === dune.name && duneDetails && (
                     <div className="dune-details">
-                      <p>Dune ID: {duneDetails?.duneID}</p>
-                      <p>Mintable: {duneDetails?.mintable ? "Yes" : "No"}</p>
-                      <p>Mints: {duneDetails?.mints}</p>
-                      <p>Etching Transaction: {duneDetails?.etching_tx}</p>
-                      <p>Etching Height: {duneDetails?.etching_height}</p>
-                      <p>Max Supply: {duneDetails?.max_supply}</p>
-                      <p>Unique Holders: {duneDetails?.unique_holders}</p>
-                      <p>Total UTXOs: {duneDetails?.total_utxos}</p>
-                      <p>Symbol: {duneDetails?.symbol}</p>
-                      <p>Divisibility: {duneDetails?.divisibility}</p>
-                      <p>Mint TXs Cap: {duneDetails?.terms?.mint_txs_cap}</p>
-                      <p>Amount per Mint: {duneDetails?.terms?.amount_per_mint}</p>
-                      <p>Start Height: {duneDetails?.terms?.start_height}</p>
-                      <p>End Height: {duneDetails?.terms?.end_height}</p>
-                      <button onClick={() => navigator.clipboard.writeText(duneDetails?.duneID)}>Copy ID</button>
+                      <p>Dune ID: {duneDetails.id}</p>
+                      <p>Etching Block: {duneDetails.etchingBlock}</p>
+                      <p>Etching TX: {duneDetails.etchingTx}</p>
+                      <p>Mint Start: {duneDetails.mintStart}</p>
+                      <p>Mint End: {duneDetails.mintEnd}</p>
+                      <p>Mint Amount: {duneDetails.mintAmount}</p>
+                      <p>Mints: {duneDetails.mints}</p>
+                      <p>Cap: {duneDetails.cap}</p>
+                      <p>Remaining: {duneDetails.remaining}</p>
+                      <p>Mintable: {duneDetails.mintable ? "Yes" : "No"}</p>
+                      <p>Supply: {duneDetails.supply}</p>
+                      <p>Premine: {duneDetails.premine}</p>
+                      <p>Premine Percentage: {duneDetails.preminePercentage}</p>
+                      <p>Burned: {duneDetails.burned}</p>
+                      <p>Divisibility: {duneDetails.divisibility}</p>
+                      <p>Symbol: {duneDetails.symbol}</p>
+                      <p>Turbo: {duneDetails.turbo ? "Yes" : "No"}</p>
+                      <p>Etching: {duneDetails.etching}</p>
+                      <button onClick={() => navigator.clipboard.writeText(duneDetails.id)}>Copy ID</button>
                     </div>
                   )}
                 </div>
