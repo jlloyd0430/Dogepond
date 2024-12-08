@@ -96,6 +96,28 @@ const TrendingDunes = () => {
     setDropdownOpen(false);
   };
 
+  const handleSubmit = async (formData) => {
+    try {
+      const result = await submitOrder(formData);
+      setPaymentInfo({ dogeAmount: result.dogeAmount, address: result.address, index: result.index });
+
+      const intervalId = setInterval(async () => {
+        try {
+          const status = await checkOrderStatus(result.index);
+          setOrderStatus(status.status);
+          if (status.status === 'complete') {
+            clearInterval(intervalId);
+          }
+        } catch (error) {
+          console.error('Error checking order status:', error);
+        }
+      }, 30000);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
+
   const filteredDunes = dunes.filter(dune => dune.name.includes(searchTerm));
 
   return (
