@@ -14,7 +14,7 @@ const AuthProvider = ({ children }) => {
   const fetchUser = async (token) => {
     if (token) {
       try {
-        const response = await axios.get('https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth', {
+        const response = await axios.get('https://doginal-drc-20-drops-backend.onrender.com/api/auth', {
           headers: { 'x-auth-token': token }
         });
         setAuth((prevAuth) => ({
@@ -43,7 +43,7 @@ const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth/login', {
+      const response = await axios.post('https://doginal-drc-20-drops-backend.onrender.com/api/auth/login', {
         email,
         password
       });
