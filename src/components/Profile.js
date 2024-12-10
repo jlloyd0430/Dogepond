@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
-import { getWalletAddress, getWalletData, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
+import { getWalletAddress, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
 import apiClient from "../services/apiClient";
+import dogepondDucks from "../collections/dogepond-ducks.json"; // Importing the local JSON file
 import "./Profile.css";
-
-const COLLECTION_SLUG = 'dogepond-ducks';
 
 const Profile = () => {
   const { auth } = useContext(AuthContext);
@@ -43,29 +42,35 @@ const Profile = () => {
       setWalletAddress(address);
       fetchWalletData(address);
     } catch (error) {
-      console.error('Failed to connect wallet:', error);
+      console.error("Failed to connect wallet:", error);
       alert(`Failed to connect wallet: ${error.message}`);
     }
   };
 
   const fetchWalletData = async (address) => {
     try {
-      // Fetch wallet balance and holdings
+      // Fetch wallet balance and inscriptions
       const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
       setWalletBalance(walletData.data.balance);
 
-      // Fetch collection metadata
-      const collectionData = await apiClient.get("https://mint.dogepond.com/api/collection");
-      const collectionInscriptionIds = collectionData.data.inscriptions.map((item) => item.id);
+      // Extract collection inscription IDs from the JSON file
+      const collectionInscriptionIds = dogepondDucks.map((item) => item.inscriptionId);
 
       // Filter user's inscriptions for Doginal Ducks
-      const userInscriptions = walletData.data.inscriptions.filter((inscription) =>
-        collectionInscriptionIds.includes(inscription.id)
-      );
+      const userInscriptions = walletData.data.inscriptions
+        .filter((inscription) => collectionInscriptionIds.includes(inscription.id))
+        .map((inscription) => {
+          const matchingDuck = dogepondDucks.find((duck) => duck.inscriptionId === inscription.id);
+          return {
+            id: inscription.id,
+            name: matchingDuck.name,
+            attributes: matchingDuck.attributes,
+          };
+        });
 
       setWalletHoldings(userInscriptions);
     } catch (error) {
-      console.error('Failed to fetch wallet data:', error);
+      console.error("Failed to fetch wallet data:", error);
     }
   };
 
@@ -118,9 +123,16 @@ const Profile = () => {
                     <div key={inscription.id} className="inscription-card">
                       <img
                         src={`https://dogecdn.ordinalswallet.com/inscription/content/${inscription.id}`}
-                        alt={inscription.id}
+                        alt={inscription.name}
                       />
-                      <p>Inscription ID: {inscription.id}</p>
+                      <p>Name: {inscription.name}</p>
+                      <div className="attributes">
+                        {Object.entries(inscription.attributes).map(([key, value]) => (
+                          <p key={key}>
+                            <strong>{key}:</strong> {value}
+                          </p>
+                        ))}
+                      </div>
                     </div>
                   ))
                 ) : (
