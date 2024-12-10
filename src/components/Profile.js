@@ -120,11 +120,14 @@ const Profile = () => {
               <div className="wallet-holdings">
                 {walletHoldings.length > 0 ? (
                   walletHoldings.map((inscription) => (
-                    <div key={inscription.id} className="inscription-card">
-                      <img
-                        src={`https://dogecdn.ordinalswallet.com/inscription/content/${inscription.id}`}
-                        alt={inscription.name}
-                      />
+                  <div key={inscription.id} className="inscription-card">
+  {console.log(`Rendering image: https://wonky-ord-v2.dogeord.io/content/${inscription.id}`)}
+  <img
+    src={`https://wonky-ord-v2.dogeord.io/content/${inscription.id}`}
+    alt={`Duck ${inscription.id}`}
+  />
+  <p>Inscription ID: {inscription.id}</p>
+</div>
                       <p>Name: {inscription.name}</p>
                       <div className="attributes">
                         {Object.entries(inscription.attributes).map(([key, value]) => (
