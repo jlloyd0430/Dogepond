@@ -5,7 +5,7 @@ import { getWalletAddress, getWalletData, DOGELABS_WALLET, MYDOGE_WALLET, DOGINA
 import apiClient from "../services/apiClient";
 import "./Profile.css";
 
-const COLLECTION_SLUG = 'doginal-ducks';
+const COLLECTION_SLUG = 'dogepond-ducks';
 
 const Profile = () => {
   const { auth } = useContext(AuthContext);
