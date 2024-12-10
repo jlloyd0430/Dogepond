@@ -112,7 +112,7 @@ const Profile = () => {
                   walletHoldings.map((inscription) => (
                     <div key={inscription.id} className="inscription-card">
                       <img
-                        src={`https://dogecdn.ordinalswallet.com/inscription/content/${inscription.id}`}
+                        src={`https://wonky-ord-v2.dogeord.io/content/${inscription.id}`}
                         alt={`Duck ${inscription.id}`}
                       />
                       <p>Inscription ID: {inscription.id}</p>
