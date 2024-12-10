@@ -53,22 +53,12 @@ const Profile = () => {
       const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
       setWalletBalance(walletData.data.balance);
 
-      // Extract collection inscription IDs from the JSON file
-      const collectionInscriptionIds = dogepondDucks.map((item) => item.inscriptionId);
+      // Extract user's inscriptions and match with Dogepond Ducks JSON
+      const userHoldings = walletData.data.inscriptions.filter((inscription) =>
+        dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
+      );
 
-      // Filter user's inscriptions for Doginal Ducks
-      const userInscriptions = walletData.data.inscriptions
-        .filter((inscription) => collectionInscriptionIds.includes(inscription.id))
-        .map((inscription) => {
-          const matchingDuck = dogepondDucks.find((duck) => duck.inscriptionId === inscription.id);
-          return {
-            id: inscription.id,
-            name: matchingDuck.name,
-            attributes: matchingDuck.attributes,
-          };
-        });
-
-      setWalletHoldings(userInscriptions);
+      setWalletHoldings(userHoldings);
     } catch (error) {
       console.error("Failed to fetch wallet data:", error);
     }
@@ -120,22 +110,15 @@ const Profile = () => {
               <div className="wallet-holdings">
                 {walletHoldings.length > 0 ? (
                   walletHoldings.map((inscription) => (
-                  <div key={inscription.id} className="inscription-card">
-  {console.log(`Rendering image: https://wonky-ord-v2.dogeord.io/content/${inscription.id}`)}
-  <img
-    src={`https://wonky-ord-v2.dogeord.io/content/${inscription.id}`}
-    alt={`Duck ${inscription.id}`}
-  />
-  <p>Inscription ID: {inscription.id}</p>
-</div>
-                      <p>Name: {inscription.name}</p>
-                      <div className="attributes">
-                        {Object.entries(inscription.attributes).map(([key, value]) => (
-                          <p key={key}>
-                            <strong>{key}:</strong> {value}
-                          </p>
-                        ))}
-                      </div>
+                    <div key={inscription.id} className="inscription-card">
+                      <>
+                        {console.log(`Rendering image: https://wonky-ord-v2.dogeord.io/content/${inscription.id}`)}
+                        <img
+                          src={`https://wonky-ord-v2.dogeord.io/content/${inscription.id}`}
+                          alt={`Duck ${inscription.id}`}
+                        />
+                        <p>Inscription ID: {inscription.id}</p>
+                      </>
                     </div>
                   ))
                 ) : (
