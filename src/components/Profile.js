@@ -14,6 +14,7 @@ const Profile = () => {
   const [walletHoldings, setWalletHoldings] = useState([]);
   const [view, setView] = useState("nftDrops");
   const [error, setError] = useState("");
+  const [points, setPoints] = useState(0);
 
   useEffect(() => {
     const fetchUserDrops = async () => {
@@ -54,9 +55,10 @@ const Profile = () => {
       setWalletBalance(walletData.data.balance);
 
       // Filter user's inscriptions for Dogepond Ducks
-      const userHoldings = walletData.data.inscriptions.filter((inscription) =>
-        dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
-      );
+      const userHoldings = walletData.data.inscriptions.map((inscription) => {
+        const duck = dogepondDucks.find((duck) => duck.inscriptionId === inscription.id);
+        return duck ? { ...duck, id: inscription.id } : null;
+      }).filter(Boolean);
 
       setWalletHoldings(userHoldings);
     } catch (error) {
@@ -64,8 +66,34 @@ const Profile = () => {
     }
   };
 
-  const handleWalletButtonClick = () => {
-    setView("staking");
+  const handleStake = async (inscriptionId) => {
+    try {
+      const response = await apiClient.post("/api/steaks/stake", {
+        discordId: auth.user.discordId,
+        walletAddress,
+        inscriptionId,
+      });
+      alert(response.data.message);
+      fetchWalletData(walletAddress); // Refresh wallet data
+    } catch (error) {
+      console.error("Failed to stake:", error);
+      alert("Failed to stake inscription.");
+    }
+  };
+
+  const handleUnstake = async (inscriptionId) => {
+    try {
+      const response = await apiClient.post("/api/steaks/unstake", {
+        discordId: auth.user.discordId,
+        walletAddress,
+        inscriptionId,
+      });
+      alert(response.data.message);
+      fetchWalletData(walletAddress); // Refresh wallet data
+    } catch (error) {
+      console.error("Failed to unstake:", error);
+      alert("Failed to unstake inscription.");
+    }
   };
 
   return (
@@ -73,7 +101,7 @@ const Profile = () => {
       <h1>Profile</h1>
       <div className="profile-buttons">
         <button onClick={() => setView("nftDrops")}>My NFT Drops</button>
-        <button onClick={handleWalletButtonClick}>Staking</button>
+        <button onClick={() => setView("staking")}>Staking</button>
       </div>
 
       {view === "nftDrops" ? (
@@ -115,7 +143,14 @@ const Profile = () => {
                         src={`https://cdn.doggy.market/content/${inscription.id}`}
                         alt={`Duck ${inscription.id}`}
                       />
+                      <p>Name: {inscription.name}</p>
                       <p>Inscription ID: {inscription.id}</p>
+                      <p>Points Earned: {inscription.points || 0}</p>
+                      {inscription.isStaked ? (
+                        <button onClick={() => handleUnstake(inscription.id)}>Unstake</button>
+                      ) : (
+                        <button onClick={() => handleStake(inscription.id)}>Stake</button>
+                      )}
                     </div>
                   ))
                 ) : (
