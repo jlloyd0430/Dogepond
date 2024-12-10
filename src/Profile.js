@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
-import { getWalletAddress, getWalletData, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
+import { getWalletAddress, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
 import apiClient from "../services/apiClient";
-import Papa from 'papaparse';
+import dogepondDucks from "../collections/dogepond-ducks.json"; // Importing the local JSON file
 import "./Profile.css";
-
-const COLLECTION_SLUG = 'doginal-ducks';
 
 const Profile = () => {
   const { auth } = useContext(AuthContext);
@@ -16,10 +14,6 @@ const Profile = () => {
   const [walletHoldings, setWalletHoldings] = useState([]);
   const [view, setView] = useState("nftDrops");
   const [error, setError] = useState("");
-  const [points, setPoints] = useState(0);
-  const [snapshotData, setSnapshotData] = useState([]);
-  const [collectionSlug, setCollectionSlug] = useState("");
-  const [showWalletDropdown, setShowWalletDropdown] = useState(false);
 
   useEffect(() => {
     const fetchUserDrops = async () => {
@@ -31,58 +25,47 @@ const Profile = () => {
         };
         const response = await apiClient.get("/nftdrops/user", config);
         setUserDrops(response.data);
-        setError("");
       } catch (error) {
         console.error("Error fetching user NFT drops:", error);
         setError("Failed to fetch user NFT drops. Please try again later.");
       }
     };
 
-    const fetchUserPoints = async () => {
-      try {
-        const response = await apiClient.get(`/wallet-users/${auth.user.id}`);
-        setPoints(response.data.points);
-      } catch (error) {
-        console.error("Error fetching user points:", error);
-        setError("Failed to fetch user points. Please try again later.");
-      }
-    };
-
     if (view === "nftDrops") {
       fetchUserDrops();
     }
-    if (auth.user) {
-      fetchUserPoints();
-    }
-  }, [auth.token, view, auth.user]);
+  }, [auth.token, view]);
 
   const connectWallet = async (walletProvider) => {
     try {
       const address = await getWalletAddress(walletProvider, DOGINALS_TYPE);
       setWalletAddress(address);
-      fetchWalletData(address, walletProvider);
+      fetchWalletData(address);
     } catch (error) {
-      console.error('Failed to connect wallet:', error);
+      console.error("Failed to connect wallet:", error);
       alert(`Failed to connect wallet: ${error.message}`);
     }
   };
 
-  const fetchWalletData = async (address, walletProvider) => {
+  const fetchWalletData = async (address) => {
     try {
-      const data = await getWalletData(address, walletProvider);
-      setWalletBalance(data.balance);
-      const filteredHoldings = data.inscriptions.filter(inscription => inscription.collection && inscription.collection.slug === COLLECTION_SLUG);
-      setWalletHoldings(filteredHoldings);
-      setPoints(filteredHoldings.length);
+      // Fetch wallet balance and inscriptions
+      const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
+      setWalletBalance(walletData.data.balance);
 
-      await apiClient.post('/wallet-users/update-points', { address, points: filteredHoldings.length, nftCount: filteredHoldings.length });
+      // Extract user's inscriptions and match with Dogepond Ducks JSON
+      const userHoldings = walletData.data.inscriptions.filter((inscription) =>
+        dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
+      );
+
+      setWalletHoldings(userHoldings);
     } catch (error) {
-      console.error('Failed to fetch wallet data:', error);
+      console.error("Failed to fetch wallet data:", error);
     }
   };
 
   const handleWalletButtonClick = () => {
-    setShowWalletDropdown(prev => !prev);
+    setView("staking");
   };
 
   return (
@@ -90,23 +73,9 @@ const Profile = () => {
       <h1>Profile</h1>
       <div className="profile-buttons">
         <button onClick={() => setView("nftDrops")}>My NFT Drops</button>
-        <div className="wallet-dropdown">
-          <button onClick={handleWalletButtonClick}>Connect Wallet</button>
-          {showWalletDropdown && (
-          <div className="dropdown-content">
-          <div className="dropdown-item" onClick={() => connectWallet(DOGELABS_WALLET)}>
-            <img src="/dogelabs.svg" alt="DogeLabs" className="wallet-icon" />
-            <span>DogeLabs Wallet</span>
-          </div>
-          <div className="dropdown-item" onClick={() => connectWallet(MYDOGE_WALLET)}>
-            <img src="/mydoge-icon.svg" alt="MyDoge" className="wallet-icon" />
-            <span>MyDoge Wallet</span>
-          </div>
-        </div>
-        
-          )}
-        </div>
+        <button onClick={handleWalletButtonClick}>Staking</button>
       </div>
+
       {view === "nftDrops" ? (
         <div>
           <h2>My NFT Drops</h2>
@@ -124,23 +93,34 @@ const Profile = () => {
           </div>
         </div>
       ) : (
-        <div className="wallet-view">
+        <div className="staking-page">
           {!walletAddress ? (
             <div>
-              <p>Please connect a wallet to view your holdings.</p>
+              <p>Please connect your wallet to view your Dogepond Ducks.</p>
+              <div className="wallet-buttons">
+                <button onClick={() => connectWallet(DOGELABS_WALLET)}>Connect DogeLabs Wallet</button>
+                <button onClick={() => connectWallet(MYDOGE_WALLET)}>Connect MyDoge Wallet</button>
+              </div>
             </div>
           ) : (
             <div>
-              <p>Wallet Address: {walletAddress}</p>
+              <p>Wallet Address: {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}</p>
               <p>Wallet Balance: {walletBalance} DOGE</p>
-              <h2>My Doginal Ducks</h2>
+              <h2>My Dogepond Ducks</h2>
               <div className="wallet-holdings">
-                {walletHoldings.map((inscription) => (
-                  <div key={inscription.id} className="inscription-card">
-                    <img src={`https://dogecdn.ordinalswallet.com/inscription/content/${inscription.id}`} alt={inscription.meta.name} />
-                    <p>{inscription.meta.name}</p>
-                  </div>
-                ))}
+                {walletHoldings.length > 0 ? (
+                  walletHoldings.map((inscription) => (
+                    <div key={inscription.id} className="inscription-card">
+                      <img
+                        src={`https://dogecdn.ordinalswallet.com/inscription/content/${inscription.id}`}
+                        alt={`Duck ${inscription.id}`}
+                      />
+                      <p>Inscription ID: {inscription.id}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p>No Dogepond Ducks found in your wallet.</p>
+                )}
               </div>
             </div>
           )}
