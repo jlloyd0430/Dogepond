@@ -145,7 +145,7 @@ const Profile = () => {
                       />
                       <p>Name: {inscription.name}</p>
                       <p>Inscription ID: {inscription.id}</p>
-                      p>DUNE: DUCKS•WIF•HAT </p>
+                      <p>DUNE: DUCKS•WIF•HAT </p>
                       <p>Amount Earned: {inscription.points || 0}</p>
                       {inscription.isStaked ? (
                         <button onClick={() => handleUnstake(inscription.id)}>Unstake</button>
