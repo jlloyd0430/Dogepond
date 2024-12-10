@@ -134,7 +134,7 @@ const Profile = () => {
             <div>
               <p>Wallet Address: {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}</p>
               <p>Wallet Balance: {walletBalance} DOGE</p>
-              <h2>My Dogepond Ducks</h2>
+              <h2>Stake Doginals</h2>
               <div className="wallet-holdings">
                 {walletHoldings.length > 0 ? (
                   walletHoldings.map((inscription) => (
