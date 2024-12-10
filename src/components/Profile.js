@@ -102,7 +102,7 @@ const Profile = () => {
         <div className="staking-page">
           {!walletAddress ? (
             <div>
-              <p>Please connect your wallet to view your Dogepond Ducks.</p>
+              <p> Connect wallet to view Stake-Able Assets.</p>
               <div className="wallet-buttons">
                 <button className="select-wallet-button" onClick={toggleDropdown}>
                   Select Wallet
