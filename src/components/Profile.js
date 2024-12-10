@@ -119,7 +119,7 @@ const Profile = () => {
                     </div>
                     <div className="dropdown-item">
                       <FaMobileAlt className="wallet-icon" />
-                      <span>Mobile Verification</span>
+                      <span>Mobile Connect</span>
                     </div>
                   </div>
                 )}
