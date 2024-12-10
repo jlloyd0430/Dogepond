@@ -32,7 +32,7 @@ const Login = () => {
     };
 
     const handleDiscordLoginButton = () => {
-        window.location.href = 'https://drc20calendar-32f6b6f7dd9e.herokuapp.com/api/auth/discord';
+        window.location.href = 'https://doginal-drc-20-drops-backend.onrender.com/api/auth/discord';
     };
 
     return (
