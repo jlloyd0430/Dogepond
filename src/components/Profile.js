@@ -124,7 +124,7 @@ const Profile = () => {
         <div className="staking-page">
           {!walletAddress ? (
             <div>
-              <p>Please connect your wallet to view your Dogepond Ducks.</p>
+              <p>Please connect your wallet to view your Stake-able Assets.</p>
               <div className="wallet-buttons">
                 <button onClick={() => connectWallet(DOGELABS_WALLET)}>Connect DogeLabs Wallet</button>
                 <button onClick={() => connectWallet(MYDOGE_WALLET)}>Connect MyDoge Wallet</button>
