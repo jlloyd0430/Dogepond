@@ -54,13 +54,41 @@ const Profile = () => {
       setWalletBalance(walletData.data.balance);
 
       // Extract user's inscriptions and match with Dogepond Ducks JSON
-      const userHoldings = walletData.data.inscriptions.filter((inscription) =>
-        dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
+      const userHoldings = await Promise.all(
+        walletData.data.inscriptions
+          .filter((inscription) => dogepondDucks.some((duck) => duck.inscriptionId === inscription.id))
+          .map(async (inscription) => {
+            const layers = await fetchRecursiveLayers(inscription.id);
+            return { id: inscription.id, layers };
+          })
       );
 
       setWalletHoldings(userHoldings);
     } catch (error) {
       console.error("Failed to fetch wallet data:", error);
+    }
+  };
+
+  const fetchRecursiveLayers = async (inscriptionId) => {
+    try {
+      const response = await apiClient.get(`https://cdn.doggy.market/content/${inscriptionId}`);
+      const metadata = response.data;
+
+      // Check for references to additional layers
+      if (metadata.layers) {
+        // Fetch each layer recursively
+        const layers = await Promise.all(
+          metadata.layers.map((layerId) =>
+            apiClient.get(`https://cdn.doggy.market/content/${layerId}`).then((res) => res.data)
+          )
+        );
+        return layers;
+      }
+
+      return [metadata]; // Single layer if no additional layers found
+    } catch (error) {
+      console.error(`Failed to fetch layers for inscription ${inscriptionId}:`, error);
+      return [];
     }
   };
 
@@ -111,14 +139,14 @@ const Profile = () => {
                 {walletHoldings.length > 0 ? (
                   walletHoldings.map((inscription) => (
                     <div key={inscription.id} className="inscription-card">
-                      <>
-                        {console.log(`Rendering image: https://wonky-ord-v2.dogeord.io/content/${inscription.id}`)}
+                      <p>Inscription ID: {inscription.id}</p>
+                      {inscription.layers.map((layer, index) => (
                         <img
-                          src={`https://wonky-ord-v2.dogeord.io/content/${inscription.id}`}
-                          alt={`Duck ${inscription.id}`}
+                          key={index}
+                          src={`https://cdn.doggy.market/content/${layer.id}`}
+                          alt={`Layer ${index + 1}`}
                         />
-                        <p>Inscription ID: {inscription.id}</p>
-                      </>
+                      ))}
                     </div>
                   ))
                 ) : (
