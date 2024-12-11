@@ -70,20 +70,28 @@ const Profile = () => {
     }
   };
 
-  const fetchWalletData = async (address) => {
-    try {
-      const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
-      setWalletBalance(walletData.data.balance);
+ const fetchWalletData = async (address) => {
+  try {
+    const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
 
-      const userHoldings = walletData.data.inscriptions.filter((inscription) =>
-        dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
-      );
+    // Verify the structure of the API response
+    console.log("Wallet Data:", walletData.data);
 
-      setWalletHoldings(userHoldings);
-    } catch (error) {
-      console.error("Failed to fetch wallet data:", error);
-    }
-  };
+    // Parse the correct balance
+    const balance = walletData.data.balance || 0; // Use fallback in case balance is undefined
+    setWalletBalance(balance);
+
+    // Extract user's inscriptions and match with Dogepond Ducks JSON
+    const userHoldings = walletData.data.inscriptions.filter((inscription) =>
+      dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
+    );
+
+    setWalletHoldings(userHoldings);
+  } catch (error) {
+    console.error("Failed to fetch wallet data:", error);
+  }
+};
+
 
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
@@ -196,7 +204,7 @@ const Profile = () => {
               <p>
                 Wallet Address: {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}
               </p>
-              <p>Wallet Balance: {walletBalance} DOGE</p>
+               <p>Wallet Balance: {walletBalance.toLocaleString()} DOGE</p>
               <h2>My Assets</h2>
               <div className="wallet-holdings">
                 {walletHoldings.length > 0 ? (
