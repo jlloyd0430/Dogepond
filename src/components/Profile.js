@@ -43,7 +43,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchStakes = async () => {
       try {
-        const response = await apiClient.get("/api/steaks");
+        const response = await apiClient.get("/steaks");
         const stakesData = response.data.reduce((acc, stake) => {
           acc[stake.inscriptionId] = stake;
           return acc;
@@ -97,7 +97,7 @@ const Profile = () => {
         inscriptionId,
       });
       alert("Successfully staked!");
-      const response = await apiClient.get("/api/steaks");
+      const response = await apiClient.get("/steaks");
       setStakes(response.data.reduce((acc, stake) => {
         acc[stake.inscriptionId] = stake;
         return acc;
@@ -116,7 +116,7 @@ const Profile = () => {
         inscriptionId,
       });
       alert("Successfully unstaked!");
-      const response = await apiClient.get("/api/steaks");
+      const response = await apiClient.get("/steaks");
       setStakes(response.data.reduce((acc, stake) => {
         acc[stake.inscriptionId] = stake;
         return acc;
