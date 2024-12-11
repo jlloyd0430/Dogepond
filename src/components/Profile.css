@@ -38,8 +38,7 @@ button:hover {
   gap: 20px;
 }
 
-.wallet-holding,
-.inscription-card {
+.wallet-holding {
   border: 1px solid goldenrod;
   border-radius: 8px;
   padding: 16px;
@@ -150,12 +149,13 @@ button:hover {
 }
 
 .inscription-card {
-  border: 1px solid var(--text-color-light);
-  padding: 10px;
-  margin: 10px;
-  border-radius: 5px;
-  text-align: center;
-  width: 150px;
+  border: 1px solid goldenrod;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .inscription-id {
