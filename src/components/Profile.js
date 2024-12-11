@@ -13,6 +13,7 @@ const Profile = () => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [walletBalance, setWalletBalance] = useState(null);
   const [walletHoldings, setWalletHoldings] = useState([]);
+  const [stakingData, setStakingData] = useState({}); // Tracks staking details per inscription
   const [view, setView] = useState("nftDrops");
   const [error, setError] = useState("");
   const [showDropdown, setShowDropdown] = useState(false); // State for dropdown menu visibility
@@ -51,7 +52,6 @@ const Profile = () => {
 
   const fetchWalletData = async (address) => {
     try {
-      // Fetch wallet balance and inscriptions
       const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
       setWalletBalance(walletData.data.balance);
 
@@ -61,8 +61,62 @@ const Profile = () => {
       );
 
       setWalletHoldings(userHoldings);
+
+      // Fetch staking data
+      const stakingResponse = await apiClient.post("/steaks/status", { walletAddress: address });
+      setStakingData(
+        stakingResponse.data.reduce((acc, stake) => {
+          acc[stake.inscriptionId] = stake;
+          return acc;
+        }, {})
+      );
     } catch (error) {
       console.error("Failed to fetch wallet data:", error);
+    }
+  };
+
+  const stakeInscription = async (inscriptionId) => {
+    try {
+      const response = await apiClient.post("/steaks/stake", {
+        discordId: auth.user?.discordId,
+        walletAddress,
+        inscriptionId,
+      });
+      alert(response.data.message);
+      fetchWalletData(walletAddress);
+    } catch (error) {
+      console.error("Failed to stake:", error);
+      alert("Failed to stake the inscription.");
+    }
+  };
+
+  const unstakeInscription = async (inscriptionId) => {
+    try {
+      const response = await apiClient.post("/steaks/unstake", {
+        discordId: auth.user?.discordId,
+        walletAddress,
+        inscriptionId,
+      });
+      alert(response.data.message);
+      fetchWalletData(walletAddress);
+    } catch (error) {
+      console.error("Failed to unstake:", error);
+      alert("Failed to unstake the inscription.");
+    }
+  };
+
+  const harvestPoints = async (inscriptionId) => {
+    try {
+      const response = await apiClient.post("/steaks/harvest", {
+        discordId: auth.user?.discordId,
+        walletAddress,
+        inscriptionId,
+      });
+      alert(response.data.message);
+      fetchWalletData(walletAddress);
+    } catch (error) {
+      console.error("Failed to harvest points:", error);
+      alert("Failed to harvest points.");
     }
   };
 
@@ -102,7 +156,7 @@ const Profile = () => {
         <div className="staking-page">
           {!walletAddress ? (
             <div>
-              <p> Connect wallet to view Stake-Able Assets.</p>
+              <p>Connect wallet to view Stake-Able Assets.</p>
               <div className="wallet-buttons">
                 <button className="select-wallet-button" onClick={toggleDropdown}>
                   Select Wallet
@@ -131,20 +185,34 @@ const Profile = () => {
                 Wallet Address: {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}
               </p>
               <p>Wallet Balance: {walletBalance} DOGE</p>
-              <h2>My Dogepond Ducks</h2>
+              <h2>My assets</h2>
               <div className="wallet-holdings">
                 {walletHoldings.length > 0 ? (
-                  walletHoldings.map((inscription) => (
-                    <div key={inscription.id} className="inscription-card">
-                      <img
-                        src={`https://wonky-ord-v2.dogeord.io/content/${inscription.id}`}
-                        alt={`Duck ${inscription.id}`}
-                      />
-                      <p>Inscription ID: {inscription.id}</p>
-                    </div>
-                  ))
+                  walletHoldings.map((inscription) => {
+                    const stake = stakingData[inscription.id];
+                    return (
+                      <div key={inscription.id} className="inscription-card">
+                        <img
+                          src={`https://wonky-ord-v2.dogeord.io/content/${inscription.id}`}
+                          alt={`Duck ${inscription.id}`}
+                        />
+                        <p className="inscription-id">Inscription ID: {inscription.id}</p>
+                        {stake ? (
+                          <div>
+                            <p>Points Earned: {stake.points}</p>
+                            <button onClick={() => unstakeInscription(inscription.id)}>Unstake</button>
+                            {stake.points > 0 && (
+                              <button onClick={() => harvestPoints(inscription.id)}>Harvest</button>
+                            )}
+                          </div>
+                        ) : (
+                          <button onClick={() => stakeInscription(inscription.id)}>Stake</button>
+                        )}
+                      </div>
+                    );
+                  })
                 ) : (
-                  <p>No Dogepond Ducks found in your wallet.</p>
+                  <p>No stakable assets found in your wallet.</p>
                 )}
               </div>
             </div>
