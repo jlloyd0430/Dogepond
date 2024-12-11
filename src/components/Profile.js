@@ -134,18 +134,32 @@ const Profile = () => {
     }
   };
 
-  const handleHarvest = async (inscriptionId) => {
-    const stake = stakes[inscriptionId];
-    if (stake && stake.points > 0) {
-      alert(`You have harvested ${stake.points} points!`);
+ const handleHarvest = async (inscriptionId) => {
+  const stake = stakes[inscriptionId];
+  if (stake && stake.points > 0) {
+    try {
+      const response = await apiClient.post('/harvest', {
+        walletAddress,
+        inscriptionId,
+        duneName: 'DUCKS•WIF•HAT', // Replace with the actual dune name
+      });
+
+      alert(response.data.message);
+
+      // Reset the points locally
       setStakes((prev) => ({
         ...prev,
         [inscriptionId]: { ...stake, points: 0 },
       }));
-    } else {
-      alert("No points to harvest.");
+    } catch (error) {
+      console.error('Failed to harvest:', error);
+      alert('Failed to harvest. Please try again.');
     }
-  };
+  } else {
+    alert('No points to harvest.');
+  }
+};
+
 
   return (
     <div className="profile-container">
