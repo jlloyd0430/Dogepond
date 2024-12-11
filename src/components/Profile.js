@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import NFTCard from "../components/NFTCard";
 import { getWalletAddress, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
 import apiClient from "../services/apiClient";
 import dogepondDucks from "../collections/dogepond-ducks.json"; // Importing the local JSON file
@@ -9,35 +8,28 @@ import "./Profile.css";
 
 const Profile = () => {
   const { auth } = useContext(AuthContext);
-  const [userDrops, setUserDrops] = useState([]);
   const [walletAddress, setWalletAddress] = useState(null);
   const [walletBalance, setWalletBalance] = useState(null);
   const [walletHoldings, setWalletHoldings] = useState([]);
-  const [stakingData, setStakingData] = useState({}); // Tracks staking details per inscription
-  const [view, setView] = useState("nftDrops");
-  const [error, setError] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false); // State for dropdown menu visibility
+  const [stakes, setStakes] = useState({});
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    const fetchUserDrops = async () => {
+    const fetchStakes = async () => {
       try {
-        const config = {
-          headers: {
-            "x-auth-token": auth.token,
-          },
-        };
-        const response = await apiClient.get("/nftdrops/user", config);
-        setUserDrops(response.data);
+        const response = await apiClient.get("/api/steaks");
+        const stakesData = response.data.reduce((acc, stake) => {
+          acc[stake.inscriptionId] = stake;
+          return acc;
+        }, {});
+        setStakes(stakesData);
       } catch (error) {
-        console.error("Error fetching user NFT drops:", error);
-        setError("Failed to fetch user NFT drops. Please try again later.");
+        console.error("Failed to fetch stakes:", error);
       }
     };
 
-    if (view === "nftDrops") {
-      fetchUserDrops();
-    }
-  }, [auth.token, view]);
+    fetchStakes();
+  }, [walletAddress]);
 
   const connectWallet = async (walletProvider) => {
     try {
@@ -55,68 +47,13 @@ const Profile = () => {
       const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
       setWalletBalance(walletData.data.balance);
 
-      // Extract user's inscriptions and match with Dogepond Ducks JSON
       const userHoldings = walletData.data.inscriptions.filter((inscription) =>
         dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
       );
 
       setWalletHoldings(userHoldings);
-
-      // Fetch staking data
-      const stakingResponse = await apiClient.post("/steaks/status", { walletAddress: address });
-      setStakingData(
-        stakingResponse.data.reduce((acc, stake) => {
-          acc[stake.inscriptionId] = stake;
-          return acc;
-        }, {})
-      );
     } catch (error) {
       console.error("Failed to fetch wallet data:", error);
-    }
-  };
-
-  const stakeInscription = async (inscriptionId) => {
-    try {
-      const response = await apiClient.post("/steaks/stake", {
-        discordId: auth.user?.discordId,
-        walletAddress,
-        inscriptionId,
-      });
-      alert(response.data.message);
-      fetchWalletData(walletAddress);
-    } catch (error) {
-      console.error("Failed to stake:", error);
-      alert("Failed to stake the inscription.");
-    }
-  };
-
-  const unstakeInscription = async (inscriptionId) => {
-    try {
-      const response = await apiClient.post("/steaks/unstake", {
-        discordId: auth.user?.discordId,
-        walletAddress,
-        inscriptionId,
-      });
-      alert(response.data.message);
-      fetchWalletData(walletAddress);
-    } catch (error) {
-      console.error("Failed to unstake:", error);
-      alert("Failed to unstake the inscription.");
-    }
-  };
-
-  const harvestPoints = async (inscriptionId) => {
-    try {
-      const response = await apiClient.post("/steaks/harvest", {
-        discordId: auth.user?.discordId,
-        walletAddress,
-        inscriptionId,
-      });
-      alert(response.data.message);
-      fetchWalletData(walletAddress);
-    } catch (error) {
-      console.error("Failed to harvest points:", error);
-      alert("Failed to harvest points.");
     }
   };
 
@@ -124,101 +61,128 @@ const Profile = () => {
     setShowDropdown((prev) => !prev);
   };
 
-  const handleWalletButtonClick = () => {
-    setView("staking");
+  const handleStake = async (inscriptionId) => {
+    try {
+      await apiClient.post("/api/steaks/stake", {
+        discordId: auth.user.discordId,
+        walletAddress,
+        inscriptionId,
+      });
+      alert("Successfully staked!");
+      // Refresh stakes after staking
+      const response = await apiClient.get("/api/steaks");
+      setStakes(response.data.reduce((acc, stake) => {
+        acc[stake.inscriptionId] = stake;
+        return acc;
+      }, {}));
+    } catch (error) {
+      console.error("Failed to stake:", error);
+      alert("Failed to stake. Please try again.");
+    }
+  };
+
+  const handleUnstake = async (inscriptionId) => {
+    try {
+      await apiClient.post("/api/steaks/unstake", {
+        discordId: auth.user.discordId,
+        walletAddress,
+        inscriptionId,
+      });
+      alert("Successfully unstaked!");
+      // Refresh stakes after unstaking
+      const response = await apiClient.get("/api/steaks");
+      setStakes(response.data.reduce((acc, stake) => {
+        acc[stake.inscriptionId] = stake;
+        return acc;
+      }, {}));
+    } catch (error) {
+      console.error("Failed to unstake:", error);
+      alert("Failed to unstake. Please try again.");
+    }
+  };
+
+  const handleHarvest = async (inscriptionId) => {
+    const stake = stakes[inscriptionId];
+    if (stake && stake.points > 0) {
+      alert(`You have harvested ${stake.points} points!`);
+      // Reset points for the harvested stake (mocking backend behavior)
+      setStakes((prev) => ({
+        ...prev,
+        [inscriptionId]: { ...stake, points: 0 },
+      }));
+    } else {
+      alert("No points to harvest.");
+    }
   };
 
   return (
     <div className="profile-container">
       <h1>Profile</h1>
-      <div className="profile-buttons">
-        <button onClick={() => setView("nftDrops")}>My NFT Drops</button>
-        <button onClick={handleWalletButtonClick}>Staking</button>
-      </div>
-
-      {view === "nftDrops" ? (
-        <div>
-          <h2>My NFT Drops</h2>
-          {error && <p>{error}</p>}
-          <div className="nft-drops">
-            {userDrops.map((drop) => (
-              <NFTCard
-                key={drop._id}
-                drop={drop}
-                onLike={() => {}}
-                isProfilePage={true}
-                userRole={auth.user?.role}
-              />
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="staking-page">
-          {!walletAddress ? (
-            <div>
-              <p>Connect wallet to view Stake-Able Assets.</p>
-              <div className="wallet-buttons">
-                <button className="select-wallet-button" onClick={toggleDropdown}>
-                  Select Wallet
-                </button>
-                {showDropdown && (
-                  <div className="wallet-dropdown">
-                    <div className="dropdown-item" onClick={() => connectWallet(MYDOGE_WALLET)}>
-                      <img src="/mydoge-icon.svg" alt="MyDoge Wallet" className="wallet-icon" />
-                      <span>MyDoge Wallet</span>
-                    </div>
-                    <div className="dropdown-item" onClick={() => connectWallet(DOGELABS_WALLET)}>
-                      <img src="/dogelabs.svg" alt="DogeLabs Wallet" className="wallet-icon" />
-                      <span>DogeLabs Wallet</span>
-                    </div>
-                    <div className="dropdown-item">
-                      <FaMobileAlt className="wallet-icon" />
-                      <span>Mobile Connect</span>
-                    </div>
+      <div className="staking-page">
+        {!walletAddress ? (
+          <div>
+            <p> Connect wallet to view Stake-Able Assets.</p>
+            <div className="wallet-buttons">
+              <button className="select-wallet-button" onClick={toggleDropdown}>
+                Select Wallet
+              </button>
+              {showDropdown && (
+                <div className="wallet-dropdown">
+                  <div className="dropdown-item" onClick={() => connectWallet(MYDOGE_WALLET)}>
+                    <img src="/mydoge-icon.svg" alt="MyDoge Wallet" className="wallet-icon" />
+                    <span>MyDoge Wallet</span>
                   </div>
-                )}
-              </div>
+                  <div className="dropdown-item" onClick={() => connectWallet(DOGELABS_WALLET)}>
+                    <img src="/dogelabs.svg" alt="DogeLabs Wallet" className="wallet-icon" />
+                    <span>DogeLabs Wallet</span>
+                  </div>
+                  <div className="dropdown-item">
+                    <FaMobileAlt className="wallet-icon" />
+                    <span>Mobile Connect</span>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            <div>
-              <p>
-                Wallet Address: {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}
-              </p>
-              <p>Wallet Balance: {walletBalance} DOGE</p>
-              <h2>My assets</h2>
-              <div className="wallet-holdings">
-                {walletHoldings.length > 0 ? (
-                  walletHoldings.map((inscription) => {
-                    const stake = stakingData[inscription.id];
-                    return (
-                      <div key={inscription.id} className="inscription-card">
-                        <img
-                          src={`https://wonky-ord-v2.dogeord.io/content/${inscription.id}`}
-                          alt={`Duck ${inscription.id}`}
-                        />
-                        <p className="inscription-id">Inscription ID: {inscription.id}</p>
-                        {stake ? (
-                          <div>
-                            <p>Points Earned: {stake.points}</p>
-                            <button onClick={() => unstakeInscription(inscription.id)}>Unstake</button>
-                            {stake.points > 0 && (
-                              <button onClick={() => harvestPoints(inscription.id)}>Harvest</button>
-                            )}
-                          </div>
-                        ) : (
-                          <button onClick={() => stakeInscription(inscription.id)}>Stake</button>
-                        )}
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p>No stakable assets found in your wallet.</p>
-                )}
-              </div>
+          </div>
+        ) : (
+          <div>
+            <p>
+              Wallet Address: {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}
+            </p>
+            <p>Wallet Balance: {walletBalance} DOGE</p>
+            <h2>My Assets</h2>
+            <div className="wallet-holdings">
+              {walletHoldings.length > 0 ? (
+                walletHoldings.map((inscription) => {
+                  const stake = stakes[inscription.id];
+                  return (
+                    <div key={inscription.id} className="inscription-card">
+                      <img
+                        src={`https://cdn.doggy.market/content/${inscription.id}`}
+                        alt={`Duck ${inscription.id}`}
+                      />
+                      <p>Inscription ID: {inscription.id}</p>
+                      <p>Points: {stake?.points || 0}</p>
+                      {stake ? (
+                        <>
+                          <button onClick={() => handleUnstake(inscription.id)}>Unstake</button>
+                          {stake.points > 0 && (
+                            <button onClick={() => handleHarvest(inscription.id)}>Harvest</button>
+                          )}
+                        </>
+                      ) : (
+                        <button onClick={() => handleStake(inscription.id)}>Stake</button>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <p>No Dogepond assets or partner projects found in your wallet.</p>
+              )}
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
