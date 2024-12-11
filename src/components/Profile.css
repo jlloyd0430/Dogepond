@@ -40,12 +40,12 @@ button:hover {
 
 .wallet-holding,
 .inscription-card {
-  border: 1px solid #ddd;
+  border: 1px solid goldenrod;
   border-radius: 8px;
   padding: 16px;
   margin: 8px 0;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
 }
 
@@ -157,6 +157,15 @@ button:hover {
   text-align: center;
   width: 150px;
 }
+
+.inscription-id {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  font-size: 12px;
+}
+
+
 
 
 @media (max-width: 600px) {
