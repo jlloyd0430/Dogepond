@@ -26,3 +26,13 @@ export const checkOrderStatus = async (index) => {
     throw new Error('An error occurred while checking the order status');
   }
 };
+
+export const harvestDunes = async (harvestData) => {
+  try {
+    const response = await apiClient.post('/harvest', harvestData);
+    return response.data;
+  } catch (error) {
+    console.error('Error harvesting dunes:', error);
+    throw new Error('Failed to harvest dunes.');
+  }
+};
