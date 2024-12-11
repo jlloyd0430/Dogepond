@@ -70,28 +70,23 @@ const Profile = () => {
     }
   };
 
- const fetchWalletData = async (address) => {
-  try {
-    const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
+  const fetchWalletData = async (address) => {
+    try {
+      const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
+      console.log("Wallet Data:", walletData.data);
 
-    // Verify the structure of the API response
-    console.log("Wallet Data:", walletData.data);
+      const balance = walletData.data.confirmed_balance || 0;
+      setWalletBalance(balance);
 
-    // Parse the correct balance
-    const balance = walletData.data.balance || 0; // Use fallback in case balance is undefined
-    setWalletBalance(balance);
+      const userHoldings = walletData.data.inscriptions.filter((inscription) =>
+        dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
+      );
 
-    // Extract user's inscriptions and match with Dogepond Ducks JSON
-    const userHoldings = walletData.data.inscriptions.filter((inscription) =>
-      dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
-    );
-
-    setWalletHoldings(userHoldings);
-  } catch (error) {
-    console.error("Failed to fetch wallet data:", error);
-  }
-};
-
+      setWalletHoldings(userHoldings);
+    } catch (error) {
+      console.error("Failed to fetch wallet data:", error);
+    }
+  };
 
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
@@ -106,10 +101,12 @@ const Profile = () => {
       });
       alert("Successfully staked!");
       const response = await apiClient.get("/steaks");
-      setStakes(response.data.reduce((acc, stake) => {
-        acc[stake.inscriptionId] = stake;
-        return acc;
-      }, {}));
+      setStakes(
+        response.data.reduce((acc, stake) => {
+          acc[stake.inscriptionId] = stake;
+          return acc;
+        }, {})
+      );
     } catch (error) {
       console.error("Failed to stake:", error);
       alert("Failed to stake. Please try again.");
@@ -125,10 +122,12 @@ const Profile = () => {
       });
       alert("Successfully unstaked!");
       const response = await apiClient.get("/steaks");
-      setStakes(response.data.reduce((acc, stake) => {
-        acc[stake.inscriptionId] = stake;
-        return acc;
-      }, {}));
+      setStakes(
+        response.data.reduce((acc, stake) => {
+          acc[stake.inscriptionId] = stake;
+          return acc;
+        }, {})
+      );
     } catch (error) {
       console.error("Failed to unstake:", error);
       alert("Failed to unstake. Please try again.");
@@ -204,7 +203,7 @@ const Profile = () => {
               <p>
                 Wallet Address: {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}
               </p>
-               <p>Wallet Balance: {walletBalance.toLocaleString()} DOGE</p>
+              <p>Wallet Balance: {walletBalance.toLocaleString()} DOGE</p>
               <h2>My Assets</h2>
               <div className="wallet-holdings">
                 {walletHoldings.length > 0 ? (
