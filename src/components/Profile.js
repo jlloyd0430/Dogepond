@@ -76,7 +76,7 @@ const Profile = () => {
       console.log("Wallet Data:", walletData.data);
 
       const balance = walletData.data.confirmed_balance || 0;
-      setWalletBalance(balance);
+      setWalletBalance((balance / 100000000).toFixed(8)); // Convert to DOGE with decimals
 
       const userHoldings = walletData.data.inscriptions.filter((inscription) =>
         dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
@@ -203,7 +203,7 @@ const Profile = () => {
               <p>
                 Wallet Address: {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}
               </p>
-              <p>Wallet Balance: {walletBalance.toLocaleString()} DOGE</p>
+              <p>Wallet Balance: {walletBalance} DOGE</p>
               <h2>My Assets</h2>
               <div className="wallet-holdings">
                 {walletHoldings.length > 0 ? (
