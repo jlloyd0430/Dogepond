@@ -17,6 +17,11 @@ const Profile = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [view, setView] = useState("nftDrops"); // State to toggle between views
   const [error, setError] = useState("");
+  const [mobileVerification, setMobileVerification] = useState(false);
+  const [tempAddress, setTempAddress] = useState("");
+  const [randomAmount, setRandomAmount] = useState(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationMessage, setVerificationMessage] = useState("");
 
   // Fetch user's NFT drops
   useEffect(() => {
@@ -92,74 +97,35 @@ const Profile = () => {
     setShowDropdown((prev) => !prev);
   };
 
-  const handleStake = async (inscriptionId) => {
+  const startMobileVerification = async () => {
+    if (!tempAddress) {
+      alert("Please enter a wallet address.");
+      return;
+    }
+
+    const amount = (Math.random() * (0.001 - 0.0001) + 0.0001).toFixed(8); // Random amount between 0.0001 and 0.001
+    setRandomAmount(amount);
+    setIsVerifying(true);
+    setVerificationMessage("Please send the exact amount to verify.");
+
     try {
-      await apiClient.post("/api/steaks/stake", {
-        discordId: auth.user.discordId,
-        walletAddress,
-        inscriptionId,
+      const response = await apiClient.post("/verify-transaction", {
+        walletAddress: tempAddress,
+        amount,
       });
-      alert("Successfully staked!");
-      const response = await apiClient.get("/steaks");
-      setStakes(
-        response.data.reduce((acc, stake) => {
-          acc[stake.inscriptionId] = stake;
-          return acc;
-        }, {})
-      );
+
+      if (response.data.message) {
+        setVerificationMessage(response.data.message);
+        setWalletAddress(tempAddress);
+        fetchWalletData(tempAddress);
+      }
     } catch (error) {
-      console.error("Failed to stake:", error);
-      alert("Failed to stake. Please try again.");
+      console.error("Verification failed:", error);
+      setVerificationMessage("Verification failed. Please try again.");
+    } finally {
+      setIsVerifying(false);
     }
   };
-
-  const handleUnstake = async (inscriptionId) => {
-    try {
-      await apiClient.post("/api/steaks/unstake", {
-        discordId: auth.user.discordId,
-        walletAddress,
-        inscriptionId,
-      });
-      alert("Successfully unstaked!");
-      const response = await apiClient.get("/steaks");
-      setStakes(
-        response.data.reduce((acc, stake) => {
-          acc[stake.inscriptionId] = stake;
-          return acc;
-        }, {})
-      );
-    } catch (error) {
-      console.error("Failed to unstake:", error);
-      alert("Failed to unstake. Please try again.");
-    }
-  };
-
- const handleHarvest = async (inscriptionId) => {
-  const stake = stakes[inscriptionId];
-  if (stake && stake.points > 0) {
-    try {
-      const response = await apiClient.post('/harvest', {
-        walletAddress,
-        inscriptionId,
-        duneName: 'DUCKS•WIF•HAT', // Replace with the actual dune name
-      });
-
-      alert(response.data.message);
-
-      // Reset the points locally
-      setStakes((prev) => ({
-        ...prev,
-        [inscriptionId]: { ...stake, points: 0 },
-      }));
-    } catch (error) {
-      console.error('Failed to harvest:', error);
-      alert('Failed to harvest. Please try again.');
-    }
-  } else {
-    alert('No points to harvest.');
-  }
-};
-
 
   return (
     <div className="profile-container">
@@ -204,13 +170,36 @@ const Profile = () => {
                       <img src="/dogelabs.svg" alt="DogeLabs Wallet" className="wallet-icon" />
                       <span>DogeLabs Wallet</span>
                     </div>
-                    <div className="dropdown-item">
+                    <div className="dropdown-item" onClick={() => setMobileVerification(true)}>
                       <FaMobileAlt className="wallet-icon" />
                       <span>Mobile Connect</span>
                     </div>
                   </div>
                 )}
               </div>
+              {mobileVerification && (
+                <div className="mobile-verification">
+                  <h2>Mobile Verification</h2>
+                  <p>Enter your wallet address for verification:</p>
+                  <input
+                    type="text"
+                    placeholder="Enter wallet address"
+                    value={tempAddress}
+                    onChange={(e) => setTempAddress(e.target.value)}
+                  />
+                  <button onClick={startMobileVerification}>Verify</button>
+                  {randomAmount && (
+                    <div>
+                      <p>
+                        Send <b>{randomAmount} DOGE</b> to your own address.
+                      </p>
+                      <p>Address: {tempAddress}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+              {isVerifying && <p>Verifying transaction... Please wait.</p>}
+              {verificationMessage && <p>{verificationMessage}</p>}
             </div>
           ) : (
             <div>
