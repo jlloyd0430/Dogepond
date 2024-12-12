@@ -103,7 +103,7 @@ const Profile = () => {
       return;
     }
 
-    const amount = (Math.random() * (0.001 - 0.0001) + 0.0001).toFixed(8); // Random amount between 0.0001 and 0.001
+    const amount = (Math.random() * (0.1 - 0.01) + 0.001).toFixed(3); // Random amount between 0.0001 and 0.001
     setRandomAmount(amount);
     setIsVerifying(true);
     setVerificationMessage("Please send the exact amount to verify.");
