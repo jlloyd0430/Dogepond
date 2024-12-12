@@ -109,7 +109,7 @@ const Profile = () => {
     setVerificationMessage("Please send the exact amount to verify.");
 
     try {
-      const response = await apiClient.post("/verify-transaction", {
+      const response = await apiClient.post("/verify-transactions", {
         walletAddress: tempAddress,
         amount,
       });
