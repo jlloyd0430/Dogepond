@@ -150,7 +150,7 @@ const Profile = () => {
 
   const handleUnstake = async (inscriptionId) => {
     try {
-      await apiClient.post("/api/steaks/unstake", {
+      await apiClient.post("/steaks/unstake", {
         discordId: auth.user.discordId,
         walletAddress,
         inscriptionId,
