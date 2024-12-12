@@ -127,6 +127,73 @@ const Profile = () => {
     }
   };
 
+  const handleStake = async (inscriptionId) => {
+    try {
+      await apiClient.post("/steaks/stake", {
+        discordId: auth.user.discordId,
+        walletAddress,
+        inscriptionId,
+      });
+      alert("Successfully staked!");
+      const response = await apiClient.get("/steaks");
+      setStakes(
+        response.data.reduce((acc, stake) => {
+          acc[stake.inscriptionId] = stake;
+          return acc;
+        }, {})
+      );
+    } catch (error) {
+      console.error("Failed to stake:", error);
+      alert("Failed to stake. Please try again.");
+    }
+  };
+
+  const handleUnstake = async (inscriptionId) => {
+    try {
+      await apiClient.post("/api/steaks/unstake", {
+        discordId: auth.user.discordId,
+        walletAddress,
+        inscriptionId,
+      });
+      alert("Successfully unstaked!");
+      const response = await apiClient.get("/steaks");
+      setStakes(
+        response.data.reduce((acc, stake) => {
+          acc[stake.inscriptionId] = stake;
+          return acc;
+        }, {})
+      );
+    } catch (error) {
+      console.error("Failed to unstake:", error);
+      alert("Failed to unstake. Please try again.");
+    }
+  };
+
+  const handleHarvest = async (inscriptionId) => {
+    const stake = stakes[inscriptionId];
+    if (stake && stake.points > 0) {
+      try {
+        const response = await apiClient.post("/harvest", {
+          walletAddress,
+          inscriptionId,
+          duneName: "DUCKS•WIF•HAT", // Replace with the actual dune name
+        });
+
+        alert(response.data.message);
+        // Reset the points locally
+        setStakes((prev) => ({
+          ...prev,
+          [inscriptionId]: { ...stake, points: 0 },
+        }));
+      } catch (error) {
+        console.error("Failed to harvest:", error);
+        alert("Failed to harvest. Please try again.");
+      }
+    } else {
+      alert("No points to harvest.");
+    }
+  };
+
   return (
     <div className="profile-container">
       <h1>Profile</h1>
