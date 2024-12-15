@@ -106,39 +106,19 @@ const startMobileVerification = async () => {
   setVerificationMessage("Generating verification amount...");
 
   try {
-    // Use verifyMobileWallet to fetch the verification amount
-    const response = await verifyMobileWallet(tempAddress);
+    // Fetch the verification amount immediately
+    const response = await duneApiClient.post("/verify-payment", { walletAddress: tempAddress });
 
-    if (response.success) {
-      const amount = response.amount;
+    if (response.data.action === 'generate') {
+      const amount = response.data.amount;
       setRandomAmount(amount); // Display the amount immediately
-      setVerificationMessage(`Send EXACTLY ${amount} DOGE from your wallet address to the same wallet address (${tempAddress}).`);
-    } else {
-      setVerificationMessage(response.message || "Failed to generate verification amount.");
+      setVerificationMessage(`Send exactly ${amount} DOGE from your wallet to your wallet (${tempAddress}).`);
+    } else if (response.data.verified) {
+      setWalletAddress(tempAddress); // Set connected wallet
+      await fetchWalletData(tempAddress); // Fetch and display wallet data
+      setVerificationMessage(`Payment of ${response.data.amount} DOGE verified successfully.`);
       setIsVerifying(false);
-      return;
     }
-
-    // Poll for verification success
-    const intervalId = setInterval(async () => {
-      try {
-        // Check if payment has been verified
-        const checkResponse = await verifyMobileWallet(tempAddress);
-        if (checkResponse.success) {
-          clearInterval(intervalId);
-
-          // Set the wallet address and fetch its data
-          setWalletAddress(tempAddress); // Same behavior as connectWallet
-          await fetchWalletData(tempAddress); // Fetch and display wallet data
-
-          // Clear verification messages
-          setVerificationMessage("");
-          setIsVerifying(false);
-        }
-      } catch (error) {
-        console.error("Error during payment check:", error.message);
-      }
-    }, 10000); // Poll every 10 seconds
   } catch (error) {
     console.error("Verification failed:", error.message);
     setVerificationMessage("Verification failed. Please try again.");
