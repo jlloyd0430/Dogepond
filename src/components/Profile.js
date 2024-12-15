@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import duneApiClient from "../services/duneApiClient";
 import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
 import { getWalletAddress, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
