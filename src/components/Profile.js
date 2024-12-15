@@ -104,7 +104,7 @@ const startMobileVerification = async () => {
   setVerificationMessage("Generating verification amount...");
 
   try {
-    // Start mobile wallet verification
+    // Start verification process
     const verificationResponse = await verifyMobileWallet(tempAddress);
 
     if (verificationResponse.message) {
@@ -112,14 +112,14 @@ const startMobileVerification = async () => {
       const amount = verificationResponse.amount;
       setRandomAmount(amount);
 
-      // Poll for payment verification
+      // Poll for payment verification and fetch wallet data on success
       const intervalId = setInterval(async () => {
         try {
           const checkResponse = await verifyMobileWallet(tempAddress);
           if (checkResponse.success) {
             clearInterval(intervalId);
 
-            // Fetch wallet data after successful payment verification
+            // Fetch wallet data
             const walletData = await fetchWalletData(tempAddress);
             setWalletBalance(walletData.balance);
             setWalletHoldings(walletData.holdings);
