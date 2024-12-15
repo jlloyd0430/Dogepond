@@ -40,18 +40,13 @@ export const harvestDunes = async (harvestData) => {
   }
 };
 
-
-export async function verifyMobileWallet({ walletAddress, isPolling, randomAmount }) {
+// Verify mobile wallet payment
+export const verifyMobileWallet = async (walletAddress) => {
   try {
-    const response = await axios.post("https://form.dogepond.com/verify-payment", {
-      walletAddress, // Ensure this is a valid string
-      isPolling, // Pass true or false correctly
-      randomAmount, // Optional: Include this if polling
-    });
-    return response.data; // Return response from backend
+    const response = await apiClient.post("/verify-payment", { walletAddress });
+    return response.data; // Contains success status and verification amount
   } catch (error) {
     console.error("Error verifying mobile wallet:", error);
     throw new Error("Mobile wallet verification failed.");
   }
-}
-
+};
