@@ -131,49 +131,43 @@ const Profile = () => {
   setVerificationMessage("Generating verification amount...");
 
   try {
-    // Step 1: Trigger verification and get the amount to send
     const verificationResponse = await verifyMobileWallet(tempAddress);
 
     if (verificationResponse.amount) {
       setVerificationMessage(`Send exactly ${verificationResponse.amount} DOGE to ${tempAddress}.`);
       setRandomAmount(verificationResponse.amount);
 
-      // Step 2: Poll for payment verification
-      let attempts = 0;
-      const maxAttempts = 30; // Retry for 5 minutes (10s intervals)
       const intervalId = setInterval(async () => {
         try {
-          attempts++;
-
-          // Verify if the payment is successful
           const checkResponse = await verifyMobileWallet(tempAddress);
 
-          if (checkResponse.success) {
+          if (checkResponse.success) { // Stop polling if verification is successful
             clearInterval(intervalId);
-            setVerificationMessage("Payment verified! Fetching wallet data...");
-            setWalletAddress(tempAddress);
 
-            // Fetch wallet data only after payment is confirmed
+            setWalletAddress(tempAddress);
             await fetchWalletData(tempAddress);
 
-            setVerificationMessage("Verification complete! Wallet data loaded.");
-            setIsVerifying(false);
-          } else if (attempts >= maxAttempts) {
-            clearInterval(intervalId);
-            setVerificationMessage("Verification timed out. Please try again.");
+            setVerificationMessage("Payment verified and wallet data fetched!");
             setIsVerifying(false);
           }
         } catch (error) {
-          console.error("Error during verification polling:", error.message);
+          console.error("Error during payment verification:", error.message);
+
+          // Stop polling if the backend returns a 409 Conflict
+          if (error.message.includes("409")) {
+            clearInterval(intervalId);
+            setVerificationMessage("Verification failed: Conflict detected.");
+            setIsVerifying(false);
+          }
         }
       }, 10000); // Poll every 10 seconds
     } else {
-      setVerificationMessage("Failed to generate verification amount. Try again.");
+      setVerificationMessage("Verification failed.");
       setIsVerifying(false);
     }
   } catch (error) {
     console.error("Verification failed:", error.message);
-    setVerificationMessage("An error occurred during verification. Please try again.");
+    setVerificationMessage("Verification failed. Please try again.");
     setIsVerifying(false);
   }
 };
