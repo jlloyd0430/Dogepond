@@ -108,7 +108,7 @@ const Profile = () => {
 
   try {
     // Fetch the verification amount immediately
-    const response = await duneApiClient.post("/api/verify-wallet", { walletAddress: tempAddress });
+    const response = await duneApiClient.post("/verify-wallet", { walletAddress: tempAddress });
     
     if (response.data.success) {
       const amount = response.data.amount;
