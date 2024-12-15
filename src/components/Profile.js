@@ -140,6 +140,8 @@ const startMobileVerification = async () => {
     setVerificationMessage("Verification failed. Please try again.");
     setIsVerifying(false);
   }
+}; // <-- Closing brace for startMobileVerification
+
 
 
   const handleStake = async (inscriptionId) => {
