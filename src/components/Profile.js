@@ -111,10 +111,22 @@ const startMobileVerification = async () => {
   try {
     const response = await verifyMobileWallet(tempAddress); // Correct function call
 
-    setRandomAmount(response.amount);
-    setVerificationMessage(
-      `Send exactly ${response.amount} DOGE to your own wallet address (${tempAddress}). Verification is in progress...`
-    );
+    if (response.success) {
+      setRandomAmount(response.amount);
+      setVerificationMessage(`Send exactly ${response.amount} DOGE to your own wallet address (${tempAddress}). Verification is in progress...`);
+
+      // After successful verification, set walletAddress and fetch wallet data
+      setWalletAddress(tempAddress);
+      await fetchWalletData(tempAddress);
+
+      // Clear the mobile verification form and messages
+      setMobileVerification(false);
+      setTempAddress("");
+      setRandomAmount(null);
+      setVerificationMessage("");
+    } else {
+      setVerificationMessage(response.message || "Verification failed. Please try again.");
+    }
   } catch (error) {
     console.error("Verification failed:", error.message);
     setVerificationMessage("Verification failed. Please try again.");
@@ -122,6 +134,7 @@ const startMobileVerification = async () => {
     setIsVerifying(false);
   }
 };
+
 
   const handleStake = async (inscriptionId) => {
     try {
