@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
 import { getWalletAddress, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
 import apiClient from "../services/apiClient";
+import { verifyMobileWallet } from "../services/duneApiClient";
 import dogepondDucks from "../collections/dogepond-ducks.json"; // Importing the local JSON file
 import { FaMobileAlt } from "react-icons/fa"; // Mobile icon from react-icons
 import "./Profile.css";
@@ -97,35 +98,33 @@ const Profile = () => {
     setShowDropdown((prev) => !prev);
   };
 
-  const startMobileVerification = async () => {
-    if (!tempAddress) {
-      alert("Please enter a wallet address.");
-      return;
+const startMobileVerification = async () => {
+  if (!tempAddress) {
+    alert("Please enter a wallet address.");
+    return;
+  }
+
+  setIsVerifying(true);
+  setVerificationMessage("Generating verification amount...");
+
+  try {
+    // Request verification from the backend
+    const response = await verifyMobileWallet(tempAddress);
+
+    if (response.success) {
+      setRandomAmount(response.amount); // Display the generated random amount
+      setVerificationMessage("Payment verified successfully!");
+      fetchWalletData(tempAddress); // Fetch wallet data after successful verification
+    } else {
+      setVerificationMessage(response.message || "Verification failed. Please try again.");
     }
-
-    const amount = (Math.random() * (0.1 - 0.01) + 0.001).toFixed(3); // Random amount between 0.0001 and 0.001
-    setRandomAmount(amount);
-    setIsVerifying(true);
-    setVerificationMessage("Please send the exact amount to verify.");
-
-    try {
-      const response = await apiClient.post("/verify/verify-transaction", {
-        walletAddress: tempAddress,
-        amount,
-      });
-
-      if (response.data.message) {
-        setVerificationMessage(response.data.message);
-        setWalletAddress(tempAddress);
-        fetchWalletData(tempAddress);
-      }
-    } catch (error) {
-      console.error("Verification failed:", error);
-      setVerificationMessage("Verification failed. Please try again.");
-    } finally {
-      setIsVerifying(false);
-    }
-  };
+  } catch (error) {
+    console.error("Verification failed:", error);
+    setVerificationMessage("Verification failed. Please try again.");
+  } finally {
+    setIsVerifying(false);
+  }
+};
 
   const handleStake = async (inscriptionId) => {
     try {
