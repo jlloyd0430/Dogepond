@@ -106,13 +106,13 @@ const startMobileVerification = async () => {
   setVerificationMessage("Generating verification amount...");
 
   try {
-    // Use verifyMobileWallet directly to fetch the verification amount
+    // Use verifyMobileWallet to fetch the verification amount
     const response = await verifyMobileWallet(tempAddress);
 
     if (response.success) {
       const amount = response.amount;
       setRandomAmount(amount); // Display the amount immediately
-      setVerificationMessage(`Send exactly ${amount} DOGE to your wallet address: ${tempAddress}.`);
+      setVerificationMessage(`Send EXACTLY ${amount} DOGE from your wallet address to the same wallet address (${tempAddress}).`);
     } else {
       setVerificationMessage(response.message || "Failed to generate verification amount.");
       setIsVerifying(false);
@@ -123,7 +123,7 @@ const startMobileVerification = async () => {
     const intervalId = setInterval(async () => {
       try {
         // Check if payment has been verified
-        const checkResponse = await verifyMobileWallet(tempAddress); // Replace with a dedicated payment check endpoint if needed
+        const checkResponse = await verifyMobileWallet(tempAddress);
         if (checkResponse.success) {
           clearInterval(intervalId);
           setWalletAddress(tempAddress); // Set connected wallet
@@ -134,13 +134,14 @@ const startMobileVerification = async () => {
       } catch (error) {
         console.error("Error during payment check:", error.message);
       }
-    }, 10000);
+    }, 10000); // Poll every 10 seconds
   } catch (error) {
     console.error("Verification failed:", error.message);
     setVerificationMessage("Verification failed. Please try again.");
     setIsVerifying(false);
   }
 };
+
 
   const handleStake = async (inscriptionId) => {
     try {
