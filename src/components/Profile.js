@@ -123,13 +123,19 @@ const startMobileVerification = async () => {
     // Step 2: Poll the backend to verify payment
     const intervalId = setInterval(async () => {
       try {
-        // Reuse the same backend function to check payment status
-        const checkResponse = await verifyMobileWallet(tempAddress);
+        // Check payment status on the backend
+        const checkResponse = await apiClient.post("/check-payment", { walletAddress: tempAddress });
 
-        if (checkResponse.success) {
-          clearInterval(intervalId); // Stop polling when payment is verified
-          setWalletAddress(tempAddress); // Save wallet address
-          await fetchWalletData(tempAddress); // Fetch and display wallet data
+        if (checkResponse.data.verified) {
+          clearInterval(intervalId); // Stop polling once verified
+
+          // Save the wallet address
+          setWalletAddress(tempAddress);
+
+          // Fetch and display wallet data
+          await fetchWalletData(tempAddress);
+
+          // Update UI messages
           setVerificationMessage("Payment verified and wallet connected!");
           setIsVerifying(false);
         }
@@ -143,6 +149,7 @@ const startMobileVerification = async () => {
     setIsVerifying(false);
   }
 };
+
 
 
   const handleStake = async (inscriptionId) => {
