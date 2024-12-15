@@ -97,37 +97,39 @@ const Profile = () => {
   };
 
   const startMobileVerification = async () => {
-    if (!tempAddress) {
-      alert("Please enter a wallet address.");
-      return;
+  if (!tempAddress) {
+    alert("Please enter a wallet address.");
+    return;
+  }
+
+  setVerificationMessage("Generating verification amount...");
+  setIsVerifying(true);
+
+  try {
+    // First, fetch the DOGE amount immediately
+    const response = await verifyMobileWallet(tempAddress);
+
+    if (response.amount) {
+      setRandomAmount(response.amount); // Show amount immediately
+      setVerificationMessage(`Send exactly ${response.amount} DOGE to your wallet address: ${tempAddress}.`);
     }
 
-    setIsVerifying(true);
-    setVerificationMessage("Generating verification amount...");
-
-    try {
-      const response = await verifyMobileWallet(tempAddress);
-      if (response.amount) {
-        setRandomAmount(response.amount);
-        setVerificationMessage(`Send exactly ${response.amount} DOGE to your wallet address (${tempAddress}).`);
-      }
-
-      // Wait for payment verification
-      if (response.success) {
-        setWalletAddress(tempAddress);
-        await fetchWalletData(tempAddress);
-        setVerificationMessage(""); // Hide messages on success
-        setMobileVerification(false);
-      } else {
-        setVerificationMessage(response.message || "Verification failed. Please try again.");
-      }
-    } catch (error) {
-      console.error("Verification failed:", error.message);
-      setVerificationMessage("Verification failed. Please try again.");
-    } finally {
-      setIsVerifying(false);
+    // Continue checking for payment verification
+    if (response.success) {
+      setWalletAddress(tempAddress); // Set connected wallet
+      await fetchWalletData(tempAddress); // Fetch wallet data
+      setVerificationMessage(""); // Clear messages after success
+      setMobileVerification(false);
+    } else {
+      setVerificationMessage(response.message || "Verification failed. Please try again.");
     }
-  };
+  } catch (error) {
+    console.error("Verification failed:", error.message);
+    setVerificationMessage("Verification failed. Please try again.");
+  } finally {
+    setIsVerifying(false);
+  }
+};
 
   const handleStake = async (inscriptionId) => {
     try {
