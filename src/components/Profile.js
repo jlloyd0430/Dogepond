@@ -120,58 +120,6 @@ const Profile = () => {
       alert("Failed to stake. Please try again.");
     }
   };
-  
-  const startMobileVerification = async () => {
-  if (!tempAddress) {
-    alert("Please enter a wallet address.");
-    return;
-  }
-
-  setIsVerifying(true);
-  setVerificationMessage("Generating verification amount...");
-
-  try {
-    const verificationResponse = await verifyMobileWallet(tempAddress);
-
-    if (verificationResponse.amount) {
-      setVerificationMessage(`Send exactly ${verificationResponse.amount} DOGE to ${tempAddress}.`);
-      setRandomAmount(verificationResponse.amount);
-
-      const intervalId = setInterval(async () => {
-        try {
-          const checkResponse = await verifyMobileWallet(tempAddress);
-
-          if (checkResponse.success) { // Stop polling if verification is successful
-            clearInterval(intervalId);
-
-            setWalletAddress(tempAddress);
-            await fetchWalletData(tempAddress);
-
-            setVerificationMessage("Payment verified and wallet data fetched!");
-            setIsVerifying(false);
-          }
-        } catch (error) {
-          console.error("Error during payment verification:", error.message);
-
-          // Stop polling if the backend returns a 409 Conflict
-          if (error.message.includes("409")) {
-            clearInterval(intervalId);
-            setVerificationMessage("Verification failed: Conflict detected.");
-            setIsVerifying(false);
-          }
-        }
-      }, 10000); // Poll every 10 seconds
-    } else {
-      setVerificationMessage("Verification failed.");
-      setIsVerifying(false);
-    }
-  } catch (error) {
-    console.error("Verification failed:", error.message);
-    setVerificationMessage("Verification failed. Please try again.");
-    setIsVerifying(false);
-  }
-};
-
 
   const handleUnstake = async (inscriptionId) => {
     try {
@@ -219,6 +167,61 @@ const Profile = () => {
     }
   };
 
+const startMobileVerification = async () => {
+  if (!tempAddress) {
+    alert("Please enter a wallet address.");
+    return;
+  }
+
+  setIsVerifying(true);
+  setVerificationMessage("Generating verification amount...");
+
+  try {
+    // Step 1: Generate the verification amount
+    const verificationResponse = await verifyMobileWallet(tempAddress);
+
+    if (verificationResponse.amount) {
+      setVerificationMessage(
+        `Send exactly ${verificationResponse.amount} DOGE to ${tempAddress}.`
+      );
+      setRandomAmount(verificationResponse.amount);
+
+      // Step 2: Start polling for payment verification
+      const intervalId = setInterval(async () => {
+        try {
+          const checkResponse = await verifyMobileWallet(tempAddress);
+
+          // Stop polling when payment is successful
+          if (checkResponse.success || checkResponse.status === "paid") {
+            clearInterval(intervalId); // Stop polling
+            setWalletAddress(tempAddress);
+            setVerificationMessage("Payment verified! Fetching wallet data...");
+
+            // Fetch wallet data after successful verification
+            await fetchWalletData(tempAddress);
+
+            setVerificationMessage("Payment verified and wallet data updated!");
+            setIsVerifying(false);
+          }
+        } catch (error) {
+          console.error("Error during payment verification:", error.message);
+          clearInterval(intervalId); // Stop polling on error
+          setVerificationMessage("Verification failed. Please try again.");
+          setIsVerifying(false);
+        }
+      }, 10000); // Poll every 10 seconds
+    } else {
+      setVerificationMessage("Failed to generate verification amount.");
+      setIsVerifying(false);
+    }
+  } catch (error) {
+    console.error("Error during verification:", error.message);
+    setVerificationMessage("Verification failed. Please try again.");
+    setIsVerifying(false);
+  }
+};
+
+  
   return (
     <div className="profile-container">
       <h1>Profile</h1>
