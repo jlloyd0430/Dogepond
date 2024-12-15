@@ -106,7 +106,7 @@ const startMobileVerification = async () => {
 
   try {
     // Send request to backend to start verification
-    const response = await apiClient.post('/verify-payment', { walletAddress: tempAddress });
+    const response = await duneApiClient.post('/verify-payment', { walletAddress: tempAddress });
 
     if (response.data.action === 'send') {
       const amount = response.data.amount;
