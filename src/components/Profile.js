@@ -109,14 +109,14 @@ const Profile = () => {
       const response = await verifyMobileWallet(tempAddress);
       if (response.amount) {
         setRandomAmount(response.amount);
-        setVerificationMessage(`Send exactly ${response.amount} DOGE to your own wallet address (${tempAddress}).`);
+        setVerificationMessage(`Send exactly ${response.amount} DOGE to your wallet address (${tempAddress}).`);
       }
 
       // Wait for payment verification
       if (response.success) {
         setWalletAddress(tempAddress);
         await fetchWalletData(tempAddress);
-        setVerificationMessage("Verification successful! Fetching your assets...");
+        setVerificationMessage(""); // Hide messages on success
         setMobileVerification(false);
       } else {
         setVerificationMessage(response.message || "Verification failed. Please try again.");
