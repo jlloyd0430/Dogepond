@@ -78,26 +78,25 @@ const Profile = () => {
 
  const fetchWalletData = async (address) => {
   try {
-   const walletData = await fetchWalletData(address);
-    console.log("Wallet Data:", walletData.data);
+    const walletData = await fetchWalletData(address); // Fetch wallet data
+    console.log("Fetched wallet data:", walletData);
 
-    // Fetch confirmed balance
-    const balance = walletData.data.confirmed_balance || 0;
-    setWalletBalance((balance / 100000000).toFixed(8)); // Convert to DOGE
+    // Set wallet balance
+    const balance = walletData.confirmed_balance || 0;
+    setWalletBalance((balance / 100000000).toFixed(8)); // Convert satoshis to DOGE
 
-    // Filter only DogePond Duck inscriptions
-    const userHoldings = walletData.data.inscriptions.filter((inscription) =>
+    // Filter for DogePond Duck inscriptions
+    const userHoldings = walletData.inscriptions.filter((inscription) =>
       dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
     );
 
     setWalletHoldings(userHoldings);
-    console.log("Filtered DogePond Ducks:", userHoldings);
+    console.log("DogePond Duck Inscriptions:", userHoldings);
   } catch (error) {
     console.error("Failed to fetch wallet data:", error.message);
+    setVerificationMessage("Failed to fetch wallet data.");
   }
 };
-
-
 
   
   const handleStake = async (inscriptionId) => {
