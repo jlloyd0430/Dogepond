@@ -96,36 +96,44 @@ const Profile = () => {
 
 
 const startMobileVerification = async () => {
-  if (!tempAddress || typeof tempAddress !== "string") {
-    alert("Please enter a valid wallet address.");
+  if (!tempAddress) {
+    alert("Please enter a wallet address.");
     return;
-  }
-
-  if (isVerifying) {
-    console.log("Verification already in progress.");
-    return; // Prevent duplicate requests
   }
 
   setIsVerifying(true);
   setVerificationMessage("Generating verification amount...");
 
   try {
-    // Step 1: Request verification amount from the backend
+    // Use verifyMobileWallet to fetch the verification amount
     const response = await verifyMobileWallet(tempAddress);
 
-    if (response.success && response.amount) {
+    if (response.success) {
       const amount = response.amount;
-      setRandomAmount(amount); // Store verification amount
-      setVerificationMessage(
-        `Send EXACTLY ${amount} DOGE from your wallet address to the same wallet address (${tempAddress}).`
-      );
-
-      // Start polling only once
-      pollVerification(tempAddress, amount);
+      setRandomAmount(amount); // Display the amount immediately
+      setVerificationMessage(`Send EXACTLY ${amount} DOGE from your wallet address to the same wallet address (${tempAddress}).`);
     } else {
       setVerificationMessage(response.message || "Failed to generate verification amount.");
       setIsVerifying(false);
+      return;
     }
+
+    // Poll for verification success
+    const intervalId = setInterval(async () => {
+      try {
+        // Check if payment has been verified
+        const checkResponse = await verifyMobileWallet(tempAddress);
+        if (checkResponse.success) {
+          clearInterval(intervalId);
+          setWalletAddress(tempAddress); // Set connected wallet
+          await fetchWalletData(tempAddress); // Fetch and display wallet data
+          setVerificationMessage(""); // Clear messages
+          setIsVerifying(false);
+        }
+      } catch (error) {
+        console.error("Error during payment check:", error.message);
+      }
+    }, 10000); // Poll every 10 seconds
   } catch (error) {
     console.error("Verification failed:", error.message);
     setVerificationMessage("Verification failed. Please try again.");
