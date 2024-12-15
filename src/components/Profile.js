@@ -76,74 +76,30 @@ const Profile = () => {
     }
   };
 
-  const fetchWalletData = async (address) => {
+ const fetchWalletData = async (address) => {
   try {
-    const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
-    console.log('Fetched wallet data:', walletData.data);
+    const walletData = await duneApiClient.getWalletData(address);
+    console.log("Wallet Data:", walletData.data);
 
+    // Fetch confirmed balance
     const balance = walletData.data.confirmed_balance || 0;
     setWalletBalance((balance / 100000000).toFixed(8)); // Convert to DOGE
 
+    // Filter only DogePond Duck inscriptions
     const userHoldings = walletData.data.inscriptions.filter((inscription) =>
       dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
     );
 
     setWalletHoldings(userHoldings);
+    console.log("Filtered DogePond Ducks:", userHoldings);
   } catch (error) {
-    console.error('Failed to fetch wallet data:', error);
+    console.error("Failed to fetch wallet data:", error.message);
   }
 };
 
-const startMobileVerification = async () => {
-  if (!tempAddress) {
-    alert("Please enter a wallet address.");
-    return;
-  }
-
-  setIsVerifying(true);
-  setVerificationMessage("Generating verification amount...");
-
-  try {
-    // Step 1: Trigger verification and get the amount to send
-    const verificationResponse = await verifyMobileWallet(tempAddress);
-
-    if (verificationResponse.amount) {
-      setVerificationMessage(`Send exactly ${verificationResponse.amount} DOGE to ${tempAddress}.`);
-      setRandomAmount(verificationResponse.amount);
-
-      // Step 2: Poll for payment verification
-      const intervalId = setInterval(async () => {
-        try {
-          // Use verifyMobileWallet or a separate check function for polling
-          const checkResponse = await fetchWalletData(tempAddress);
-
-          if (checkResponse.success || checkResponse.balance) {
-            clearInterval(intervalId);
-            setWalletAddress(tempAddress);
-
-            // Step 3: Fetch wallet data on success
-            await fetchWalletData(tempAddress);
-
-            setVerificationMessage("Payment verified and wallet data fetched!");
-            setIsVerifying(false);
-          }
-        } catch (error) {
-          console.error("Error checking payment:", error.message);
-        }
-      }, 10000); // Poll every 10 seconds
-    } else {
-      setVerificationMessage("Verification failed.");
-      setIsVerifying(false);
-    }
-  } catch (error) {
-    console.error("Verification failed:", error.message);
-    setVerificationMessage("Verification failed. Please try again.");
-    setIsVerifying(false);
-  }
-}; // <-- Closing brace for startMobileVerification
 
 
-
+  
   const handleStake = async (inscriptionId) => {
     try {
       await apiClient.post("/steaks/stake", {
@@ -164,6 +120,64 @@ const startMobileVerification = async () => {
       alert("Failed to stake. Please try again.");
     }
   };
+  
+  const startMobileVerification = async () => {
+  if (!tempAddress) {
+    alert("Please enter a wallet address.");
+    return;
+  }
+
+  setIsVerifying(true);
+  setVerificationMessage("Generating verification amount...");
+
+  try {
+    // Step 1: Trigger verification and get the amount to send
+    const verificationResponse = await verifyMobileWallet(tempAddress);
+
+    if (verificationResponse.amount) {
+      setVerificationMessage(`Send exactly ${verificationResponse.amount} DOGE to ${tempAddress}.`);
+      setRandomAmount(verificationResponse.amount);
+
+      // Step 2: Poll for payment verification
+      let attempts = 0;
+      const maxAttempts = 30; // Retry for 5 minutes (10s intervals)
+      const intervalId = setInterval(async () => {
+        try {
+          attempts++;
+
+          // Verify if the payment is successful
+          const checkResponse = await verifyMobileWallet(tempAddress);
+
+          if (checkResponse.success) {
+            clearInterval(intervalId);
+            setVerificationMessage("Payment verified! Fetching wallet data...");
+            setWalletAddress(tempAddress);
+
+            // Fetch wallet data only after payment is confirmed
+            await fetchWalletData(tempAddress);
+
+            setVerificationMessage("Verification complete! Wallet data loaded.");
+            setIsVerifying(false);
+          } else if (attempts >= maxAttempts) {
+            clearInterval(intervalId);
+            setVerificationMessage("Verification timed out. Please try again.");
+            setIsVerifying(false);
+          }
+        } catch (error) {
+          console.error("Error during verification polling:", error.message);
+        }
+      }, 10000); // Poll every 10 seconds
+    } else {
+      setVerificationMessage("Failed to generate verification amount. Try again.");
+      setIsVerifying(false);
+    }
+  } catch (error) {
+    console.error("Verification failed:", error.message);
+    setVerificationMessage("An error occurred during verification. Please try again.");
+    setIsVerifying(false);
+  }
+};
+
 
   const handleUnstake = async (inscriptionId) => {
     try {
