@@ -78,7 +78,7 @@ const Profile = () => {
 
  const fetchWalletData = async (address) => {
   try {
-    const walletData = await duneApiClient.getWalletData(address);
+   const walletData = await fetchWalletData(address);
     console.log("Wallet Data:", walletData.data);
 
     // Fetch confirmed balance
