@@ -104,34 +104,42 @@ const startMobileVerification = async () => {
   setVerificationMessage("Generating verification amount...");
 
   try {
-    const verificationResponse = await apiClient.post("/verify-payment", { walletAddress: tempAddress });
+    // Step 1: Trigger verification and get the amount to send
+    const verificationResponse = await verifyMobileWallet(tempAddress);
 
-    if (verificationResponse.data.amount) {
-      setVerificationMessage(`Send exactly ${verificationResponse.data.amount} DOGE to ${tempAddress}.`);
-      setRandomAmount(verificationResponse.data.amount);
+    if (verificationResponse.amount) {
+      setVerificationMessage(`Send exactly ${verificationResponse.amount} DOGE to ${tempAddress}.`);
+      setRandomAmount(verificationResponse.amount);
 
-      // Poll for payment verification
+      // Step 2: Poll for payment verification
       const intervalId = setInterval(async () => {
-        const paymentResponse = await apiClient.post("/check-payment", { walletAddress: tempAddress });
+        try {
+          // Use verifyMobileWallet or a separate check function for polling
+          const checkResponse = await fetchWalletData(tempAddress);
 
-        if (paymentResponse.data.verified) {
-          clearInterval(intervalId);
-          setWalletAddress(tempAddress);
+          if (checkResponse.success || checkResponse.balance) {
+            clearInterval(intervalId);
+            setWalletAddress(tempAddress);
 
-          // Fetch wallet data
-          await fetchWalletData(tempAddress);
+            // Step 3: Fetch wallet data on success
+            await fetchWalletData(tempAddress);
 
-          setVerificationMessage("Payment verified and wallet data fetched!");
-          setIsVerifying(false);
+            setVerificationMessage("Payment verified and wallet data fetched!");
+            setIsVerifying(false);
+          }
+        } catch (error) {
+          console.error("Error checking payment:", error.message);
         }
-      }, 10000); // Check every 10 seconds
+      }, 10000); // Poll every 10 seconds
+    } else {
+      setVerificationMessage("Verification failed.");
+      setIsVerifying(false);
     }
   } catch (error) {
     console.error("Verification failed:", error.message);
     setVerificationMessage("Verification failed. Please try again.");
     setIsVerifying(false);
   }
-};
 
 
   const handleStake = async (inscriptionId) => {
