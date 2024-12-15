@@ -96,37 +96,43 @@ const Profile = () => {
     setShowDropdown((prev) => !prev);
   };
 
-  const startMobileVerification = async () => {
+ const startMobileVerification = async () => {
   if (!tempAddress) {
     alert("Please enter a wallet address.");
     return;
   }
 
-  setVerificationMessage("Generating verification amount...");
   setIsVerifying(true);
+  setVerificationMessage("Generating verification amount...");
 
   try {
-    // First, fetch the DOGE amount immediately
-    const response = await verifyMobileWallet(tempAddress);
-
-    if (response.amount) {
-      setRandomAmount(response.amount); // Show amount immediately
-      setVerificationMessage(`Send exactly ${response.amount} DOGE to your wallet address: ${tempAddress}.`);
-    }
-
-    // Continue checking for payment verification
-    if (response.success) {
-      setWalletAddress(tempAddress); // Set connected wallet
-      await fetchWalletData(tempAddress); // Fetch wallet data
-      setVerificationMessage(""); // Clear messages after success
-      setMobileVerification(false);
+    // Fetch the verification amount immediately
+    const response = await apiClient.post("/api/verify-wallet", { walletAddress: tempAddress });
+    
+    if (response.data.success) {
+      const amount = response.data.amount;
+      setRandomAmount(amount); // Display the amount immediately
+      setVerificationMessage(`Send exactly ${amount} DOGE to your wallet address: ${tempAddress}.`);
     } else {
-      setVerificationMessage(response.message || "Verification failed. Please try again.");
+      setVerificationMessage(response.data.message || "Failed to generate verification amount.");
+      setIsVerifying(false);
+      return;
     }
+
+    // Poll for verification success
+    const intervalId = setInterval(async () => {
+      const checkResponse = await apiClient.post("/api/check-wallet-payment", { walletAddress: tempAddress, amount: randomAmount });
+      if (checkResponse.data.success) {
+        clearInterval(intervalId);
+        setWalletAddress(tempAddress); // Set connected wallet
+        await fetchWalletData(tempAddress); // Fetch and display wallet data
+        setVerificationMessage("");
+        setIsVerifying(false);
+      }
+    }, 10000);
   } catch (error) {
     console.error("Verification failed:", error.message);
     setVerificationMessage("Verification failed. Please try again.");
-  } finally {
     setIsVerifying(false);
   }
 };
