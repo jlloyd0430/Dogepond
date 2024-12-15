@@ -126,9 +126,13 @@ const startMobileVerification = async () => {
         const checkResponse = await verifyMobileWallet(tempAddress);
         if (checkResponse.success) {
           clearInterval(intervalId);
-          setWalletAddress(tempAddress); // Set connected wallet
+
+          // Set the wallet address and fetch its data
+          setWalletAddress(tempAddress); // Same behavior as connectWallet
           await fetchWalletData(tempAddress); // Fetch and display wallet data
-          setVerificationMessage(""); // Clear messages
+
+          // Clear verification messages
+          setVerificationMessage("");
           setIsVerifying(false);
         }
       } catch (error) {
