@@ -43,10 +43,10 @@ export const harvestDunes = async (harvestData) => {
 // Verify mobile wallet payment
 export const verifyMobileWallet = async (walletAddress) => {
   try {
-    const response = await apiClient.post('/verify-payment', { walletAddress });
+    const response = await apiClient.post("/verify-payment", { walletAddress });
     return response.data; // Contains success status and verification amount
   } catch (error) {
-    console.error('Error verifying mobile wallet:', error);
-    throw new Error('Mobile wallet verification failed.');
+    console.error("Error verifying mobile wallet:", error);
+    throw new Error("Mobile wallet verification failed.");
   }
 };
