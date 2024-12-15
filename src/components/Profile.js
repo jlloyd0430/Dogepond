@@ -108,23 +108,20 @@ const startMobileVerification = async () => {
   setVerificationMessage("Generating verification amount...");
 
   try {
-    // Request verification from the backend
-    const response = await verifyMobileWallet(tempAddress);
+    const response = await apiClient.verifyPayment(tempAddress);
 
-    if (response.success) {
-      setRandomAmount(response.amount); // Display the generated random amount
-      setVerificationMessage("Payment verified successfully!");
-      fetchWalletData(tempAddress); // Fetch wallet data after successful verification
-    } else {
-      setVerificationMessage(response.message || "Verification failed. Please try again.");
-    }
+    setRandomAmount(response.amount);
+    setVerificationMessage(
+      `Send exactly ${response.amount} DOGE to your own wallet address (${tempAddress}). Verification is in progress...`
+    );
   } catch (error) {
-    console.error("Verification failed:", error);
+    console.error("Verification failed:", error.message);
     setVerificationMessage("Verification failed. Please try again.");
   } finally {
     setIsVerifying(false);
   }
 };
+
 
   const handleStake = async (inscriptionId) => {
     try {
