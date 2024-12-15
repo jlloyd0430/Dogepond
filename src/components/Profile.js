@@ -106,18 +106,19 @@ const startMobileVerification = async () => {
 
   try {
     // Step 1: Request verification amount from the backend
-    const response = await apiClient.post("/verify-payment", {
+    const response = await verifyMobileWallet({
       walletAddress: tempAddress,
+      isPolling: false, // Indicate this is the initial request
     });
 
-    if (response.data.amount) {
-      const amount = response.data.amount;
+    if (response.success && response.amount) {
+      const amount = response.amount;
       setRandomAmount(amount); // Display the verification amount
       setVerificationMessage(
         `Send EXACTLY ${amount} DOGE from your wallet address to the same wallet address (${tempAddress}).`
       );
     } else {
-      setVerificationMessage(response.data.message || "Failed to generate verification amount.");
+      setVerificationMessage(response.message || "Failed to generate verification amount.");
       setIsVerifying(false);
       return;
     }
@@ -126,20 +127,20 @@ const startMobileVerification = async () => {
     const intervalId = setInterval(async () => {
       try {
         // Poll the backend for payment verification
-        const pollResponse = await apiClient.post("/verify-payment", {
+        const pollResponse = await verifyMobileWallet({
           walletAddress: tempAddress,
-          isPolling: true,
-          randomAmount,
+          isPolling: true, // Indicate this is a polling request
+          randomAmount, // Pass the verification amount
         });
 
-        if (pollResponse.data.verified) {
+        if (pollResponse.success && pollResponse.verified) {
           clearInterval(intervalId); // Stop polling when payment is verified
 
-          // Save wallet address and wallet data
+          // Save the wallet address
           setWalletAddress(tempAddress);
-          const walletData = pollResponse.data.walletData;
-          setWalletBalance((walletData.confirmed_balance / 100000000).toFixed(8)); // Convert balance to DOGE
-          setWalletHoldings(walletData.inscriptions); // Update holdings
+
+          // Fetch wallet data using the verified wallet address
+          await fetchWalletData(tempAddress);
 
           setVerificationMessage("Payment verified and wallet connected!");
           setIsVerifying(false);
