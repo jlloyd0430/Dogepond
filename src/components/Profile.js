@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import duneApiClient from "../services/duneApiClient";
 import { AuthContext } from "../context/AuthContext";
 import NFTCard from "../components/NFTCard";
 import { getWalletAddress, DOGELABS_WALLET, MYDOGE_WALLET, DOGINALS_TYPE } from "../wallets/wallets";
@@ -97,7 +96,7 @@ const Profile = () => {
     setShowDropdown((prev) => !prev);
   };
 
- const startMobileVerification = async () => {
+const startMobileVerification = async () => {
   if (!tempAddress) {
     alert("Please enter a wallet address.");
     return;
@@ -107,28 +106,33 @@ const Profile = () => {
   setVerificationMessage("Generating verification amount...");
 
   try {
-    // Fetch the verification amount immediately
-    const response = await duneApiClient.post("/verify-wallet", { walletAddress: tempAddress });
-    
-    if (response.data.success) {
-      const amount = response.data.amount;
+    // Use verifyMobileWallet directly to fetch the verification amount
+    const response = await verifyMobileWallet(tempAddress);
+
+    if (response.success) {
+      const amount = response.amount;
       setRandomAmount(amount); // Display the amount immediately
       setVerificationMessage(`Send exactly ${amount} DOGE to your wallet address: ${tempAddress}.`);
     } else {
-      setVerificationMessage(response.data.message || "Failed to generate verification amount.");
+      setVerificationMessage(response.message || "Failed to generate verification amount.");
       setIsVerifying(false);
       return;
     }
 
     // Poll for verification success
     const intervalId = setInterval(async () => {
-      const checkResponse = await apiClient.post("/api/check-wallet-payment", { walletAddress: tempAddress, amount: randomAmount });
-      if (checkResponse.data.success) {
-        clearInterval(intervalId);
-        setWalletAddress(tempAddress); // Set connected wallet
-        await fetchWalletData(tempAddress); // Fetch and display wallet data
-        setVerificationMessage("");
-        setIsVerifying(false);
+      try {
+        // Check if payment has been verified
+        const checkResponse = await verifyMobileWallet(tempAddress); // Replace with a dedicated payment check endpoint if needed
+        if (checkResponse.success) {
+          clearInterval(intervalId);
+          setWalletAddress(tempAddress); // Set connected wallet
+          await fetchWalletData(tempAddress); // Fetch and display wallet data
+          setVerificationMessage(""); // Clear messages
+          setIsVerifying(false);
+        }
+      } catch (error) {
+        console.error("Error during payment check:", error.message);
       }
     }, 10000);
   } catch (error) {
