@@ -226,79 +226,79 @@ const Profile = () => {
       ) : (
         <div className="staking-page">
           {!walletAddress ? (
-            <div>
-              <p>Connect wallet to view Stake-Able Assets.</p>
-      <div className="wallet-buttons">
-        <button className="select-wallet-button" onClick={() => setShowDropdown(!showDropdown)}>
-          Select Wallet
-        </button>
-        {showDropdown && (
-          <div className="wallet-dropdown">
-            <div className="dropdown-item" onClick={() => connectWallet(MYDOGE_WALLET)}>
-              <img src="/mydoge-icon.svg" alt="MyDoge Wallet" className="wallet-icon" />
-              <span>MyDoge Wallet</span>
-            </div>
-            <div className="dropdown-item" onClick={() => connectWallet(DOGELABS_WALLET)}>
-              <img src="/dogelabs.svg" alt="DogeLabs Wallet" className="wallet-icon" />
-              <span>DogeLabs Wallet</span>
-            </div>
-            <div className="dropdown-item" onClick={() => setMobileVerification(true)}>
-              <FaMobileAlt className="wallet-icon" />
-              <span>Mobile Connect</span>
-            </div>
+  <div>
+    <p>Connect wallet to view Stake-Able Assets.</p>
+    <div className="wallet-buttons">
+      <button className="select-wallet-button" onClick={() => setShowDropdown(!showDropdown)}>
+        Select Wallet
+      </button>
+      {showDropdown && (
+        <div className="wallet-dropdown">
+          <div className="dropdown-item" onClick={() => connectWallet(MYDOGE_WALLET)}>
+            <img src="/mydoge-icon.svg" alt="MyDoge Wallet" className="wallet-icon" />
+            <span>MyDoge Wallet</span>
           </div>
-        )}
-      </div>
-
-      {/* Render Mobile Verification */}
-      {mobileVerification && (
-        <div className="mobile-verification">
-          <h2>Mobile Verification</h2>
-          <p>Enter your wallet address for verification:</p>
-          <input
-            type="text"
-            placeholder="Enter wallet address"
-            value={tempAddress}
-            onChange={(e) => setTempAddress(e.target.value)}
-          />
-          <button onClick={startMobileVerification}>Verify</button>
-          {randomAmount && (
-            <div>
-              <p>
-                Send <b>{randomAmount} DOGE</b> to your own address.
-              </p>
-              <p>Address: {tempAddress}</p>
-            </div>
-          )}
-          {isVerifying && <p>Verifying transaction... Please wait.</p>}
-          {verificationMessage && <p>{verificationMessage}</p>}
+          <div className="dropdown-item" onClick={() => connectWallet(DOGELABS_WALLET)}>
+            <img src="/dogelabs.svg" alt="DogeLabs Wallet" className="wallet-icon" />
+            <span>DogeLabs Wallet</span>
+          </div>
+          <div className="dropdown-item" onClick={() => setMobileVerification(true)}>
+            <FaMobileAlt className="wallet-icon" />
+            <span>Mobile Connect</span>
+          </div>
         </div>
       )}
     </div>
-  ) : (
-    <div>
-      <p>
-        Wallet Address: {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}
-      </p>
-      <p>Wallet Balance: {walletBalance} DOGE</p>
-      <h2>My Assets</h2>
-      <div className="wallet-holdings">
-        {walletHoldings.length > 0 ? (
-          walletHoldings.map((inscription) => (
-            <div key={inscription.id} className="inscription-card">
-              <img
-                src={`https://cdn.doggy.market/content/${inscription.id}`}
-                alt={`Duck ${inscription.id}`}
-              />
-              <p>Inscription ID: {inscription.id}</p>
-            </div>
-          ))
-        ) : (
-          <p>No Dogepond assets or partner projects found in your wallet.</p>
+
+    {/* Mobile Verification */}
+    {mobileVerification && (
+      <div className="mobile-verification">
+        <h2>Mobile Verification</h2>
+        <p>Enter your wallet address for verification:</p>
+        <input
+          type="text"
+          placeholder="Enter wallet address"
+          value={tempAddress}
+          onChange={(e) => setTempAddress(e.target.value)}
+        />
+        <button onClick={startMobileVerification}>Verify</button>
+        {randomAmount && (
+          <div>
+            <p>
+              Send <b>{randomAmount} DOGE</b> to your own address.
+            </p>
+            <p>Address: {tempAddress}</p>
+          </div>
         )}
+        {isVerifying && <p>Verifying transaction... Please wait.</p>}
+        {verificationMessage && <p>{verificationMessage}</p>}
       </div>
+    )}
+  </div>
+) : (
+  <div>
+    <p>
+      Wallet Address: {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}
+    </p>
+    <p>Wallet Balance: {walletBalance} DOGE</p>
+    <h2>My Assets</h2>
+    <div className="wallet-holdings">
+      {walletHoldings.length > 0 ? (
+        walletHoldings.map((inscription) => (
+          <div key={inscription.id} className="inscription-card">
+            <img
+              src={`https://cdn.doggy.market/content/${inscription.id}`}
+              alt={`Duck ${inscription.id}`}
+            />
+            <p>Inscription ID: {inscription.id}</p>
+          </div>
+        ))
+      ) : (
+        <p>No Dogepond assets or partner projects found in your wallet.</p>
+      )}
     </div>
-  )}
-</div>
+  </div>
+)}
+
 
 export default Profile;
