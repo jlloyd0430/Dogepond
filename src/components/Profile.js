@@ -96,8 +96,8 @@ const Profile = () => {
 
 
 const startMobileVerification = async () => {
-  if (!tempAddress) {
-    alert("Please enter a wallet address.");
+  if (!tempAddress || typeof tempAddress !== "string") {
+    alert("Please enter a valid wallet address.");
     return;
   }
 
@@ -107,7 +107,7 @@ const startMobileVerification = async () => {
   try {
     // Step 1: Request verification amount from the backend
     const response = await verifyMobileWallet({
-      walletAddress: tempAddress,
+      walletAddress: tempAddress.trim(), // Ensure it's a trimmed string
       isPolling: false, // Indicate this is the initial request
     });
 
@@ -128,7 +128,7 @@ const startMobileVerification = async () => {
       try {
         // Poll the backend for payment verification
         const pollResponse = await verifyMobileWallet({
-          walletAddress: tempAddress,
+          walletAddress: tempAddress.trim(),
           isPolling: true, // Indicate this is a polling request
           randomAmount, // Pass the verification amount
         });
@@ -155,6 +155,7 @@ const startMobileVerification = async () => {
     setIsVerifying(false);
   }
 };
+
 
 
   const handleStake = async (inscriptionId) => {
