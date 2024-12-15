@@ -96,61 +96,68 @@ const Profile = () => {
 
 
 const startMobileVerification = async () => {
-  if (!tempAddress || typeof tempAddress !== 'string') {
-    alert('Please enter a valid wallet address.');
+  if (!tempAddress || typeof tempAddress !== "string") {
+    alert("Please enter a valid wallet address.");
     return;
   }
 
+  if (isVerifying) {
+    console.log("Verification already in progress.");
+    return; // Prevent duplicate requests
+  }
+
   setIsVerifying(true);
-  setVerificationMessage('Generating verification amount...');
+  setVerificationMessage("Generating verification amount...");
 
   try {
     // Step 1: Request verification amount from the backend
-    const response = await verifyMobileWallet({
-      walletAddress: tempAddress.trim(), // Ensure it's a trimmed string
-    });
+    const response = await verifyMobileWallet(tempAddress);
 
-    if (response.action === 'send' && response.amount) {
+    if (response.success && response.amount) {
       const amount = response.amount;
-      setRandomAmount(amount); // Display the verification amount
+      setRandomAmount(amount); // Store verification amount
       setVerificationMessage(
         `Send EXACTLY ${amount} DOGE from your wallet address to the same wallet address (${tempAddress}).`
       );
+
+      // Start polling only once
+      pollVerification(tempAddress, amount);
     } else {
-      setVerificationMessage(response.message || 'Failed to generate verification amount.');
+      setVerificationMessage(response.message || "Failed to generate verification amount.");
       setIsVerifying(false);
-      return;
     }
-
-    // Step 2: Poll the backend to verify payment
-    const intervalId = setInterval(async () => {
-      try {
-        // Poll the backend for payment verification
-        const pollResponse = await verifyMobileWallet({
-          walletAddress: tempAddress.trim(),
-        });
-
-        if (pollResponse.success) {
-          clearInterval(intervalId); // Stop polling when payment is verified
-
-          // Save the wallet address
-          setWalletAddress(tempAddress);
-
-          // Fetch wallet data using the verified wallet address
-          await fetchWalletData(tempAddress);
-
-          setVerificationMessage('Payment verified and wallet connected!');
-          setIsVerifying(false);
-        }
-      } catch (error) {
-        console.error('Error during payment verification:', error.message);
-      }
-    }, 10000); // Poll every 10 seconds
   } catch (error) {
-    console.error('Verification failed:', error.message);
-    setVerificationMessage('Verification failed. Please try again.');
+    console.error("Verification failed:", error.message);
+    setVerificationMessage("Verification failed. Please try again.");
     setIsVerifying(false);
   }
+};
+
+// Polling logic in a separate function
+const pollVerification = (walletAddress, amount) => {
+  const maxAttempts = 30; // 5 minutes
+  let attempts = 0;
+
+  const intervalId = setInterval(async () => {
+    attempts++;
+    try {
+      const pollResponse = await verifyMobileWallet(walletAddress);
+
+      if (pollResponse.success && pollResponse.verified) {
+        clearInterval(intervalId);
+        setWalletAddress(walletAddress); // Connect the wallet
+        await fetchWalletData(walletAddress); // Fetch wallet data
+        setVerificationMessage("Payment verified and wallet connected!");
+        setIsVerifying(false);
+      } else if (attempts >= maxAttempts) {
+        clearInterval(intervalId);
+        setVerificationMessage("Payment verification timed out. Please try again.");
+        setIsVerifying(false);
+      }
+    } catch (error) {
+      console.error("Error during payment verification:", error.message);
+    }
+  }, 10000); // Poll every 10 seconds
 };
 
 
