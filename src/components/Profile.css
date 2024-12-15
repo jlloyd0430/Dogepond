@@ -177,7 +177,7 @@ button:hover {
 
 @media (max-width: 600px) {
   .profile-buttons {
-    flex-direction: column;
+    flex-direction: row;
     gap: 5px;
   }
 
