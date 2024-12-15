@@ -109,17 +109,20 @@ const startMobileVerification = async () => {
   setVerificationMessage("Generating verification amount...");
 
   try {
-    const response = await verifyMobileWallet(tempAddress); // Correct function call
-
-    if (response.success) {
+    // Generate the verification amount and show it immediately
+    const response = await verifyMobileWallet(tempAddress);
+    if (response.amount) {
       setRandomAmount(response.amount);
       setVerificationMessage(`Send exactly ${response.amount} DOGE to your own wallet address (${tempAddress}). Verification is in progress...`);
+    }
 
-      // After successful verification, set walletAddress and fetch wallet data
+    // Wait for payment verification
+    if (response.success) {
+      // Set the wallet address and fetch wallet data
       setWalletAddress(tempAddress);
       await fetchWalletData(tempAddress);
 
-      // Clear the mobile verification form and messages
+      // Clear verification UI
       setMobileVerification(false);
       setTempAddress("");
       setRandomAmount(null);
@@ -253,31 +256,29 @@ const startMobileVerification = async () => {
                   </div>
                 )}
               </div>
-              {mobileVerification && (
-                <div className="mobile-verification">
-                  <h2>Mobile Verification</h2>
-                  <p>Enter your wallet address for verification:</p>
-                  <input
-                    type="text"
-                    placeholder="Enter wallet address"
-                    value={tempAddress}
-                    onChange={(e) => setTempAddress(e.target.value)}
-                  />
-                  <button onClick={startMobileVerification}>Verify</button>
-                  {randomAmount && (
-                    <div>
-                      <p>
-                        Send <b>{randomAmount} DOGE</b> to your own address.
-                      </p>
-                      <p>Address: {tempAddress}</p>
-                    </div>
-                  )}
-                </div>
-              )}
-              {isVerifying && <p>Verifying transaction... Please wait.</p>}
-              {verificationMessage && <p>{verificationMessage}</p>}
-            </div>
-          ) : (
+             {mobileVerification && (
+  <div className="mobile-verification">
+    <h2>Mobile Verification</h2>
+    <p>Enter your wallet address for verification:</p>
+    <input
+      type="text"
+      placeholder="Enter wallet address"
+      value={tempAddress}
+      onChange={(e) => setTempAddress(e.target.value)}
+    />
+    <button onClick={startMobileVerification}>Verify</button>
+    {randomAmount && (
+      <div>
+        <p>
+          Send <b>{randomAmount} DOGE</b> to your own address.
+        </p>
+        <p>Address: {tempAddress}</p>
+      </div>
+    )}
+    {isVerifying && <p>Verifying transaction... Please wait.</p>}
+    {verificationMessage && <p>{verificationMessage}</p>}
+  </div>
+)}
             <div>
               <p>
                 Wallet Address: {walletAddress.slice(0, 6)}...{walletAddress.slice(-6)}
