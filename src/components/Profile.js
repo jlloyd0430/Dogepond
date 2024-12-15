@@ -98,6 +98,7 @@ const Profile = () => {
     setShowDropdown((prev) => !prev);
   };
 
+
 const startMobileVerification = async () => {
   if (!tempAddress) {
     alert("Please enter a wallet address.");
@@ -108,7 +109,7 @@ const startMobileVerification = async () => {
   setVerificationMessage("Generating verification amount...");
 
   try {
-    const response = await apiClient.verifyPayment(tempAddress);
+    const response = await verifyMobileWallet(tempAddress); // Correct function call
 
     setRandomAmount(response.amount);
     setVerificationMessage(
@@ -121,7 +122,6 @@ const startMobileVerification = async () => {
     setIsVerifying(false);
   }
 };
-
 
   const handleStake = async (inscriptionId) => {
     try {
