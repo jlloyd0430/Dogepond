@@ -77,51 +77,63 @@ const Profile = () => {
   };
 
   const fetchWalletData = async (address) => {
-    try {
-      const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
-      const balance = walletData.data.confirmed_balance || 0;
-      setWalletBalance((balance / 100000000).toFixed(8)); // Convert to DOGE with decimals
+  try {
+    const walletData = await apiClient.get(`https://dogeturbo.ordinalswallet.com/wallet/${address}`);
+    console.log('Fetched wallet data:', walletData.data);
 
-      const userHoldings = walletData.data.inscriptions.filter((inscription) =>
-        dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
-      );
+    const balance = walletData.data.confirmed_balance || 0;
+    setWalletBalance((balance / 100000000).toFixed(8)); // Convert to DOGE
 
-      setWalletHoldings(userHoldings);
-    } catch (error) {
-      console.error("Failed to fetch wallet data:", error);
-    }
-  };
+    const userHoldings = walletData.data.inscriptions.filter((inscription) =>
+      dogepondDucks.some((duck) => duck.inscriptionId === inscription.id)
+    );
 
-  const toggleDropdown = () => {
-    setShowDropdown((prev) => !prev);
-  };
+    setWalletHoldings(userHoldings);
+  } catch (error) {
+    console.error('Failed to fetch wallet data:', error);
+  }
+};
+
 
 const startMobileVerification = async () => {
   if (!tempAddress) {
-    alert("Please enter a wallet address.");
+    alert('Please enter a wallet address.');
     return;
   }
 
   setIsVerifying(true);
-  setVerificationMessage("Generating verification amount...");
+  setVerificationMessage('Generating verification amount...');
 
   try {
-    // Fetch the verification amount immediately
-    const response = await duneApiClient.post("/verify-payment", { walletAddress: tempAddress });
+    // Send request to backend to start verification
+    const response = await apiClient.post('/verify-payment', { walletAddress: tempAddress });
 
-    if (response.data.action === 'generate') {
+    if (response.data.action === 'send') {
       const amount = response.data.amount;
-      setRandomAmount(amount); // Display the amount immediately
-      setVerificationMessage(`Send exactly ${amount} DOGE from your wallet to your wallet (${tempAddress}).`);
-    } else if (response.data.verified) {
-      setWalletAddress(tempAddress); // Set connected wallet
-      await fetchWalletData(tempAddress); // Fetch and display wallet data
-      setVerificationMessage(`Payment of ${response.data.amount} DOGE verified successfully.`);
-      setIsVerifying(false);
+      setRandomAmount(amount); // Show amount in UI
+      setVerificationMessage(
+        `Send exactly ${amount} DOGE to your own wallet address (${tempAddress}).`
+      );
+
+      // Poll the backend every 10 seconds to check payment status
+      const intervalId = setInterval(async () => {
+        try {
+          const checkResponse = await apiClient.post('/check-payment', { walletAddress: tempAddress });
+          if (checkResponse.data.verified) {
+            clearInterval(intervalId); // Stop polling on success
+            setWalletAddress(tempAddress); // Save wallet address
+            await fetchWalletData(tempAddress); // Fetch wallet data
+            setVerificationMessage('Payment verified and wallet connected!');
+            setIsVerifying(false);
+          }
+        } catch (error) {
+          console.error('Error checking payment status:', error.message);
+        }
+      }, 10000);
     }
   } catch (error) {
-    console.error("Verification failed:", error.message);
-    setVerificationMessage("Verification failed. Please try again.");
+    console.error('Verification failed:', error.message);
+    setVerificationMessage('Verification failed. Please try again.');
     setIsVerifying(false);
   }
 };
