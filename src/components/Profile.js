@@ -97,43 +97,49 @@ const Profile = () => {
 
 const startMobileVerification = async () => {
   if (!tempAddress) {
-    alert('Please enter a wallet address.');
+    alert("Please enter a wallet address.");
     return;
   }
 
   setIsVerifying(true);
-  setVerificationMessage('Generating verification amount...');
+  setVerificationMessage("Generating verification amount...");
 
   try {
-    // Send request to backend to start verification
-    const response = await duneApiClient.post('/verify-payment', { walletAddress: tempAddress });
+    // Step 1: Request verification amount from the backend
+    const response = await verifyMobileWallet(tempAddress);
 
-    if (response.data.action === 'send') {
-      const amount = response.data.amount;
-      setRandomAmount(amount); // Show amount in UI
+    if (response.success) {
+      const amount = response.amount;
+      setRandomAmount(amount); // Display the verification amount
       setVerificationMessage(
-        `Send exactly ${amount} DOGE to your own wallet address (${tempAddress}).`
+        `Send EXACTLY ${amount} DOGE from your wallet address to the same wallet address (${tempAddress}).`
       );
-
-      // Poll the backend every 10 seconds to check payment status
-      const intervalId = setInterval(async () => {
-        try {
-          const checkResponse = await apiClient.post('/check-payment', { walletAddress: tempAddress });
-          if (checkResponse.data.verified) {
-            clearInterval(intervalId); // Stop polling on success
-            setWalletAddress(tempAddress); // Save wallet address
-            await fetchWalletData(tempAddress); // Fetch wallet data
-            setVerificationMessage('Payment verified and wallet connected!');
-            setIsVerifying(false);
-          }
-        } catch (error) {
-          console.error('Error checking payment status:', error.message);
-        }
-      }, 10000);
+    } else {
+      setVerificationMessage(response.message || "Failed to generate verification amount.");
+      setIsVerifying(false);
+      return;
     }
+
+    // Step 2: Poll the backend to verify payment
+    const intervalId = setInterval(async () => {
+      try {
+        // Reuse the same backend function to check payment status
+        const checkResponse = await verifyMobileWallet(tempAddress);
+
+        if (checkResponse.success) {
+          clearInterval(intervalId); // Stop polling when payment is verified
+          setWalletAddress(tempAddress); // Save wallet address
+          await fetchWalletData(tempAddress); // Fetch and display wallet data
+          setVerificationMessage("Payment verified and wallet connected!");
+          setIsVerifying(false);
+        }
+      } catch (error) {
+        console.error("Error during payment verification:", error.message);
+      }
+    }, 10000); // Poll every 10 seconds
   } catch (error) {
-    console.error('Verification failed:', error.message);
-    setVerificationMessage('Verification failed. Please try again.');
+    console.error("Verification failed:", error.message);
+    setVerificationMessage("Verification failed. Please try again.");
     setIsVerifying(false);
   }
 };
